@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { checkStaffCredentials, isPasscodeConfigured, staffEmail, adminUsername } from "@/lib/admin-auth";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, resetRateLimit } from "@/lib/rate-limit";
 
 export type StudioState =
   | { step: "username"; error?: string }
@@ -56,6 +56,9 @@ export async function studioAction(prev: StudioState, form: FormData): Promise<S
   } else if (user.role !== "admin") {
     [user] = await db.update(schema.users).set({ role: "admin" }).where(eq(schema.users.id, user.id)).returning();
   }
+  // Correct passcode: clear the counters so normal logins never lock anyone out.
+  resetRateLimit(`studio-ip:${ip}`);
+  resetRateLimit(`studio-user:${adminUsername().toLowerCase()}`);
   await signIn(user);
   const next = String(form.get("next") ?? "");
   redirect(next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin");

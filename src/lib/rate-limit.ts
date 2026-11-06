@@ -21,6 +21,11 @@ export function rateLimit(key: string, limit: number, windowMs: number) {
   return b.count > limit ? { ok: false, retryAfter: Math.ceil((b.resetAt - now) / 1000) } : { ok: true, retryAfter: 0 };
 }
 
+/** Forget a key's attempts (e.g. after a successful sign-in, so real logins don't count as guesses). */
+export function resetRateLimit(key: string) {
+  buckets.delete(key);
+}
+
 export async function clientIp() {
   const { headers } = await import("next/headers");
   const h = await headers();

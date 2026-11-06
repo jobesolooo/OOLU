@@ -12,79 +12,61 @@ import { StaffMark } from "@/components/auth/StaffMark";
  * pasting or iOS/Android autofill of all six digits fills every box. When the 6th digit
  * is in, the form submits on its own.
  */
-function CodeBoxes({ onComplete, disabled }: { onComplete: () => void; disabled: boolean }) {
-  const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
-  const refs = useRef<(HTMLInputElement | null)[]>([]);
-  useEffect(() => refs.current[0]?.focus(), []);
+function CodeBoxes({ onComplete, onType, disabled }: { onComplete: () => void; onType: (empty: boolean) => void; disabled: boolean }) {
+  // One real input (invisible, laid over the boxes) so phone keyboards never close between digits:
+  // each digit simply lands in the next box. Also supports paste and SMS/password-manager autofill.
+  const [code, setCode] = useState("");
+  const [focused, setFocused] = useState(false);
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => ref.current?.focus(), []);
 
-  const fill = (from: number, raw: string) => {
-    const incoming = raw.replace(/\D/g, "");
-    const next = [...digits];
-    if (!incoming) {
-      next[from] = "";
-      setDigits(next);
-      return;
-    }
-    let i = from;
-    for (const ch of incoming) {
-      if (i > 5) break;
-      next[i++] = ch;
-    }
-    setDigits(next);
-    const focusAt = Math.min(i, 5);
-    // focus after React commits the new values
-    requestAnimationFrame(() => {
-      refs.current[focusAt]?.focus();
-      refs.current[focusAt]?.select();
-    });
-    if (next.every((d) => d !== "")) setTimeout(onComplete, 80);
+  const update = (raw: string) => {
+    const v = raw.replace(/\D/g, "").slice(0, 6);
+    setCode(v);
+    onType(v.length === 0);
+    if (v.length === 6) setTimeout(onComplete, 80);
   };
+  const active = Math.min(code.length, 5);
 
   return (
-    <div
-      className="flex justify-between gap-2 sm:gap-3"
-      onPaste={(e) => {
-        e.preventDefault();
-        fill(0, e.clipboardData.getData("text"));
-      }}
-    >
-      {digits.map((d, i) => (
-        <input
-          key={i}
-          ref={(el) => {
-            refs.current[i] = el;
-          }}
-          value={d}
-          disabled={disabled}
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          autoComplete={i === 0 ? "one-time-code" : "off"}
-          aria-label={`Digit ${i + 1} of 6`}
-          onFocus={(e) => e.target.select()}
-          onChange={(e) => {
-            // Replace the box's digit with what was typed (or spread a pasted/autofilled code).
-            const typed = e.target.value.replace(d, "") || e.target.value;
-            fill(i, typed);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Backspace") {
-              e.preventDefault();
-              const next = [...digits];
-              if (next[i]) next[i] = "";
-              else if (i > 0) {
-                next[i - 1] = "";
-                refs.current[i - 1]?.focus();
-              }
-              setDigits(next);
-            }
-            if (e.key === "ArrowLeft" && i > 0) refs.current[i - 1]?.focus();
-            if (e.key === "ArrowRight" && i < 5) refs.current[i + 1]?.focus();
-          }}
-          className="h-16 w-full min-w-0 border border-[#e9e4d8]/25 bg-black/40 text-center font-mono text-3xl text-[#f4efe3] caret-transparent transition focus:border-[#a592ff] focus:bg-black/60 focus:shadow-[0_0_24px_rgba(165,146,255,0.25)] focus:outline-none disabled:opacity-50 sm:h-[72px]"
-        />
-      ))}
-      <input type="hidden" name="code" value={digits.join("")} />
+    <div className="relative">
+      <input
+        ref={ref}
+        name="code"
+        value={code}
+        disabled={disabled}
+        onChange={(e) => update(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        autoComplete="one-time-code"
+        maxLength={6}
+        aria-label="6-digit passcode"
+        // 16px keeps iPhones from zooming in; the text itself is invisible.
+        className="absolute inset-0 z-10 h-full w-full cursor-pointer bg-transparent text-[16px] text-transparent caret-transparent opacity-0 outline-none selection:bg-transparent"
+      />
+      <div aria-hidden className="flex justify-between gap-2 sm:gap-3">
+        {Array.from({ length: 6 }, (_, i) => {
+          const isActive = focused && !disabled && i === active && (code.length < 6 || i === 5);
+          return (
+            <div
+              key={i}
+              className={`relative grid h-16 w-full min-w-0 place-items-center border font-mono text-3xl text-[#f4efe3] transition sm:h-[72px] ${
+                isActive
+                  ? "border-[#a592ff] bg-black/60 shadow-[0_0_24px_rgba(165,146,255,0.25)]"
+                  : code[i]
+                    ? "border-[#e9e4d8]/40 bg-black/50"
+                    : "border-[#e9e4d8]/25 bg-black/40"
+              } ${disabled ? "opacity-50" : ""}`}
+            >
+              {code[i] ?? ""}
+              {isActive && !code[i] && <span className="studio-caret absolute h-8 w-[2px] bg-[#a592ff]" />}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -127,6 +109,9 @@ export function StudioLogin({ next, notice }: { next?: string; notice?: string |
   const step = state?.step ?? "username";
   // Controlled so the username survives a failed attempt.
   const [username, setUsername] = useState("");
+  // Hide the last error once they start typing a new code (reset by each new attempt via the box key).
+  const [typedAfterError, setTypedAfterError] = useState<string | null>(null);
+  const attempt = String(state && "nonce" in state ? state.nonce : "fresh");
 
   return (
     <div className="fixed inset-0 z-[90] overflow-hidden bg-[#050505] text-[#f4efe3]">
@@ -214,8 +199,8 @@ export function StudioLogin({ next, notice }: { next?: string; notice?: string |
                   <p className="text-center text-[13px] text-[#f4efe3]/70">
                     Welcome back, <span className="text-[#a592ff]">{state && "username" in state ? state.username : username}</span>. Enter your 6-digit passcode.
                   </p>
-                  <CodeBoxes key={state && "nonce" in state ? state.nonce : "fresh"} disabled={pending} onComplete={() => formRef.current?.requestSubmit()} />
-                  {state?.error && <p className="text-center text-[13px] text-[#ff8a7a]" role="alert">{state.error}</p>}
+                  <CodeBoxes key={attempt} disabled={pending} onType={(empty) => setTypedAfterError(empty ? null : attempt)} onComplete={() => formRef.current?.requestSubmit()} />
+                  {state?.error && typedAfterError !== attempt && <p className="text-center text-[13px] text-[#ff8a7a]" role="alert">{state.error}</p>}
                   <button
                     disabled={pending}
                     className="flex w-full items-center justify-center gap-3 bg-[#f4efe3] py-4 text-[12px] font-bold tracking-[0.25em] text-black uppercase transition hover:bg-[#a592ff] disabled:opacity-50"
