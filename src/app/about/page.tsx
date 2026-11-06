@@ -1,0 +1,51 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+import { site } from "@/lib/site";
+import { formatMoneyShort } from "@/lib/format";
+import { shippingConfig } from "@/lib/shipping";
+import { PageHeader } from "@/components/PageHeader";
+
+export const metadata: Metadata = { title: "About" };
+
+export default function AboutPage() {
+  const { freeShippingThreshold, flatRate } = shippingConfig();
+  return (
+    <>
+      <PageHeader eyebrow={site.established} title="About" />
+      <div className="container-x grid gap-12 py-14 md:grid-cols-[1.2fr_1fr]">
+        <div className="max-w-xl">
+          <p className="font-display text-3xl leading-tight font-[800] uppercase">More than clothing — it&apos;s a mindset.</p>
+          <p className="mt-6 text-[15px] leading-relaxed text-black/80">{site.description}</p>
+          <p className="mt-4 text-[15px] leading-relaxed text-black/80">
+            Every piece is designed on the West Side and produced in small runs, so when a drop is gone, it&apos;s gone.
+          </p>
+          <p className="mt-10 -rotate-6 font-script text-6xl">{site.name}</p>
+        </div>
+        <div id="shipping" className="scroll-mt-24 space-y-8 border-t border-black/10 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-12">
+          <div>
+            <h2 className="label font-semibold">Shipping</h2>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">
+              Free shipping on orders over {formatMoneyShort(freeShippingThreshold)}. Otherwise a flat {formatMoneyShort(flatRate)}.
+              Orders ship within 2–4 business days, worldwide.
+            </p>
+          </div>
+          <div>
+            <h2 className="label font-semibold">Returns</h2>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">
+              Unworn items with tags can be returned within 30 days. Reach out with your order number and we&apos;ll sort it.
+            </p>
+          </div>
+          <div>
+            <h2 className="label font-semibold">Payments</h2>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">
+              Checkout is handled by Stripe. We never see or store your card details.
+            </p>
+          </div>
+          <Link href="/shop" className="btn-solid">
+            Shop now
+          </Link>
+        </div>
+      </div>
+    </>
+  );
+}
