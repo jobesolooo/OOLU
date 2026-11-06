@@ -47,7 +47,7 @@ export function PreferencesMenu({ variant = "header" }: { variant?: "header" | "
       <ScrollRow label={t("prefs.currency")}>
         {CURRENCIES.map((c) => (
           <Chip key={c.code} active={currency === c.code} onClick={() => choose(CURRENCY_COOKIE, c.code)} title={c.name}>
-            {symbol(c.code, c.locale) !== c.code && <span className="opacity-60">{symbol(c.code, c.locale)}</span>} {c.code}
+            {c.symbol !== c.code && <span className="opacity-60">{c.symbol}</span>} {c.code}
           </Chip>
         ))}
       </ScrollRow>
@@ -80,11 +80,6 @@ export function PreferencesMenu({ variant = "header" }: { variant?: "header" | "
     </div>
   );
 }
-
-const symbol = (code: string, locale: string) =>
-  new Intl.NumberFormat(locale, { style: "currency", currency: code, currencyDisplay: "narrowSymbol" })
-    .formatToParts(0)
-    .find((p) => p.type === "currency")?.value ?? code;
 
 function Chip({ active, onClick, title, children }: { active: boolean; onClick: () => void; title: string; children: React.ReactNode }) {
   return (

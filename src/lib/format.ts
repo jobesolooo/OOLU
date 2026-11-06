@@ -3,6 +3,11 @@ export const DEFAULT_CURRENCY = (process.env.NEXT_PUBLIC_STORE_CURRENCY ?? "eur"
 
 /** Dutch-style money like the OOLU shop: €29,00 */
 export function formatMoney(cents: number, currency = DEFAULT_CURRENCY) {
+  // Euros (everything the store sells in) are formatted by hand so server and browser always match.
+  if (currency.toLowerCase() === "eur") {
+    const [whole, frac] = (Math.abs(cents) / 100).toFixed(2).split(".");
+    return `${cents < 0 ? "-" : ""}€${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${frac}`;
+  }
   return new Intl.NumberFormat("nl-NL", {
     style: "currency",
     currency: currency.toUpperCase(),
