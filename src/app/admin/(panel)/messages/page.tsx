@@ -4,6 +4,7 @@ import { Inbox } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { setMessageStatus } from "../actions";
+import { AdminHeader, Segmented } from "../ui";
 
 export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/messages">) {
   const raw = (await searchParams).status;
@@ -12,19 +13,15 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
   const rows = await db.select().from(schema.contactMessages).where(eq(schema.contactMessages.status, status)).orderBy(desc(schema.contactMessages.createdAt)).limit(200);
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Inbox</h1>
-        <div className="flex gap-2">
-          {(["new", "done"] as const).map((s) => (
-            <a key={s} href={`/admin/messages?status=${s}`} className={`border px-4 py-2 text-[11px] tracking-[0.12em] uppercase ${s === status ? "border-ink bg-ink text-white" : "border-black/15 bg-white"}`}>
-              {s === "new" ? "Open" : "Done"}
-            </a>
-          ))}
-        </div>
-      </div>
+      <AdminHeader
+        eyebrow="People"
+        title="Inbox"
+        description="Messages from the contact form. Reply opens your email app with the subject filled in."
+        actions={<Segmented items={(["new", "done"] as const).map((s) => ({ href: `/admin/messages?status=${s}`, label: s === "new" ? "Open" : "Done", active: s === status }))} />}
+      />
       <ul className="space-y-3">
         {rows.length === 0 && (
-          <li className="bg-white">
+          <li className="bg-white ring-1 ring-black/5">
             <AdminEmpty
               icon={Inbox}
               title={status === "new" ? "Inbox zero" : "Nothing marked done"}
@@ -34,10 +31,10 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
           </li>
         )}
         {rows.map((m) => (
-          <li key={m.id} className="bg-white p-6">
+          <li key={m.id} className="bg-white p-5 ring-1 ring-black/5 sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-semibold">{m.topic}{m.orderNumber ? ` · Order #${m.orderNumber}` : ""}</p>
+                <p className="font-display text-[22px] tracking-[-0.01em]">{m.topic}{m.orderNumber ? ` · Order #${m.orderNumber}` : ""}</p>
                 <p className="text-xs text-ash">{m.name} · {m.email} · {formatDate(m.createdAt)}</p>
               </div>
               <div className="flex items-center gap-3">
@@ -49,7 +46,7 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
                 </form>
               </div>
             </div>
-            <p className="mt-4 text-sm leading-relaxed whitespace-pre-wrap">{m.message}</p>
+            <p className="mt-4 border-l-2 border-accent pl-4 text-sm leading-relaxed whitespace-pre-wrap">{m.message}</p>
           </li>
         ))}
       </ul>

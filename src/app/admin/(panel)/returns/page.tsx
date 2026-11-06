@@ -8,6 +8,7 @@ import type { ReturnStatus } from "@/lib/db/schema";
 import { formatDate, formatMoney } from "@/lib/format";
 import { updateReturn } from "../actions";
 import { AdminForm } from "../FormMessage";
+import { AdminHeader, Segmented } from "../ui";
 
 const FILTERS: { key: string; label: string; statuses: ReturnStatus[] }[] = [
   { key: "open", label: "Open", statuses: ["requested", "approved", "received"] },
@@ -33,22 +34,15 @@ export default async function ReturnsAdmin({ searchParams }: PageProps<"/admin/r
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Returns</h1>
-          <p className="mt-1 text-xs text-ash">Approve → customer gets the return address by email. Mark refunded to refund via Stripe.</p>
-        </div>
-        <div className="flex gap-2">
-          {FILTERS.map((f) => (
-            <a key={f.key} href={`/admin/returns?filter=${f.key}`} className={`border px-4 py-2 text-[11px] tracking-[0.12em] uppercase ${f.key === filter.key ? "border-ink bg-ink text-white" : "border-black/15 bg-white"}`}>
-              {f.label}
-            </a>
-          ))}
-        </div>
-      </div>
-      <ul className="space-y-4">
+      <AdminHeader
+        eyebrow="People"
+        title="Returns"
+        description="Approve a request and the customer gets the return address by email. Mark it refunded to refund through Stripe."
+        actions={<Segmented items={FILTERS.map((f) => ({ href: `/admin/returns?filter=${f.key}`, label: f.label, active: f.key === filter.key }))} />}
+      />
+      <ul className="space-y-3">
         {rows.length === 0 && (
-          <li className="bg-white">
+          <li className="bg-white ring-1 ring-black/5">
             <AdminEmpty
               icon={RotateCcw}
               title={filter.key === "open" ? "No open returns" : "No closed returns"}
@@ -57,12 +51,12 @@ export default async function ReturnsAdmin({ searchParams }: PageProps<"/admin/r
           </li>
         )}
         {rows.map(({ r, order }) => (
-          <li key={r.id} className="grid gap-6 bg-white p-6 lg:grid-cols-[1fr_360px]">
+          <li key={r.id} className="grid grid-cols-[minmax(0,1fr)] gap-6 bg-white p-5 ring-1 ring-black/5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div>
               <p className="text-xs text-ash">
                 {formatDate(r.createdAt)} · <Link href={`/admin/orders/${order.id}`} className="underline">Order #{order.number}</Link> · {order.email}
               </p>
-              <p className="mt-2 font-semibold capitalize">{r.status} · {r.reason}</p>
+              <p className="mt-3 flex flex-wrap items-center gap-2"><span className="rounded-full bg-accent/20 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] uppercase">{r.status}</span><span className="font-display text-[22px] tracking-[-0.01em]">{r.reason}</span></p>
               <ul className="mt-2 text-sm">
                 {r.items.map((l) => {
                   const i = byId.get(l.orderItemId);

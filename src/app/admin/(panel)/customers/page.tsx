@@ -3,6 +3,8 @@ import { EmptyRow } from "../Empty";
 import { Users } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate, formatMoney } from "@/lib/format";
+import { AdminHeader, StatTile, table } from "../ui";
+import { cx } from "@/lib/format";
 
 const PAID = ["paid", "fulfilled", "shipped", "delivered", "partially_refunded"] as const;
 
@@ -42,21 +44,19 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Customers</h1>
-          <p className="mt-1 text-xs text-ash">
-            {total.n} accounts · {verified.n} confirmed · {social.n} use Google/Apple
-          </p>
-        </div>
-        <form className="flex gap-2">
-          <input name="q" defaultValue={q} placeholder="Search name or email" className="input w-64 py-2.5 text-sm" />
-          <button className="btn-solid py-2.5">Search</button>
-        </form>
+      <AdminHeader eyebrow="People" title="Customers" />
+      <div className="grid grid-cols-3 gap-3">
+        <StatTile dark index={0} label="Accounts" value={String(total.n)} />
+        <StatTile index={1} label="Confirmed email" value={String(verified.n)} />
+        <StatTile index={2} label="Google / Apple" value={String(social.n)} />
       </div>
-      <div className="overflow-x-auto bg-white">
-        <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-black/10 text-[10px] tracking-[0.14em] text-ash uppercase">
+      <form className="mt-10 mb-4 flex max-w-md gap-2">
+        <input name="q" defaultValue={q} placeholder="Search name or email" className="input py-2.5" />
+        <button className="btn-solid shrink-0 py-2.5">Search</button>
+      </form>
+      <div className={table.wrap}>
+        <table className={cx(table.table, "min-w-[760px]")}>
+          <thead className={table.head}>
             <tr>
               <th className="p-4 font-medium">Customer</th>
               <th className="p-4 font-medium">Sign-in</th>
@@ -66,7 +66,7 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
               <th className="p-4 font-medium">Last order</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-black/5">
+          <tbody className={table.body}>
             {users.length === 0 && (
               <EmptyRow
                 colSpan={6}

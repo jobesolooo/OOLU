@@ -23,8 +23,8 @@ export function FulfilmentForm({ order }: { order: Order }) {
     ? STATUS_OPTIONS
     : [{ value: order.status, label: order.status.replace("_", " ") }, ...STATUS_OPTIONS];
   return (
-    <form action={action} className="space-y-4 bg-white p-6">
-      <h2 className="label font-semibold">Fulfilment</h2>
+    <form action={action} className="space-y-4 bg-white p-6 ring-1 ring-black/5">
+      <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Fulfilment</h2>
       <input type="hidden" name="orderId" value={order.id} />
       <label className="block">
         <span className="mb-1 block text-xs text-ash">Status</span>
@@ -64,12 +64,12 @@ export function RefundForm({ order }: { order: Order }) {
   return (
     <form
       action={action}
-      className="space-y-4 bg-white p-6"
+      className="space-y-4 bg-white p-6 ring-1 ring-black/5"
       onSubmit={(e) => {
         if (!confirm("Issue this refund? This can't be undone.")) e.preventDefault();
       }}
     >
-      <h2 className="label font-semibold">Refund</h2>
+      <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Refund</h2>
       <input type="hidden" name="orderId" value={order.id} />
       <label className="block">
         <span className="mb-1 block text-xs text-ash">Amount ({order.currency.toUpperCase()}) — leave blank for the full {(remaining / 100).toFixed(2)}</span>

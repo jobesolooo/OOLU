@@ -3,8 +3,9 @@ import { AdminEmpty } from "../Empty";
 import { BarChart3 } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import type { OrderStatus } from "@/lib/db/schema";
-import { formatMoney, formatMoneyShort } from "@/lib/format";
+import { formatDate, formatMoney, formatMoneyShort } from "@/lib/format";
 import { nowMs } from "@/lib/time";
+import { AdminHeader, Segmented, StatTile } from "../ui";
 
 const PAID: OrderStatus[] = ["paid", "fulfilled", "shipped", "delivered", "partially_refunded", "refunded"];
 
@@ -80,55 +81,51 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/admin/
 
   return (
     <>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Analytics</h1>
-        <div className="flex gap-2">
-          {[7, 30, 90].map((d) => (
-            <a key={d} href={`/admin/analytics?days=${d}`} className={`border px-4 py-2 text-[11px] tracking-[0.12em] uppercase ${d === days ? "border-ink bg-ink text-white" : "border-black/15 bg-white"}`}>
-              {d} days
-            </a>
-          ))}
-        </div>
-      </div>
+      <AdminHeader
+        eyebrow="Store"
+        title="Analytics"
+        description={`Paid orders over the last ${days} days, compared with the ${days} days before.`}
+        actions={<Segmented items={[7, 30, 90].map((d) => ({ href: `/admin/analytics?days=${d}`, label: `${d} days`, active: d === days }))} />}
+      />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-        {tiles.map((t) => (
-          <div key={t.label} className="bg-white p-5">
-            <p className="text-[10px] tracking-[0.14em] text-ash uppercase">{t.label}</p>
-            <p className="mt-2 text-2xl font-semibold tabular-nums">{t.value}</p>
-            {"delta" in t && t.delta != null && (
-              <p className={`mt-1 text-xs ${t.delta >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
-                {t.delta >= 0 ? "▲" : "▼"} {Math.abs(t.delta)}% vs previous {days} days
-              </p>
-            )}
-            {"sub" in t && t.sub && <p className="mt-1 text-xs text-ash">{t.sub}</p>}
-          </div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
+        {tiles.map((t, i) => (
+          <StatTile
+            key={t.label}
+            index={i}
+            dark={i === 0}
+            label={t.label}
+            value={t.value}
+            delta={"delta" in t ? t.delta : undefined}
+            deltaLabel="vs prev."
+            sub={"sub" in t ? t.sub : undefined}
+          />
         ))}
       </div>
 
-      <div className="mt-6 bg-white p-6">
+      <div className="mt-3 bg-white p-5 ring-1 ring-black/5 sm:p-6">
         <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="label font-semibold">Revenue per day</h2>
+          <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Revenue per day</h2>
           <span className="text-xs text-ash">Peak {formatMoneyShort(max)}</span>
         </div>
         <div className="flex h-56 items-end gap-[2px]" role="img" aria-label={`Daily revenue for the last ${days} days`}>
           {series.map((s) => (
             <div key={s.day} className="group relative flex-1" style={{ height: "100%" }}>
-              <div className="absolute inset-x-0 bottom-0 bg-ink/85 group-hover:bg-ink" style={{ height: `${(s.revenue / max) * 100}%`, minHeight: s.revenue ? 2 : 0 }} />
+              <div className="absolute inset-x-0 bottom-0 bg-ink/85 transition-colors group-hover:bg-accent" style={{ height: `${(s.revenue / max) * 100}%`, minHeight: s.revenue ? 2 : 0 }} />
               <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 bg-ink px-2 py-1 text-[11px] whitespace-nowrap text-white group-hover:block">
-                {s.day}: {formatMoneyShort(s.revenue)} · {s.orders} orders
+                {formatDate(s.day)}: {formatMoneyShort(s.revenue)} · {s.orders} orders
               </div>
             </div>
           ))}
         </div>
         <div className="mt-2 flex justify-between text-[11px] text-ash">
-          <span>{series[0].day}</span>
-          <span>{series.at(-1)!.day}</span>
+          <span>{formatDate(series[0].day)}</span>
+          <span>Today</span>
         </div>
       </div>
 
-      <div className="mt-6 bg-white p-6">
-        <h2 className="label mb-4 font-semibold">Top products</h2>
+      <div className="mt-3 bg-white p-5 ring-1 ring-black/5 sm:p-6">
+        <h2 className="mb-4 text-[11px] font-semibold tracking-[0.14em] uppercase">Top products</h2>
         {top.length === 0 ? (
           <AdminEmpty compact icon={BarChart3} title="No sales yet" body={`Best sellers for the last ${days} days appear here once orders come in.`} />
         ) : (

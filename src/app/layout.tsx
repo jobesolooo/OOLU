@@ -13,6 +13,7 @@ import { getSettings } from "@/lib/settings";
 import { Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
+import { StoreOnly } from "@/components/StoreOnly";
 import { NewsletterPopup } from "@/components/Newsletter";
 import { AccountSync } from "@/components/auth/AccountSync";
 
@@ -49,15 +50,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">
           {dictionaries[locale]["a11y.skip"]}
         </a>
-        <Header />
+        <StoreOnly>
+          <Header />
+        </StoreOnly>
         <main id="main" className="flex-1">
           <ViewTransition>{children}</ViewTransition>
         </main>
-        <Footer />
+        <StoreOnly>
+          <Footer />
+        </StoreOnly>
         <AccountSync />
         <RevealObserver />
-        <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
-        {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
+        <StoreOnly>
+          <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
+          {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
+        </StoreOnly>
         </PrefsProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </body>

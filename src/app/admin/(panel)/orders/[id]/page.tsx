@@ -4,6 +4,9 @@ import { getOrder } from "@/lib/orders";
 import { stripeDashboardUrl } from "@/lib/stripe";
 import { OrderDetail } from "@/components/OrderDetail";
 import { FulfilmentForm, RefundForm } from "./OrderForms";
+import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { formatDate } from "@/lib/format";
+import { AdminHeader, ghostBtn } from "../../ui";
 
 export default async function AdminOrderPage({ params }: PageProps<"/admin/orders/[id]">) {
   const { id } = await params;
@@ -13,18 +16,26 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
 
   return (
     <>
-      <Link href="/admin" className="text-[10px] tracking-[0.2em] text-ash uppercase hover:text-ink">← Orders</Link>
-      <div className="mt-3 mb-8 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display font-normal tracking-[-0.02em] text-4xl">Order #{order.number}</h1>
-        {order.stripePaymentIntentId && (
-          <a href={stripeDashboardUrl(`/payments/${order.stripePaymentIntentId}`)} target="_blank" rel="noreferrer" className="text-xs underline">
-            View payment in Stripe ↗
-          </a>
-        )}
-      </div>
-      <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-        <OrderDetail order={order} items={items} />
-        <div className="space-y-6">
+      <Link href="/admin/orders" className="group mb-4 inline-flex items-center gap-2 text-[11px] tracking-[0.14em] text-ash uppercase hover:text-ink">
+        <span className="transition-transform group-hover:-translate-x-1">←</span> Orders
+      </Link>
+      <AdminHeader
+        eyebrow={`Placed ${formatDate(order.createdAt)}`}
+        title={`Order #${order.number}`}
+        description={<OrderStatusBadge status={order.status} />}
+        actions={
+          order.stripePaymentIntentId && (
+            <a href={stripeDashboardUrl(`/payments/${order.stripePaymentIntentId}`)} target="_blank" rel="noreferrer" className={ghostBtn}>
+              Payment in Stripe ↗
+            </a>
+          )
+        }
+      />
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="bg-white p-5 ring-1 ring-black/5 sm:p-8">
+          <OrderDetail order={order} items={items} />
+        </div>
+        <div className="space-y-3 lg:sticky lg:top-6 lg:self-start">
           <FulfilmentForm order={order} />
           <RefundForm order={order} />
         </div>

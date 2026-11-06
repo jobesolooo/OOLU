@@ -4,7 +4,8 @@ import { DEFAULT_CURRENCY } from "@/lib/format";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, signOut } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getDb, schema } from "@/lib/db";
 import { ORDER_STATUSES, RETURN_STATUSES } from "@/lib/db/schema";
 import { createPromotion, setPromotionActive } from "@/lib/promotions";
@@ -285,4 +286,10 @@ export async function saveStoreSettings(_: ActionResult, form: FormData): Promis
   await saveSettings(next);
   revalidatePath("/", "layout");
   return { ok: "Settings saved" };
+}
+
+/** Staff sign-out: ends the session and returns to the staff login. */
+export async function adminSignOut() {
+  await signOut();
+  redirect("/admin/login");
 }

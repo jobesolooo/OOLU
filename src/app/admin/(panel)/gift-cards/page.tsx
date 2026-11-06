@@ -5,6 +5,8 @@ import { getDb, schema } from "@/lib/db";
 import { formatDate, formatMoney } from "@/lib/format";
 import { adminIssueGiftCard, setGiftCardDisabled } from "../actions";
 import { AdminForm } from "../FormMessage";
+import { AdminHeader, StatTile, table } from "../ui";
+import { cx } from "@/lib/format";
 
 export default async function GiftCardsAdmin() {
   const db = await getDb();
@@ -12,15 +14,13 @@ export default async function GiftCardsAdmin() {
   const outstanding = cards.filter((c) => c.status === "active").reduce((s, c) => s + c.balance, 0);
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-      <div className="space-y-6">
-        <div className="bg-white p-6">
-          <p className="text-[10px] tracking-[0.14em] text-ash uppercase">Outstanding balance</p>
-          <p className="mt-2 text-2xl font-semibold">{formatMoney(outstanding)}</p>
-          <p className="mt-1 text-xs text-ash">Value still redeemable across active cards.</p>
-        </div>
-        <div className="bg-white p-6">
-          <h1 className="font-display font-normal tracking-[-0.02em] text-2xl">Issue a gift card</h1>
+    <>
+    <AdminHeader eyebrow="Catalogue" title="Gift cards" description="Cards bought on the store and cards you issue yourself, with what's left on each." />
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[360px_minmax(0,1fr)]">
+      <div className="space-y-3">
+        <StatTile dark label="Outstanding balance" value={formatMoney(outstanding)} sub="Still redeemable across active cards" />
+        <div className="bg-white p-6 ring-1 ring-black/5">
+          <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Issue a gift card</h2>
           <p className="mt-2 text-xs text-ash">For store credit, apologies or giveaways. No payment is taken.</p>
           <AdminForm action={adminIssueGiftCard} submitLabel="Issue card" className="mt-6 space-y-3">
             <input name="amount" required inputMode="decimal" placeholder="Amount in EUR, e.g. 25" className="input" />
@@ -29,9 +29,9 @@ export default async function GiftCardsAdmin() {
           </AdminForm>
         </div>
       </div>
-      <div className="overflow-x-auto bg-white">
-        <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="border-b border-black/10 text-[10px] tracking-[0.14em] text-ash uppercase">
+      <div className={table.wrap}>
+        <table className={cx(table.table, "min-w-[640px]")}>
+          <thead className={table.head}>
             <tr>
               <th className="p-4 font-medium">Code</th>
               <th className="p-4 font-medium">Balance</th>
@@ -40,7 +40,7 @@ export default async function GiftCardsAdmin() {
               <th className="p-4" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-black/5">
+          <tbody className={table.body}>
             {cards.length === 0 && (
               <EmptyRow
                 colSpan={5}
@@ -69,5 +69,6 @@ export default async function GiftCardsAdmin() {
         </table>
       </div>
     </div>
+    </>
   );
 }

@@ -6,10 +6,11 @@ import { getProducts } from "@/lib/catalog";
 import { formatDate } from "@/lib/format";
 import { Stars } from "@/components/Price";
 import { moderateReview } from "../actions";
+import { AdminHeader, Segmented } from "../ui";
 
 export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/reviews">) {
   const raw = (await searchParams).status;
-  const status = (["pending", "approved", "rejected"] as const).find((s) => s === raw) ?? "pending";
+  const status = (["pending", "approved", "rejected"] as const).find((s) => s === raw) ?? "approved";
   const db = await getDb();
   const [rows, products] = await Promise.all([
     db.select().from(schema.reviews).where(eq(schema.reviews.status, status)).orderBy(desc(schema.reviews.createdAt)).limit(200),
@@ -19,31 +20,32 @@ export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/r
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Reviews</h1>
-          <p className="mt-1 text-xs text-ash">Reviews from verified buyers publish automatically. Others wait here for approval.</p>
-        </div>
-        <div className="flex gap-2">
-          {(["pending", "approved", "rejected"] as const).map((s) => (
-            <a key={s} href={`/admin/reviews?status=${s}`} className={`border px-4 py-2 text-[11px] tracking-[0.12em] uppercase ${s === status ? "border-ink bg-ink text-white" : "border-black/15 bg-white"}`}>
-              {s}
-            </a>
-          ))}
-        </div>
-      </div>
-      <ul className="space-y-3">
+      <AdminHeader
+        eyebrow="People"
+        title="Reviews"
+        description="Reviews go live as soon as they're written. Hide one to take it off the product page, or delete it for good."
+        actions={
+          <Segmented
+            items={(["approved", "pending", "rejected"] as const).map((s) => ({
+              href: `/admin/reviews?status=${s}`,
+              label: s === "approved" ? "Live" : s === "rejected" ? "Hidden" : "Waiting",
+              active: s === status,
+            }))}
+          />
+        }
+      />
+      <ul className="grid grid-cols-[minmax(0,1fr)] gap-3 xl:grid-cols-2">
         {rows.length === 0 && (
-          <li className="bg-white">
+          <li className="bg-white ring-1 ring-black/5 xl:col-span-2">
             <AdminEmpty
               icon={MessageSquareText}
-              title={status === "pending" ? "Nothing to review" : `No ${status} reviews`}
+              title={status === "pending" ? "Nothing waiting" : status === "approved" ? "No reviews yet" : "No hidden reviews"}
               body={status === "pending" ? "Reviews now publish straight away. Older reviews that were waiting show here and are already visible on the product page; reject one to hide it." : undefined}
             />
           </li>
         )}
         {rows.map((r) => (
-          <li key={r.id} className="flex flex-col gap-4 bg-white p-5 md:flex-row md:items-start">
+          <li key={r.id} className="flex flex-col gap-4 bg-white p-5 ring-1 ring-black/5 sm:p-6">
             <div className="flex-1">
               <p className="text-xs text-ash">{names.get(r.productId) ?? r.productId} · {formatDate(r.createdAt)} · {r.name}{r.verified ? " · verified buyer" : ""}</p>
               <div className="mt-2 flex items-center gap-3">
@@ -57,7 +59,7 @@ export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/r
                 <form key={a} action={moderateReview}>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="action" value={a} />
-                  <button className={`border px-3 py-2 text-[11px] tracking-[0.1em] uppercase ${a === "approve" ? "border-ink bg-ink text-white" : "border-black/20"}`}>{a}</button>
+                  <button className={`border px-3 py-2 text-[11px] tracking-[0.1em] uppercase transition-colors ${a === "approve" ? "border-ink bg-ink text-white" : a === "delete" ? "border-rose-200 text-rose-700 hover:bg-rose-50" : "border-black/20 hover:border-ink"}`}>{a === "reject" ? "hide" : a === "approve" ? (status === "rejected" ? "show" : "approve") : a}</button>
                 </form>
               ))}
             </div>
