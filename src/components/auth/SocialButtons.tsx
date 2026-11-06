@@ -22,12 +22,12 @@ export function SocialButtons({ next, mode }: { next?: string; mode: "login" | "
   const q = next ? `?next=${encodeURIComponent(next)}` : "";
   const verb = mode === "login" ? "Continue" : "Sign up";
   return (
-    <div className="space-y-4">
-      <a href={`/api/auth/google${q}`} className="flex min-h-[58px] w-full items-center justify-center gap-3 border border-black/20 bg-white px-5 text-[16px] font-medium transition-colors hover:border-ink">
-        <GoogleIcon className="size-5" /> {verb} with Google
+    <div className="grid gap-3 sm:grid-cols-2">
+      <a href={`/api/auth/google${q}`} aria-label={`${verb} with Google`} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 border border-black/20 bg-white px-4 text-[15px] font-medium transition-colors hover:border-ink">
+        <GoogleIcon className="size-5" /> Google
       </a>
-      <a href={`/api/auth/apple${q}`} className="flex min-h-[58px] w-full items-center justify-center gap-3 bg-black px-5 text-[16px] font-medium text-white transition-opacity hover:opacity-85">
-        <AppleIcon className="size-5" /> {verb} with Apple
+      <a href={`/api/auth/apple${q}`} aria-label={`${verb} with Apple`} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 bg-black px-4 text-[15px] font-medium text-white transition-opacity hover:opacity-85">
+        <AppleIcon className="size-5" /> Apple
       </a>
     </div>
   );
@@ -35,7 +35,7 @@ export function SocialButtons({ next, mode }: { next?: string; mode: "login" | "
 
 export function OrDivider({ label = "or with email" }: { label?: string }) {
   return (
-    <div className="my-9 flex items-center gap-5 text-[11px] tracking-[0.2em] whitespace-nowrap text-ash uppercase">
+    <div className="my-[clamp(16px,3.4vh,36px)] flex items-center gap-5 text-[11px] tracking-[0.2em] whitespace-nowrap text-ash uppercase">
       <span className="h-px flex-1 bg-black/15" />
       {label}
       <span className="h-px flex-1 bg-black/15" />

@@ -30,7 +30,7 @@ export function Gallery({ images, name }: { images: string[]; name: string }) {
   if (!count) return <div className="aspect-square bg-stone" />;
 
   return (
-    <div className="flex flex-col-reverse gap-3 lg:flex-row">
+    <div className="flex flex-col-reverse gap-3 lg:flex-row lg:justify-center">
       {count > 1 && (
         <div className="flex gap-3 lg:w-20 lg:flex-col">
           {images.map((src, i) => (
@@ -46,7 +46,7 @@ export function Gallery({ images, name }: { images: string[]; name: string }) {
           ))}
         </div>
       )}
-      <div className="group relative aspect-square min-w-0 flex-1 overflow-hidden bg-stone">
+      <div className="group relative aspect-square min-w-0 flex-1 overflow-hidden bg-stone lg:max-h-[calc(100svh-var(--chrome-h)-72px)] lg:max-w-[calc(100svh-var(--chrome-h)-72px)]">
         <button className="absolute inset-0 cursor-zoom-in" onClick={() => setZoom(true)} aria-label="Zoom image">
           <Image src={images[active]} alt={name} fill priority sizes="(min-width:1024px) 50vw, 100vw" className="object-contain" />
         </button>

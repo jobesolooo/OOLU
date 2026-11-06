@@ -15,7 +15,7 @@ import { Logo } from "./Logo";
 export function AnnouncementBar({ text }: { text: string }) {
   return (
     <div className="bg-black text-white">
-      <div className="container-x flex h-[34px] items-center justify-between text-[10px] font-medium tracking-[0.14em] uppercase sm:h-[38px] sm:text-[11px]">
+      <div className="container-x flex h-[var(--bar-h)] items-center justify-between text-[10px] font-medium tracking-[0.14em] uppercase sm:text-[11px]">
         <p className="truncate">{text}</p>
         <p className="hidden items-center gap-1 sm:flex">
           {site.region} <span className="text-white/50">/</span> {site.currency}
@@ -49,7 +49,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-night text-white">
-      <div className="container-x flex h-[60px] items-center justify-between md:h-[clamp(68px,6vw,96px)]">
+      <div className="container-x flex h-[var(--nav-h)] items-center justify-between">
         <button className="-ml-1 p-1 md:hidden" aria-label="Open menu" onClick={() => setMenuOpen((v) => !v)}>
           {menuOpen ? <X className="size-5" strokeWidth={1.5} /> : <Menu className="size-5" strokeWidth={1.5} />}
         </button>

@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 export function Hero() {
   const { hero } = site;
   return (
-    <section className="grain relative isolate h-[580px] overflow-hidden bg-[#1b1b1a] text-white md:aspect-[2048/916] md:h-auto md:min-h-[480px]">
+    <section className="grain relative isolate h-[580px] overflow-hidden bg-[#1b1b1a] text-white md:h-[calc(100svh-var(--chrome-h))] md:min-h-[520px] md:max-h-[1200px]">
       <Image src={hero.image} alt="" fill priority sizes="100vw" className="-z-20 object-cover object-[36%_center] md:object-center" />
 
       {/* Giant wordmark sits behind the model (skipped when it's baked into the photo) */}
@@ -29,7 +29,7 @@ export function Hero() {
 
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/70 via-black/35 to-transparent md:hidden" aria-hidden />
 
-      <div className="container-x relative flex h-full flex-col pt-[56px] md:pt-[clamp(70px,9.6vw,150px)]">
+      <div className="container-x relative flex h-full flex-col pt-[56px] md:justify-center md:pt-0 md:pb-[4vh]">
         <p className="text-[10px] font-medium tracking-[0.3em] uppercase md:text-[clamp(11px,1.08vw,16px)]">{hero.eyebrow}</p>
         <h1 className="mt-5 font-display text-[40px] leading-[0.94] font-[800] tracking-[0.01em] uppercase md:mt-[clamp(16px,2.2vw,32px)] md:text-[clamp(32px,3.5vw,66px)]">
           {hero.title.map((line) => (

@@ -93,7 +93,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       <RecordView product={saved} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
-      <nav aria-label="Breadcrumb" className="container-x py-6 text-[11px] tracking-[0.14em] text-ash uppercase">
+      <nav aria-label="Breadcrumb" className="container-x py-4 text-[11px] tracking-[0.14em] text-ash uppercase">
         <Link href="/" className="hover:text-ink">Home</Link> <span className="mx-2">/</span>
         <Link href="/shop" className="hover:text-ink">Shop</Link> <span className="mx-2">/</span>
         <span className="text-ink">{product.name}</span>
@@ -102,7 +102,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       <div className="container-x grid gap-10 pb-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-16">
         <Gallery images={product.images} name={product.name} />
 
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <div className="lg:sticky lg:top-[calc(var(--nav-h)+24px)] lg:self-start">
           {collection && (
             <Link href={`/shop?collection=${product.collection}`} className="eyebrow text-ash hover:text-ink">
               {collection.title}

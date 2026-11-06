@@ -27,6 +27,19 @@
   --tracking-mark: 0.42em;
 }
 
+/* Height of the announcement bar + sticky header, so sections can size to "exactly one screen". */
+:root {
+  --bar-h: 34px;
+  --nav-h: 60px;
+  --chrome-h: calc(var(--bar-h) + var(--nav-h));
+}
+@media (min-width: 40rem) {
+  :root { --bar-h: 38px; }
+}
+@media (min-width: 48rem) {
+  :root { --nav-h: clamp(68px, 6vw, 96px); }
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
@@ -93,6 +106,7 @@
   }
 }
 
+@layer components {
 .btn-outline {
   display: inline-flex;
   align-items: center;
@@ -141,6 +155,7 @@
 .input:focus {
   outline: none;
   border-color: var(--color-ink);
+}
 }
 
 @keyframes fade-up {
