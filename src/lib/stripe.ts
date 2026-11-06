@@ -13,7 +13,12 @@ export function getStripe(): Stripe {
     throw new Error("STRIPE_SECRET_KEY is not set. Add it to .env.local (see .env.example).");
   }
   if (!client) {
-    client = new Stripe(key, { appInfo: { name: "OOLU storefront" } });
+    // STRIPE_MOCK_URL (e.g. http://localhost:12111) points the client at stripe-mock for local testing.
+    const mock = process.env.STRIPE_MOCK_URL ? new URL(process.env.STRIPE_MOCK_URL) : null;
+    client = new Stripe(key, {
+      appInfo: { name: "OOLU storefront" },
+      ...(mock ? { host: mock.hostname, port: Number(mock.port), protocol: mock.protocol.replace(":", "") as "http" | "https" } : {}),
+    });
   }
   return client;
 }

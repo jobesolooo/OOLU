@@ -18,6 +18,7 @@ import {
   Package,
   RotateCcw,
   Settings,
+  Shirt,
   ShoppingBag,
   Store,
   TicketPercent,
@@ -43,7 +44,8 @@ const GROUPS: { title: string; items: Item[] }[] = [
   {
     title: "Catalogue",
     items: [
-      { label: "Products & stock", href: "/admin/inventory", icon: Package },
+      { label: "Products", href: "/admin/products", icon: Shirt },
+      { label: "Stock", href: "/admin/inventory", icon: Package },
       { label: "Discounts", href: "/admin/discounts", icon: TicketPercent },
       { label: "Gift cards", href: "/admin/gift-cards", icon: Gift },
     ],

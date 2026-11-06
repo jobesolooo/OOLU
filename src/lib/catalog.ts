@@ -68,7 +68,7 @@ function parseMoney(v: string | undefined): number | null {
  *   colors      colour options on one product, e.g. "Black:#111111|White:#f4f4f2"
  *   variants    (optional) only these "Colour / Size" combinations exist, separated by "|"
  */
-function fromStripe(p: Stripe.Product): Product | null {
+export function fromStripe(p: Stripe.Product): Product | null {
   const price = p.default_price as Stripe.Price | null;
   if (!price || typeof price === "string" || price.unit_amount == null || !price.active) return null;
   const m = p.metadata ?? {};
@@ -120,7 +120,7 @@ function parseColors(v: string | undefined): ColorOption[] {
     });
 }
 
-function slugify(s: string) {
+export function slugify(s: string) {
   return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -134,7 +134,7 @@ const DEFAULT_DETAILS: Record<string, string[]> = {
   hoodies: ["Brushed-back fleece", "Full zip, kangaroo pocket", "OOLU logo", "Designed in Amsterdam"],
 };
 
-function demoProducts(): Product[] {
+export function demoProducts(): Product[] {
   const base = Date.UTC(2024, 0, 1);
   // Round to the hour so the countdown target is stable between requests.
   const hour = Math.floor(Date.now() / 3_600_000) * 3_600_000;

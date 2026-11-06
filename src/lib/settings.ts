@@ -14,6 +14,8 @@ export type StoreSettings = {
     href: string;
   };
   popup: { enabled: boolean; percentOff: number; delaySeconds: number };
+  /** Gift card amounts sold on /gift-cards, in cents */
+  giftCardAmounts: number[];
 };
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -27,6 +29,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     href: "/drops",
   },
   popup: { enabled: true, percentOff: 10, delaySeconds: 12 },
+  giftCardAmounts: [2500, 5000, 10000, 15000, 25000],
 };
 
 export async function getSettings(): Promise<StoreSettings> {
@@ -42,6 +45,7 @@ export async function getSettings(): Promise<StoreSettings> {
       ...saved,
       dropBanner: { ...DEFAULT_SETTINGS.dropBanner, ...saved.dropBanner },
       popup: { ...DEFAULT_SETTINGS.popup, ...saved.popup },
+      giftCardAmounts: saved.giftCardAmounts?.length ? saved.giftCardAmounts : DEFAULT_SETTINGS.giftCardAmounts,
     };
   } catch (err) {
     console.error("[settings] falling back to defaults", err);

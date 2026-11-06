@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
-import { attachGiftCardSession, createPendingGiftCard, GIFT_CARD_AMOUNTS } from "@/lib/giftcards";
+import { attachGiftCardSession, createPendingGiftCard } from "@/lib/giftcards";
+import { getSettings } from "@/lib/settings";
 import { site } from "@/lib/site";
 import { DEFAULT_CURRENCY, formatMoneyShort } from "@/lib/format";
 import { getLocale, stripeLocale } from "@/i18n/server";
 
 const Body = z.object({
-  amount: z.number().int().refine((a) => GIFT_CARD_AMOUNTS.includes(a), "Pick an amount"),
+  amount: z.number().int().positive(),
   recipientEmail: z.string().trim().toLowerCase().email().optional().or(z.literal("")),
   recipientName: z.string().trim().max(80).optional(),
   senderName: z.string().trim().max(80).optional(),
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Check the form." }, { status: 400 });
   const d = parsed.data;
+  if (!(await getSettings()).giftCardAmounts.includes(d.amount)) return NextResponse.json({ error: "Pick an amount" }, { status: 400 });
 
   const card = await createPendingGiftCard({
     amount: d.amount,

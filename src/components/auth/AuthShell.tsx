@@ -81,8 +81,8 @@ export async function AuthShell({
           <span className="max-w-0 overflow-hidden text-[11px] font-semibold tracking-[0.2em] whitespace-nowrap uppercase opacity-0 transition-all duration-300 group-hover:max-w-28 group-hover:opacity-100">
             {t("auth.staff")}
           </span>
-          <span className="grid h-[53px] w-[67px] place-items-center rounded-full border border-black/15 bg-white transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white">
-            <StaffMark className="w-[34px] transition-transform duration-300 group-hover:scale-110" />
+          <span className="grid h-[42px] w-[54px] place-items-center rounded-full border border-black/15 bg-white transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white">
+            <StaffMark className="w-[27px] transition-transform duration-300 group-hover:scale-110" />
           </span>
         </Link>
 

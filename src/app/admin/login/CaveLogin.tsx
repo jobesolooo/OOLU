@@ -169,7 +169,7 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
         <main className="flex flex-1 items-center justify-center px-6">
           <div className="cave-rise w-full max-w-[460px]">
             <div className="mb-10 flex flex-col items-center text-center">
-              <StaffMark className="w-[110px] drop-shadow-[0_0_32px_rgba(165,146,255,0.55)]" />
+              <StaffMark className="w-[88px] drop-shadow-[0_0_32px_rgba(165,146,255,0.55)]" />
               <p className="mt-6 font-mono text-[10px] tracking-[0.4em] text-[#a592ff] uppercase">
                 {step === "username" ? "Identify yourself" : "Enter passcode"}
                 <span className="cave-caret ml-1">_</span>

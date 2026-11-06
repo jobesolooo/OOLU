@@ -49,7 +49,7 @@ export type PromoInput = {
   currency: string;
 };
 
-export async function createPromotion(input: PromoInput) {
+export async function createPromotion(input: PromoInput, previousUses = 0) {
   const stripe = getStripe();
   const coupon = await stripe.coupons.create({
     duration: "once",
@@ -61,7 +61,8 @@ export async function createPromotion(input: PromoInput) {
   return stripe.promotionCodes.create({
     promotion: { type: "coupon", coupon: coupon.id },
     code: input.code,
-    ...(input.maxRedemptions ? { max_redemptions: input.maxRedemptions } : {}),
+    // When replacing a code, uses so far count towards the new limit.
+    ...(input.maxRedemptions ? { max_redemptions: Math.max(1, input.maxRedemptions - previousUses) } : {}),
     ...(input.expiresAt ? { expires_at: Math.floor(input.expiresAt.getTime() / 1000) } : {}),
     restrictions: {
       first_time_transaction: Boolean(input.firstOrderOnly),
@@ -73,9 +74,50 @@ export async function createPromotion(input: PromoInput) {
   });
 }
 
+/** Every promotion code in Stripe (active and paused), except personal newsletter welcome codes. */
 export async function listPromotions(): Promise<Stripe.PromotionCode[]> {
-  const res = await getStripe().promotionCodes.list({ limit: 100, expand: ["data.promotion.coupon"] });
-  return res.data.filter((p) => p.metadata?.source !== "newsletter");
+  const out: Stripe.PromotionCode[] = [];
+  for await (const p of getStripe().promotionCodes.list({ limit: 100, expand: ["data.promotion.coupon"] })) {
+    if (p.metadata?.source !== "newsletter" && p.metadata?.deleted !== "true") out.push(p);
+  }
+  return out;
+}
+
+export async function getPromotion(id: string) {
+  return getStripe().promotionCodes.retrieve(id, { expand: ["promotion.coupon"] });
+}
+
+/**
+ * Stripe codes can't be edited after creation (only paused), so "editing" a code
+ * pauses the old one and creates a fresh one with the same customer-facing code.
+ * If creating fails, the old code is switched back on.
+ */
+export async function replacePromotion(id: string, input: PromoInput) {
+  const stripe = getStripe();
+  const old = await stripe.promotionCodes.retrieve(id);
+  if (old.active) await stripe.promotionCodes.update(id, { active: false });
+  try {
+    const created = await createPromotion(input, old.times_redeemed);
+    await stripe.promotionCodes.update(id, { metadata: { replaced_by: created.id } });
+    return created;
+  } catch (err) {
+    if (old.active) await stripe.promotionCodes.update(id, { active: true });
+    throw err;
+  }
+}
+
+/** Remove a code: switch it off for good and delete its discount (coupon) in Stripe. */
+export async function deletePromotion(id: string) {
+  const stripe = getStripe();
+  const promo = await stripe.promotionCodes.retrieve(id, { expand: ["promotion.coupon"] });
+  await stripe.promotionCodes.update(id, { active: false, metadata: { deleted: "true" } });
+  const coupon = promo.promotion?.coupon;
+  const couponId = typeof coupon === "string" ? coupon : coupon?.id;
+  // Only delete coupons this store created for a single code (never the shared welcome coupons).
+  if (couponId && !couponId.startsWith(WELCOME_COUPON_PREFIX)) {
+    const others = await stripe.promotionCodes.list({ coupon: couponId, active: true, limit: 1 });
+    if (!others.data.length) await stripe.coupons.del(couponId).catch(() => {});
+  }
 }
 
 export async function setPromotionActive(id: string, active: boolean) {

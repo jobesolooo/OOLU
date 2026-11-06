@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { invalidateCatalog } from "@/lib/catalog";
-import { activatePurchasedGiftCard } from "@/lib/giftcards";
+import { activatePurchasedGiftCard, syncGiftCardRefund } from "@/lib/giftcards";
 import { claimEvent, markOrderCancelled, markOrderPaid, releaseEvent, syncRefund } from "@/lib/orders";
 
 /**
@@ -10,7 +11,7 @@ import { claimEvent, markOrderCancelled, markOrderPaid, releaseEvent, syncRefund
  *   checkout.session.completed, checkout.session.async_payment_succeeded,
  *   checkout.session.async_payment_failed, checkout.session.expired,
  *   charge.refunded, product.created, product.updated, product.deleted,
- *   price.created, price.updated
+ *   price.created, price.updated, price.deleted
  */
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -40,14 +41,18 @@ export async function POST(req: Request) {
         await markOrderCancelled(event.data.object);
         break;
       case "charge.refunded":
-        await syncRefund(event.data.object);
+        // Gift card purchases refunded in Stripe reduce/disable the card; everything else is an order.
+        if (!(await syncGiftCardRefund(event.data.object))) await syncRefund(event.data.object);
         break;
       case "product.created":
       case "product.updated":
       case "product.deleted":
       case "price.created":
       case "price.updated":
+      case "price.deleted":
+        // Edits made in the Stripe dashboard show on the store straight away.
         invalidateCatalog();
+        revalidatePath("/", "layout");
         break;
     }
   } catch (err) {

@@ -1,7 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getProducts } from "@/lib/catalog";
 import { getStockMap, stockKey } from "@/lib/inventory";
-import { isStripeConfigured, stripeDashboardUrl } from "@/lib/stripe";
+import { isStripeConfigured } from "@/lib/stripe";
 import { formatMoney } from "@/lib/format";
 import { refreshCatalog } from "../actions";
 import { StockForm } from "./StockForm";
@@ -17,17 +18,17 @@ export default async function InventoryPage() {
     <>
       <AdminHeader
         eyebrow="Catalogue"
-        title="Products & stock"
-        description="Names, prices, photos and descriptions live in Stripe. Set stock per size here: leave a box empty (∞) to not track that size. Stock drops automatically when an order is paid."
+        title="Stock"
+        description="Set stock per size: leave a box empty (∞) to not track that size. Stock drops automatically when an order is paid, and waiting customers are emailed when a sold-out size comes back."
         actions={
           <>
             <form action={refreshCatalog}>
               <button className={ghostBtn}>Refresh from Stripe</button>
             </form>
             {stripe && (
-              <a href={stripeDashboardUrl("/products?active=true")} target="_blank" rel="noreferrer" className="btn-solid">
-                Add / edit in Stripe ↗
-              </a>
+              <Link href="/admin/products" className="btn-solid">
+                Edit products
+              </Link>
             )}
           </>
         }
@@ -49,7 +50,13 @@ export default async function InventoryPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">
-                    {p.name}
+                    {stripe && !p.isDemo ? (
+                      <Link href={`/admin/products/${p.id}`} className="hover:underline">
+                        {p.name}
+                      </Link>
+                    ) : (
+                      p.name
+                    )}
                     {p.isDemo && <span className="ml-2 bg-black/5 px-1.5 py-0.5 text-[9px] tracking-wider uppercase">demo</span>}
                   </p>
                   <p className="text-xs text-ash">
