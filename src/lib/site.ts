@@ -21,10 +21,15 @@ export const site = {
     title: ["Built for", "the real", "ones."],
     body: ["More than clothing —", "it's a mindset. Wstablished", "is for the dreamers, the doers,", "and the ones who stay solid."],
     cta: { label: "Shop now", href: "/shop" },
-    image: "/images/hero.svg",
-    // Optional transparent cut-out of the model, layered in front of the big
-    // wordmark (like the mockup). Set to null if the hero photo already includes the model.
-    foreground: "/images/hero-figure.svg" as string | null,
+    // Photo taken from the design mockup (model + big wordmark baked in).
+    // Swap for the original high-res shoot when available.
+    image: "/images/hero-photo.jpg",
+    // true = the big WSTABLISHED wordmark is part of the photo, so don't draw it in code.
+    // Set to false with a photo that has no wordmark (e.g. "/images/hero.svg").
+    wordmarkInImage: true as boolean,
+    // Optional transparent model cut-out drawn in front of the coded wordmark.
+    // null when the photo already contains the model.
+    foreground: null as string | null,
   },
 
   categories: [

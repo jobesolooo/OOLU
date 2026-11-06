@@ -6,10 +6,11 @@ import { site } from "@/lib/site";
 export function Hero() {
   const { hero } = site;
   return (
-    <section className="grain relative isolate h-[640px] overflow-hidden bg-[#1b1b1a] text-white md:h-[clamp(440px,45vw,780px)]">
-      <Image src={hero.image} alt="" fill priority sizes="100vw" className="-z-20 object-cover" />
+    <section className="grain relative isolate h-[580px] overflow-hidden bg-[#1b1b1a] text-white md:aspect-[2048/916] md:h-auto md:min-h-[420px]">
+      <Image src={hero.image} alt="" fill priority sizes="100vw" className="-z-20 object-cover object-[36%_center] md:object-center" />
 
-      {/* Giant wordmark sits behind the model */}
+      {/* Giant wordmark sits behind the model (skipped when it's baked into the photo) */}
+      {!hero.wordmarkInImage && (
       <div
         aria-hidden
         className="pointer-events-none absolute right-[4%] bottom-[14%] -z-10 flex items-start font-display leading-[0.8] font-bold tracking-[-0.035em] text-[#ecebe7] select-none md:top-[54%] md:bottom-auto md:-translate-y-1/2"
@@ -18,6 +19,7 @@ export function Hero() {
         {site.wordmark}
         <span className="mt-[0.02em] ml-[0.04em] text-[0.13em] font-medium tracking-normal">®</span>
       </div>
+      )}
 
       {hero.foreground && (
         <div className="absolute bottom-0 left-[76%] -z-10 aspect-[600/720] h-[64%] -translate-x-1/2 md:left-[49%] md:h-full">
@@ -25,7 +27,7 @@ export function Hero() {
         </div>
       )}
 
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/55 via-black/20 to-transparent md:hidden" aria-hidden />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/70 via-black/35 to-transparent md:hidden" aria-hidden />
 
       <div className="container-x relative flex h-full flex-col pt-[56px] md:pt-[clamp(70px,9.6vw,150px)]">
         <p className="text-[10px] font-medium tracking-[0.3em] uppercase md:text-[clamp(10px,1.08vw,15px)]">{hero.eyebrow}</p>
