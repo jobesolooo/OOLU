@@ -286,3 +286,7 @@ a[class*="border-ink"]:active, button[class*="bg-ink"]:active:not(:disabled) { t
   html.reveal-ready [data-reveal="stagger"] > * { opacity: 1; transform: none; transition: none; }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
+
+/* Horizontal scrollers without a visible scrollbar (still scrollable by touch, wheel and keys) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

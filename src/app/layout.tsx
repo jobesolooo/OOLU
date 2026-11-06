@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { RevealObserver } from "@/components/Reveal";
 import { PrefsProvider } from "@/components/Prefs";
 import { getLocale, getT } from "@/i18n/server";
+import { intlLocale } from "@/i18n/config";
 import { dictionaries } from "@/i18n/messages";
 import { getCurrency, getRates } from "@/lib/rates";
 import "./globals.css";
@@ -23,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     title: { default: t("meta.default", { name: site.name }), template: `%s | ${site.name}` },
     description: t("brand.description"),
-    openGraph: { siteName: site.name, type: "website", images: ["/images/brand/hero.jpg"], locale: locale === "nl" ? "nl_NL" : "en_GB" },
+    openGraph: { siteName: site.name, type: "website", images: ["/images/brand/hero.jpg"], locale: intlLocale(locale).replace("-", "_") },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: "/" },
   };

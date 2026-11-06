@@ -4,7 +4,7 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { attachGiftCardSession, createPendingGiftCard, GIFT_CARD_AMOUNTS } from "@/lib/giftcards";
 import { site } from "@/lib/site";
 import { DEFAULT_CURRENCY, formatMoneyShort } from "@/lib/format";
-import { getLocale } from "@/i18n/server";
+import { getLocale, stripeLocale } from "@/i18n/server";
 
 const Body = z.object({
   amount: z.number().int().refine((a) => GIFT_CARD_AMOUNTS.includes(a), "Pick an amount"),
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       // Stripe's payment page in the shopper's language.
-      locale: (await getLocale()) === "nl" ? "nl" : "en",
+      locale: stripeLocale(await getLocale()),
       metadata: { kind: "giftcard", giftCardId: card.id },
       payment_intent_data: { metadata: { kind: "giftcard", giftCardId: card.id } },
       line_items: [

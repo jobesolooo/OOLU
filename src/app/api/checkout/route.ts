@@ -12,7 +12,7 @@ import { ensureStripeCustomer } from "@/lib/customers";
 import { shippingConfig } from "@/lib/shipping";
 import { MAX_QTY } from "@/lib/constants";
 import { allVariantKeys, variantLabel } from "@/lib/variants";
-import { getLocale } from "@/i18n/server";
+import { getLocale, stripeLocale } from "@/i18n/server";
 
 const Body = z.object({
   items: z
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       // Stripe's payment page in the shopper's language.
-      locale: (await getLocale()) === "nl" ? "nl" : "en",
+      locale: stripeLocale(await getLocale()),
       client_reference_id: order.id,
       metadata: { orderId: order.id },
       payment_intent_data: { metadata: { orderId: order.id } },
