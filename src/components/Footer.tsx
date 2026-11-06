@@ -88,6 +88,7 @@ export function Footer() {
         {/* Giant wordmark */}
         <p
           aria-hidden
+          data-reveal
           className="mt-[clamp(24px,3vw,48px)] text-center font-wordmark leading-[0.8] text-[#f3f2ef] select-none"
           style={{ fontSize: "clamp(120px, 26vw, 420px)" }}
         >

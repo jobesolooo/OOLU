@@ -49,7 +49,7 @@ export default async function JournalPage({ searchParams }: PageProps<"/journal"
           </Link>
         )}
 
-        <div className="mt-20 grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+        <div data-reveal="stagger" className="mt-20 grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
           {rest.map((p) => (
             <Link key={p.slug} href={`/journal/${p.slug}`} className="group">
               <div className="relative aspect-[4/3] overflow-hidden bg-ink">

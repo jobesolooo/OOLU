@@ -29,6 +29,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
   const [size, setSize] = useState<string | null>(oneSize ? product.sizes[0] : null);
   const [qty, setQty] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState(false);
 
   const key = size ? variantKey(size, color) : null;
   const left = key ? stock[key] : undefined;
@@ -59,6 +60,8 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
       quantity: Math.min(qty, maxQty),
     });
     setError(null);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
   }
 
   return (
@@ -158,7 +161,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
             </button>
           </div>
           <button type="button" className="btn-solid flex-1 px-4 py-[18px] text-[13px] whitespace-nowrap" onClick={onAdd} disabled={everythingOut}>
-            {everythingOut ? "Sold out" : "Add to bag"}
+            {everythingOut ? "Sold out" : added ? <span key="added" className="animate-fade-in">Added ✓</span> : "Add to bag"}
           </button>
           <WishlistButton product={product} className="grid w-12 shrink-0 place-items-center border border-black/20 hover:border-ink sm:w-14" />
         </div>

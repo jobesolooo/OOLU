@@ -11,12 +11,12 @@ export function Hero({ promo }: { promo: string }) {
   return (
     <div className="-mt-[var(--nav-h)] flex flex-col md:h-[100svh] md:min-h-[600px] md:max-h-[1300px]">
       <section className="relative isolate flex h-[78svh] min-h-[480px] items-end overflow-hidden bg-[#10151a] text-white md:h-auto md:min-h-0 md:flex-1">
-        <Image src={hero.image} alt="Model in the OOLU tracksuit walking through a tunnel" fill priority sizes="100vw" className="-z-20 object-cover object-[62%_center] md:object-[center_30%]" />
+        <Image src={hero.image} alt="Model in the OOLU tracksuit walking through a tunnel" fill priority sizes="100vw" className="hero-zoom -z-20 object-cover object-[62%_center] md:object-[center_30%]" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/55 via-black/10 to-black/30" />
         <div className="container-x pb-[clamp(36px,5vh,72px)]">
-          <p className="text-[11px] tracking-[0.08em] uppercase sm:text-[12px]">{hero.eyebrow}</p>
-          <h1 className="mt-3 font-display text-[clamp(44px,5.4vw,92px)] leading-[1] tracking-[-0.025em]">{hero.title}</h1>
-          <Link href={hero.cta.href} className="mt-[clamp(20px,3vh,36px)] inline-flex bg-white px-6 py-4 text-[12px] tracking-[0.06em] text-ink uppercase transition-opacity hover:opacity-90">
+          <p className="rise text-[11px] tracking-[0.08em] uppercase sm:text-[12px]" style={{ "--delay": "250ms" } as React.CSSProperties}>{hero.eyebrow}</p>
+          <h1 style={{ "--delay": "400ms" } as React.CSSProperties} className="rise mt-3 font-display text-[clamp(44px,5.4vw,92px)] leading-[1] tracking-[-0.025em]">{hero.title}</h1>
+          <Link href={hero.cta.href} style={{ "--delay": "600ms" } as React.CSSProperties} className="rise mt-[clamp(20px,3vh,36px)] inline-flex bg-white px-6 py-4 text-[12px] tracking-[0.06em] text-ink uppercase transition-[opacity,transform] hover:opacity-90 active:scale-[0.98]">
             {hero.cta.label}
           </Link>
         </div>

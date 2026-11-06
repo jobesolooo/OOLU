@@ -96,7 +96,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           {products.length} {products.length === 1 ? "product" : "products"}
         </p>
         {products.length ? (
-          <div className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+          <div data-reveal="stagger" className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((p, i) => (
               <ProductCard key={p.id} product={p} priority={i < 4} rating={ratings.get(p.id)} />
             ))}

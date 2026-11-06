@@ -197,7 +197,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
         <section className="section-y border-t border-black/10 bg-mist">
           <div className="container-x">
             <h2 className="eyebrow mb-8">You may also like</h2>
-            <div className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-10 lg:grid-cols-4">
+            <div data-reveal="stagger" className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-10 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} rating={ratings.get(p.id)} />
               ))}

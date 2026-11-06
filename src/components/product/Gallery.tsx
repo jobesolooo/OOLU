@@ -48,7 +48,7 @@ export function Gallery({ images, name }: { images: string[]; name: string }) {
       )}
       <div className="group relative aspect-square min-w-0 flex-1 overflow-hidden bg-stone lg:max-h-[calc(100svh-var(--chrome-h)-72px)] lg:max-w-[calc(100svh-var(--chrome-h)-72px)]">
         <button className="absolute inset-0 cursor-zoom-in" onClick={() => setZoom(true)} aria-label="Zoom image">
-          <Image src={images[active]} alt={name} fill priority sizes="(min-width:1024px) 50vw, 100vw" className="object-contain" />
+          <Image key={images[active]} src={images[active]} alt={name} fill priority sizes="(min-width:1024px) 50vw, 100vw" className="animate-fade-in object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]" />
         </button>
         <span className="pointer-events-none absolute right-4 bottom-4 grid size-10 place-items-center rounded-full bg-white/90 opacity-0 transition group-hover:opacity-100">
           <ZoomIn className="size-4" />

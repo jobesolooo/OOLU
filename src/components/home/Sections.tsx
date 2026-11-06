@@ -13,9 +13,11 @@ export function CategoryTiles({ counts }: { counts: Record<string, number> }) {
   return (
     <section className="bg-mist pt-[clamp(24px,3vw,56px)] pb-[clamp(56px,7vw,128px)]">
       <div className="container-x">
+        <div data-reveal>
         <p className="eyebrow text-ash">Shop by category</p>
         <h2 className="mt-2 font-display text-[clamp(30px,2.6vw,44px)] leading-none tracking-[-0.02em]">Find your fit</h2>
-        <div className="mt-[clamp(24px,2.6vw,40px)] grid gap-[clamp(10px,1.1vw,18px)] sm:grid-cols-3">
+        </div>
+        <div data-reveal="stagger" className="mt-[clamp(24px,2.6vw,40px)] grid gap-[clamp(10px,1.1vw,18px)] sm:grid-cols-3">
           {site.categories.map((c) => (
             <Link key={c.slug} href={`/shop?category=${c.slug}`} className="group block">
               <div className="relative aspect-[4/3] max-h-[calc(100svh-var(--nav-h)-180px)] w-full overflow-hidden bg-stone sm:aspect-[4/5]">
@@ -41,11 +43,11 @@ export function Story() {
   const { story } = site;
   return (
     <section className="grid bg-bone md:min-h-[min(calc(100svh-var(--nav-h)),900px)] md:grid-cols-[7fr_5fr]">
-      <div className="relative aspect-[4/3] md:aspect-auto">
-        <Image src={story.image} alt="Three friends in OOLU “Your Roots.” t-shirts walking down a street" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover" />
+      <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto">
+        <Image src={story.image} alt="Three friends in OOLU “Your Roots.” t-shirts walking down a street" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out hover:scale-[1.03]" />
       </div>
       <div className="flex items-center px-[clamp(20px,5vw,96px)] py-14">
-        <div className="max-w-[440px]">
+        <div data-reveal className="max-w-[440px]">
           <p className="eyebrow">{story.eyebrow}</p>
           <h2 className="mt-3 font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{story.title}</h2>
           <div className="mt-6 space-y-4 text-[13px] leading-[1.6]">
@@ -69,7 +71,7 @@ export function Features() {
       {site.features.map((f) => (
         <section key={f.title} className="grid md:min-h-[clamp(440px,38vw,680px)] md:grid-cols-[5fr_7fr]" style={{ background: f.tone }}>
           <div className="order-2 flex items-center px-[clamp(20px,6vw,128px)] py-14 md:order-1">
-            <div className="max-w-[340px]">
+            <div data-reveal className="max-w-[340px]">
               <h2 className="font-display text-[clamp(24px,1.9vw,32px)] leading-[1.1] tracking-[-0.02em]">{f.title}</h2>
               <p className="mt-5 text-[13px] leading-[1.6]">{f.body}</p>
               <Link href={f.cta.href} className="btn-solid mt-7 px-5 py-3.5 text-[11px]">
@@ -77,8 +79,8 @@ export function Features() {
               </Link>
             </div>
           </div>
-          <div className="relative order-1 aspect-[4/3] md:order-2 md:aspect-auto">
-            <Image src={f.image} alt="" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover" />
+          <div className="relative order-1 aspect-[4/3] overflow-hidden md:order-2 md:aspect-auto">
+            <Image src={f.image} alt="" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out hover:scale-[1.03]" />
           </div>
         </section>
       ))}
@@ -101,13 +103,13 @@ export function ProductRow({
   return (
     <section className="section-y bg-mist">
       <div className="container-x">
-        <div className="mb-[clamp(20px,2.2vw,36px)] flex items-end justify-between gap-6">
+        <div data-reveal className="mb-[clamp(20px,2.2vw,36px)] flex items-end justify-between gap-6">
           <h2 className="font-display text-[clamp(26px,2.2vw,38px)] leading-none tracking-[-0.02em]">{title}</h2>
           <Link href={href} className="shrink-0 border border-ink px-4 py-3 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-ink hover:text-white">
             View all
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-[clamp(8px,0.9vw,16px)] gap-y-[clamp(28px,2.6vw,44px)] lg:grid-cols-4">
+        <div data-reveal="stagger" className="grid grid-cols-2 gap-x-[clamp(8px,0.9vw,16px)] gap-y-[clamp(28px,2.6vw,44px)] lg:grid-cols-4">
           {products.map((p, i) => (
             <ProductCard key={p.id} product={p} priority={i < 2} rating={ratings?.get(p.id)} />
           ))}
@@ -166,7 +168,7 @@ export function JournalTeaser({ posts }: { posts: JournalPost[] }) {
             Read the journal <ArrowRight className="size-3.5" strokeWidth={1.5} />
           </Link>
         </div>
-        <div className="grid gap-8 md:grid-cols-3">
+        <div data-reveal="stagger" className="grid gap-8 md:grid-cols-3">
           {posts.map((p) => (
             <Link key={p.slug} href={`/journal/${p.slug}`} className="group">
               <div className="relative aspect-[4/3] overflow-hidden bg-ink">
@@ -188,7 +190,7 @@ export function JournalTeaser({ posts }: { posts: JournalPost[] }) {
 export function NewsletterBand({ percentOff }: { percentOff: number }) {
   return (
     <section className="bg-mist py-[clamp(40px,4vw,72px)]">
-      <div className="container-x">
+      <div data-reveal className="container-x">
         <h2 className="font-display text-[clamp(20px,1.7vw,28px)] leading-[1.2] tracking-[-0.015em]">
           Don&apos;t want to miss anything? For early drops, discounts and more, leave your email address below
         </h2>

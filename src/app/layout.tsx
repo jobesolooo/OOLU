@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { ViewTransition } from "react";
+import { RevealObserver } from "@/components/Reveal";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { shippingConfig } from "@/lib/shipping";
@@ -43,10 +45,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <Header />
         <main id="main" className="flex-1">
-          {children}
+          <ViewTransition>{children}</ViewTransition>
         </main>
         <Footer />
         <AccountSync />
+        <RevealObserver />
         <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
         {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />

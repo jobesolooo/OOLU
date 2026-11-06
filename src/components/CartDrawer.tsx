@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Minus, Plus, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { Check, Minus, Plus, X } from "lucide-react";
 import { useCart, cartSubtotal, MAX_QTY, type CartLine } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/variants";
@@ -38,11 +39,21 @@ export function useCheckout() {
   return { checkout, pending, error };
 }
 
-export function CartLineRow({ line, compact = false }: { line: CartLine; compact?: boolean }) {
+export function CartLineRow({
+  line,
+  compact = false,
+  className,
+  style,
+}: {
+  line: CartLine;
+  compact?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const setQuantity = useCart((s) => s.setQuantity);
   const remove = useCart((s) => s.remove);
   return (
-    <li className="flex gap-4 py-5">
+    <li className={`flex gap-4 py-5 ${className ?? ""}`} style={style}>
       <Link href={`/products/${line.slug}`} className="relative aspect-square w-20 shrink-0 bg-stone sm:w-24">
         {line.image && <Image src={line.image} alt={line.name} fill sizes="96px" className="object-cover" />}
       </Link>
@@ -157,10 +168,28 @@ export function FreeShippingMeter({ subtotal, threshold }: { subtotal: number; t
   );
 }
 
+const AUTO_CLOSE_MS = 3500;
+
 export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: number }) {
-  const { lines, open, setOpen } = useCart();
+  const { lines, open, setOpen, justAdded } = useCart();
   const { checkout, pending, error } = useCheckout();
   const subtotal = cartSubtotal(lines);
+  const pathname = usePathname();
+  const panelRef = useRef<HTMLElement>(null);
+  const [engaged, setEngaged] = useState(false);
+
+  // Close whenever the page changes (e.g. after tapping a product or "View bag").
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, setOpen]);
+
+  // After "Add to bag" the drawer confirms and slides away on its own,
+  // unless the shopper is hovering over it or using it.
+  useEffect(() => {
+    if (!open || !justAdded || engaged || pending) return;
+    const t = setTimeout(() => setOpen(false), AUTO_CLOSE_MS);
+    return () => clearTimeout(t);
+  }, [open, justAdded, engaged, pending, setOpen]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -175,22 +204,41 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
   return (
     <div className={open ? "" : "pointer-events-none"} aria-hidden={!open}>
       <div
-        className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`}
         onClick={() => setOpen(false)}
       />
       <aside
+        ref={panelRef}
         role="dialog"
         aria-label="Shopping bag"
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col bg-white transition-transform duration-300 ${
+        onPointerEnter={() => setEngaged(true)}
+        onPointerLeave={() => setEngaged(false)}
+        onFocusCapture={() => setEngaged(true)}
+        onBlurCapture={(e) => !panelRef.current?.contains(e.relatedTarget as Node) && setEngaged(false)}
+        onClickCapture={(e) => {
+          // Any link inside the drawer takes you somewhere else, so close it right away.
+          if ((e.target as HTMLElement).closest("a")) setOpen(false);
+        }}
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.12)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
           <h2 className="label text-xs font-semibold">Your bag</h2>
-          <button aria-label="Close bag" onClick={() => setOpen(false)}>
+          <button aria-label="Close bag" onClick={() => setOpen(false)} className="transition-transform duration-300 hover:rotate-90">
             <X className="size-5" strokeWidth={1.5} />
           </button>
         </div>
+        {justAdded && open && (
+          <div key={justAdded.at} className="animate-fade-up relative overflow-hidden bg-ink px-6 py-3 text-[12px] text-white" role="status">
+            <p className="flex items-center gap-2">
+              <Check className="size-4 text-accent" strokeWidth={2} /> Added to bag: <span className="truncate">{justAdded.name}</span>
+            </p>
+            {!engaged && (
+              <span className="drawer-timer absolute bottom-0 left-0 h-[2px] bg-accent" style={{ animationDuration: `${AUTO_CLOSE_MS}ms` }} aria-hidden />
+            )}
+          </div>
+        )}
 
         {lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
@@ -205,8 +253,14 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
               <FreeShippingMeter subtotal={subtotal} threshold={freeShippingThreshold} />
             </div>
             <ul className="flex-1 divide-y divide-black/10 overflow-y-auto px-6">
-              {lines.map((l) => (
-                <CartLineRow key={`${l.productId}|${l.size}`} line={l} compact />
+              {lines.map((l, i) => (
+                <CartLineRow
+                  key={`${l.productId}|${l.size}`}
+                  line={l}
+                  compact
+                  className={open ? "animate-fade-up" : undefined}
+                  style={{ animationDelay: `${80 + i * 50}ms` }}
+                />
               ))}
             </ul>
             <div className="border-t border-black/10 px-6 py-5">

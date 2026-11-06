@@ -170,7 +170,7 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
 }
-.animate-fade-up { animation: fade-up 0.4s ease-out both; }
+.animate-fade-up { animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
 details > summary { list-style: none; cursor: pointer; }
 details > summary::-webkit-details-marker { display: none; }
@@ -230,3 +230,59 @@ details[open] .rotate-open { transform: rotate(45deg); }
 .marquee { animation: marquee 60s linear infinite; }
 .marquee:hover { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
+
+/* ── Motion system ──────────────────────────────────────── */
+:root { --ease-out: cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@keyframes fade-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.animate-fade-down { animation: fade-down 0.35s var(--ease-out) both; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fade-in 0.45s var(--ease-out) both; }
+
+@keyframes pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.animate-pop { animation: pop 0.45s var(--ease-out) both; }
+
+@keyframes drawer-timer { from { width: 100%; } to { width: 0; } }
+.drawer-timer { animation: drawer-timer linear forwards; }
+
+/* Hero: slow settle-in zoom on the photo, copy rises in line by line */
+@keyframes hero-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+.hero-zoom { animation: hero-zoom 2.6s var(--ease-out) both; }
+.rise { animation: rise 0.9s var(--ease-out) both; animation-delay: var(--delay, 0ms); }
+
+/* Scroll reveal: elements with data-reveal fade up as they enter the screen.
+   Only hidden once the observer is running (html.reveal-ready), so nothing stays
+   invisible without JavaScript. data-reveal="stagger" animates the children one by one. */
+html.reveal-ready [data-reveal]:not([data-reveal="stagger"]),
+html.reveal-ready [data-reveal="stagger"] > * {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.reveal-ready [data-reveal].is-in:not([data-reveal="stagger"]),
+html.reveal-ready [data-reveal="stagger"].is-in > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Buttons: subtle press */
+.btn-solid, .btn-outline { transition: background 0.25s, color 0.25s, opacity 0.25s, transform 0.15s; }
+.btn-solid:active:not(:disabled), .btn-outline:active { transform: scale(0.98); }
+a[class*="border-ink"]:active, button[class*="bg-ink"]:active:not(:disabled) { transform: scale(0.98); }
+
+/* Page-to-page crossfade (React <ViewTransition> in the root layout) */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.35s; animation-timing-function: var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-zoom, .rise, .animate-fade-in, .animate-pop, .animate-fade-down, .animate-fade-up { animation: none; }
+  html.reveal-ready [data-reveal]:not([data-reveal="stagger"]),
+  html.reveal-ready [data-reveal="stagger"] > * { opacity: 1; transform: none; transition: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}

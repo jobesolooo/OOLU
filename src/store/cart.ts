@@ -23,6 +23,8 @@ export type AppliedGiftCard = { code: string; balance: number; currency: string 
 type CartState = {
   lines: CartLine[];
   open: boolean;
+  /** Set when something was just added: the drawer shows a confirmation and closes itself. */
+  justAdded: { name: string; at: number } | null;
   giftCard: AppliedGiftCard | null;
   setGiftCard: (g: AppliedGiftCard | null) => void;
   add: (line: CartLine) => void;
@@ -37,6 +39,7 @@ export const useCart = create<CartState>()(
     (set) => ({
       lines: [],
       open: false,
+      justAdded: null,
       giftCard: null,
       setGiftCard: (giftCard) => set({ giftCard }),
       add: (line) =>
@@ -47,7 +50,7 @@ export const useCart = create<CartState>()(
                 lineKey(l) === lineKey(line) ? { ...l, quantity: Math.min(MAX_QTY, l.quantity + line.quantity) } : l,
               )
             : [...s.lines, { ...line, quantity: Math.min(MAX_QTY, line.quantity) }];
-          return { lines, open: true };
+          return { lines, open: true, justAdded: { name: line.name, at: Date.now() } };
         }),
       setQuantity: (productId, size, quantity) =>
         set((s) => ({
@@ -61,7 +64,7 @@ export const useCart = create<CartState>()(
       remove: (productId, size) =>
         set((s) => ({ lines: s.lines.filter((l) => lineKey(l) !== lineKey({ productId, size })) })),
       clear: () => set({ lines: [], giftCard: null }),
-      setOpen: (open) => set({ open }),
+      setOpen: (open) => set(open ? { open } : { open, justAdded: null }),
     }),
     {
       name: "oolu-cart",
