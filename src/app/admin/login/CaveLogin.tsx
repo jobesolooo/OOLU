@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
 import { caveAction, type CaveState } from "./actions";
+import { WingedW } from "@/components/auth/WingedW";
 
 /* ── One-time-code boxes ─────────────────────────────────── */
 function CodeBoxes({ onComplete, disabled }: { onComplete: () => void; disabled: boolean }) {
@@ -137,9 +138,7 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
         <main className="flex flex-1 items-center justify-center px-6">
           <div className="cave-rise w-full max-w-[460px]">
             <div className="mb-10 flex flex-col items-center text-center">
-              <div className="grid size-20 place-items-center border border-[#e8c58a]/40 bg-black/40 shadow-[0_0_60px_rgba(232,197,138,0.15)]">
-                <span className="font-serif text-5xl leading-none font-black">W</span>
-              </div>
+              <WingedW className="w-36 text-[#f4efe3] drop-shadow-[0_0_28px_rgba(232,197,138,0.45)]" />
               <p className="mt-6 font-mono text-[10px] tracking-[0.4em] text-[#e8c58a] uppercase">
                 {step === "email" ? "Identify yourself" : "Verification required"}
                 <span className="cave-caret ml-1">_</span>

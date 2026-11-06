@@ -29,23 +29,23 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
   const [email, setEmail] = useState("");
   const q = next ? `?next=${encodeURIComponent(next)}` : "";
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} className="space-y-6">
       {next && <input type="hidden" name="next" value={next} />}
       {mode === "register" && (
         <label className="block">
-          <span className="label mb-2 block text-[11px]">Name</span>
+          <span className="label mb-3 block text-[12px]">Name</span>
           <input name="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className="input" />
         </label>
       )}
       <label className="block">
-        <span className="label mb-2 block text-[11px]">Email</span>
+        <span className="label mb-3 block text-[12px]">Email</span>
         <input name="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
       </label>
       <label className="block">
-        <span className="mb-2 flex items-center justify-between">
-          <span className="label text-[11px]">Password</span>
+        <span className="mb-3 flex items-center justify-between">
+          <span className="label text-[12px]">Password</span>
           {mode === "login" && (
-            <Link href="/account/forgot" className="text-xs underline underline-offset-4">
+            <Link href="/account/forgot" className="text-[13px] underline underline-offset-4">
               Forgot password?
             </Link>
           )}
@@ -60,7 +60,7 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
         </label>
       )}
       {state?.error && <p className="text-[13px] text-red-700" role="alert">{state.error}</p>}
-      <button className="btn-solid w-full py-[18px]" disabled={pending}>
+      <button className="btn-solid min-h-[60px] w-full text-[13px]" disabled={pending}>
         {pending ? "One sec…" : mode === "login" ? "Sign in" : "Create account"}
       </button>
       {mode === "register" && (
@@ -69,7 +69,7 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
           <Link href="/legal/privacy" className="underline">privacy policy</Link>.
         </p>
       )}
-      <p className="pt-2 text-center text-[13px] text-ash">
+      <p className="pt-4 text-center text-[14px] text-ash">
         {mode === "login" ? (
           <>New here? <Link className="text-ink underline" href={`/account/register${q}`}>Create an account</Link></>
         ) : (
