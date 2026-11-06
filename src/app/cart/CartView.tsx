@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMounted } from "@/lib/use-mounted";
 import { useCart, cartSubtotal } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
-import { CartLineRow, FreeShippingMeter, useCheckout } from "@/components/CartDrawer";
+import { CartLineRow, FreeShippingMeter, GiftCardInput, useCheckout } from "@/components/CartDrawer";
 
 export function CartView({ freeShippingThreshold }: { freeShippingThreshold: number }) {
   const lines = useCart((s) => s.lines);
@@ -39,6 +39,7 @@ export function CartView({ freeShippingThreshold }: { freeShippingThreshold: num
           <span>Subtotal</span>
           <span className="font-medium">{formatMoney(subtotal)}</span>
         </div>
+        <GiftCardInput subtotal={subtotal} />
         <p className="mt-1 text-xs text-ash">Shipping and taxes calculated at checkout.</p>
         {error && <p className="mt-3 text-xs text-red-700">{error}</p>}
         <button className="btn-solid mt-5 w-full py-4" onClick={checkout} disabled={pending}>

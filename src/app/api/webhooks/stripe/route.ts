@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { invalidateCatalog } from "@/lib/catalog";
+import { activatePurchasedGiftCard } from "@/lib/giftcards";
 import { claimEvent, markOrderCancelled, markOrderPaid, releaseEvent, syncRefund } from "@/lib/orders";
 
 /**
@@ -31,7 +32,8 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded":
-        await markOrderPaid(event.data.object);
+        if (event.data.object.metadata?.kind === "giftcard") await activatePurchasedGiftCard(event.data.object);
+        else await markOrderPaid(event.data.object);
         break;
       case "checkout.session.expired":
       case "checkout.session.async_payment_failed":

@@ -31,6 +31,9 @@ async function main() {
         featured: String(Boolean(p.featured)),
         new: String(Boolean(p.isNew)),
         sort: String(p.sort),
+        ...(p.group ? { group: p.group, color: p.color ?? "", color_hex: p.colorHex ?? "" } : {}),
+        ...(p.compareAt ? { compare_at: (p.compareAt / 100).toFixed(2) } : {}),
+        ...(p.releaseInDays ? { release_at: new Date(Date.now() + p.releaseInDays * 86_400_000).toISOString() } : {}),
       },
       default_price_data: { currency: "usd", unit_amount: p.unitAmount, tax_behavior: "exclusive" },
     });

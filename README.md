@@ -4,15 +4,29 @@ Next.js 16 + TypeScript e-commerce site for **Wstablished**, built from the home
 
 ## What's included
 
-| Area | Details |
-| --- | --- |
-| Storefront | Homepage (matches the mockup), shop with category/sort filters, collections, product pages with sizes + live stock, search, about/shipping |
-| Cart | Slide-out bag + full cart page, saved in the browser, free-shipping progress bar |
-| Checkout | Stripe Checkout: shipping address, phone, promo codes, free shipping over $100 (configurable), optional Stripe Tax |
-| Orders | Stripe webhook records paid orders, decrements stock, handles expired checkouts and refunds; idempotent |
-| Emails | Order confirmation, new-order alert to the owner, shipping update, refund notice, welcome (via Resend; logged to console if no key) |
-| Accounts | Register / sign in / sign out, order history and order detail |
-| Admin `/admin` | Revenue + order stats, order list by status, fulfilment (status, tracking, notes, "shipped" email), refunds (full or partial), stock per size |
+**Storefront**
+- Homepage built from the mockup (hero, category tiles and "Fresh drops" use photos from the mockup), plus a drop countdown, New in, On sale, journal teaser, recently viewed and a newsletter band
+- Shop with category / sale filters and sorting, collections, search
+- Product pages: gallery with zoom, colour swatches, sale prices, size guide, details/shipping/returns/care, reviews with fit summary, "you may also like", recently viewed, Google product schema
+- Wishlist (heart on every product, `/wishlist`), slide-out bag with free-shipping meter and gift card input
+
+**Selling**
+- Stripe Checkout: shipping, promo codes, optional Stripe Tax, gift cards
+- Drops: products with a `release_at` date show a countdown and "notify me", can't be bought early, and waiting customers are emailed at launch (hourly cron)
+- Back-in-stock alerts: sold-out sizes become "notify me"; raising stock in admin emails everyone waiting
+- Newsletter with popup + footer signup; each new subscriber gets a unique single-use first-order code (Stripe promotion code)
+- Digital gift cards (`/gift-cards`): bought via Stripe, emailed with a message, partial balances carry over
+- Emails: order confirmation, owner alert, shipped, refund, return updates, welcome code, gift card, restock/drop, contact
+
+**Customer service**
+- Order tracking for guests (`/track`, order number + email) with a status timeline and carrier links
+- Returns portal: customers pick items + reason from their account or the tracking page; admin approves → refunds via Stripe
+- Help centre with FAQs and size charts, contact form → admin inbox
+- Legal templates: privacy, terms, cookies, returns policy, imprint (EU/NL — fill in the [brackets] and have them checked)
+- Journal / lookbook with "shop the look" (content in `src/content/journal.ts`)
+
+**Admin (`/admin`)**
+Orders & fulfilment, analytics (revenue chart, AOV, conversion, top products), products & stock, returns, review moderation, inbox, discount codes, gift cards, subscribers (+ CSV export), store settings (announcement bar, drop countdown, popup %).
 
 **Products live in Stripe.** Add or edit them in the Stripe dashboard; the site reads them automatically. Until Stripe has products, the site shows a built-in demo catalog.
 
@@ -70,6 +84,11 @@ Each product needs a **default price**. The site also reads these optional **met
 | `featured` | `true` | Shows in "Featured products" on the homepage |
 | `new` | `true` | "New" tag and New Arrivals |
 | `sort` | `1` | Lower numbers show first |
+| `group` | `brushstroke-tee` | Same value on each colourway → colour swatches |
+| `color` / `color_hex` | `Black` / `#151515` | Swatch name and colour |
+| `compare_at` | `40` | Original price in dollars → shows as a sale |
+| `release_at` | `2026-12-01T18:00:00+01:00` | Drop time → countdown + notify me |
+| `details` | `240gsm cotton\|Boxy fit` | Bullet points (separate with `\|`) |
 
 Changes appear within a minute (or instantly with the webhook / "Refresh from Stripe" button in admin). Stock per size is set in **Admin → Products & stock**; an empty box means "not tracked".
 
@@ -81,8 +100,7 @@ All brand copy and image paths live in `src/lib/site.ts`. Replace the placeholde
 | --- | --- |
 | `hero.svg` | Hero background |
 | `hero-figure.svg` | Model cut-out in front of the big WSTABLISHED wordmark (transparent PNG works best; set `hero.foreground` to `null` if the hero photo already includes the model) |
-| `tile-*.svg` | The four category tiles |
-| `drops.svg` | "Fresh drops" band |
+| `tile-*.jpg`, `drops-photo.jpg` | Category tiles and "Fresh drops" band (cut from the mockup) |
 | `footer-skyline.svg` | Footer background |
 
 Product photos come from Stripe, not from this folder.
@@ -95,8 +113,20 @@ Product photos come from Stripe, not from this folder.
 4. In Stripe → Developers → Webhooks, add `https://<domain>/api/webhooks/stripe` with these events:
    `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `charge.refunded`, `product.created`, `product.updated`, `product.deleted`, `price.created`, `price.updated`.
    Put its signing secret in `STRIPE_WEBHOOK_SECRET`.
-5. For emails, add a [Resend](https://resend.com) key and verify the sending domain used in `EMAIL_FROM`.
-6. Switch to live Stripe keys when ready (and re-run `npm run stripe:seed` or create products in live mode).
+5. Set `CRON_SECRET` (any long random string) so the hourly drop-launch emails run, and `RETURN_ADDRESS` for return instructions.
+6. For emails, add a [Resend](https://resend.com) key and verify the sending domain used in `EMAIL_FROM`.
+7. Switch to live Stripe keys when ready (and re-run `npm run stripe:seed` or create products in live mode).
+
+## Editing content
+
+| What | Where |
+| --- | --- |
+| Brand copy, nav, homepage text, images | `src/lib/site.ts` |
+| Announcement bar, drop countdown, popup | Admin → Settings |
+| Size charts, collection names | `src/lib/demo-catalog.ts` (`SIZE_GUIDES`, `COLLECTIONS`) |
+| Journal / lookbook posts | `src/content/journal.ts` |
+| Legal pages + company details | `src/content/legal.ts` |
+| FAQs | `src/app/help/page.tsx` |
 
 ## Scripts
 

@@ -18,9 +18,13 @@ const lineKey = (l: Pick<CartLine, "productId" | "size">) => `${l.productId}|${l
 import { MAX_QTY } from "@/lib/constants";
 export { MAX_QTY };
 
+export type AppliedGiftCard = { code: string; balance: number; currency: string };
+
 type CartState = {
   lines: CartLine[];
   open: boolean;
+  giftCard: AppliedGiftCard | null;
+  setGiftCard: (g: AppliedGiftCard | null) => void;
   add: (line: CartLine) => void;
   setQuantity: (productId: string, size: string, quantity: number) => void;
   remove: (productId: string, size: string) => void;
@@ -33,6 +37,8 @@ export const useCart = create<CartState>()(
     (set) => ({
       lines: [],
       open: false,
+      giftCard: null,
+      setGiftCard: (giftCard) => set({ giftCard }),
       add: (line) =>
         set((s) => {
           const existing = s.lines.find((l) => lineKey(l) === lineKey(line));
@@ -54,13 +60,13 @@ export const useCart = create<CartState>()(
         })),
       remove: (productId, size) =>
         set((s) => ({ lines: s.lines.filter((l) => lineKey(l) !== lineKey({ productId, size })) })),
-      clear: () => set({ lines: [] }),
+      clear: () => set({ lines: [], giftCard: null }),
       setOpen: (open) => set({ open }),
     }),
     {
       name: "wst-cart",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ lines: s.lines }),
+      partialize: (s) => ({ lines: s.lines, giftCard: s.giftCard }),
     },
   ),
 );

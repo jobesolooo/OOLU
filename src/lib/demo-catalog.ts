@@ -14,6 +14,14 @@ export type DemoProduct = {
   featured?: boolean;
   isNew?: boolean;
   sort: number;
+  /** Products sharing a group show as colour swatches of each other */
+  group?: string;
+  color?: string;
+  colorHex?: string;
+  /** Original price in cents → shows as a sale */
+  compareAt?: number;
+  /** Days from now until release (demo only) → drop countdown */
+  releaseInDays?: number;
 };
 
 const TEE_SIZES = ["S", "M", "L", "XL", "XXL"];
@@ -30,6 +38,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
     sizes: TEE_SIZES,
     featured: true,
     sort: 1,
+    group: "brushstroke-tee",
+    color: "Black",
+    colorHex: "#151515",
   },
   {
     slug: "brushstroke-tee-red",
@@ -42,6 +53,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
     sizes: TEE_SIZES,
     featured: true,
     sort: 2,
+    group: "brushstroke-tee",
+    color: "Red",
+    colorHex: "#b4151c",
   },
   {
     slug: "paint-the-west",
@@ -61,6 +75,7 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
     description:
       "Vintage-wash brown tee with the West Side Testament artwork across the chest. Relaxed fit, soft hand feel.",
     unitAmount: 2500,
+    compareAt: 3500,
     category: "t-shirts",
     collection: "west-side",
     sizes: TEE_SIZES,
@@ -90,6 +105,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
     sizes: TEE_SIZES,
     isNew: true,
     sort: 6,
+    group: "sunday-service-tee",
+    color: "Brown",
+    colorHex: "#4a2f22",
   },
   {
     slug: "west-side-tee-cream",
@@ -113,6 +131,7 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
     sizes: TEE_SIZES,
     isNew: true,
     sort: 8,
+    releaseInDays: 9,
   },
 ];
 
@@ -122,4 +141,35 @@ export const COLLECTIONS: Record<string, { title: string; blurb: string }> = {
   "west-side": { title: "West Side", blurb: "Vintage washes and varsity type, straight from the coast." },
   "sunday-service": { title: "Sunday Service", blurb: "The palms, the script, the original." },
   essentials: { title: "Essentials", blurb: "Everyday staples with the W monogram." },
+};
+
+/** Size charts shown in the size guide, per category (cm). Edit freely. */
+export const SIZE_GUIDES: Record<string, { note: string; columns: string[]; rows: (string | number)[][] }> = {
+  "t-shirts": {
+    note: "Boxy, oversized fit. Size down for a regular fit. Measured flat, in cm.",
+    columns: ["Size", "Chest width", "Body length", "Sleeve"],
+    rows: [
+      ["S", 56, 70, 22],
+      ["M", 58, 72, 23],
+      ["L", 61, 74, 24],
+      ["XL", 64, 76, 25],
+      ["XXL", 67, 78, 26],
+    ],
+  },
+  hoodies: {
+    note: "Relaxed fit with dropped shoulders. Measured flat, in cm.",
+    columns: ["Size", "Chest width", "Body length", "Sleeve"],
+    rows: [
+      ["S", 60, 68, 60],
+      ["M", 63, 70, 62],
+      ["L", 66, 72, 63],
+      ["XL", 69, 74, 64],
+      ["XXL", 72, 76, 65],
+    ],
+  },
+  caps: {
+    note: "One size with adjustable strap. Fits head circumference 54–61 cm.",
+    columns: ["Size", "Head circumference", "Crown depth"],
+    rows: [["One Size", "54–61", 16]],
+  },
 };

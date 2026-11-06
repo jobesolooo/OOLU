@@ -3,18 +3,19 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Search, User, ShoppingBag, ChevronDown, Menu, X } from "lucide-react";
+import { Search, User, ShoppingBag, ChevronDown, Menu, X, Heart } from "lucide-react";
+import { useWishlist } from "@/store/saved";
 import { site } from "@/lib/site";
 import { cx } from "@/lib/format";
 import { useCart, cartCount } from "@/store/cart";
 import { useMounted } from "@/lib/use-mounted";
 import { Logo } from "./Logo";
 
-export function AnnouncementBar() {
+export function AnnouncementBar({ text }: { text: string }) {
   return (
     <div className="bg-black text-white">
-      <div className="container-x flex h-[30px] items-center justify-between text-[9.5px] font-medium tracking-[0.14em] uppercase sm:text-[10px]">
-        <p>{site.announcement}</p>
+      <div className="container-x flex h-[34px] items-center justify-between text-[10px] font-medium tracking-[0.14em] uppercase sm:h-[38px] sm:text-[11px]">
+        <p className="truncate">{text}</p>
         <p className="hidden items-center gap-1 sm:flex">
           {site.region} <span className="text-white/50">/</span> {site.currency}
           <ChevronDown className="size-3" strokeWidth={1.5} />
@@ -32,6 +33,8 @@ export function Header() {
   const setOpen = useCart((s) => s.setOpen);
   const mounted = useMounted();
   const count = mounted ? cartCount(lines) : 0;
+  const saved = useWishlist((s) => s.items.length);
+  const savedCount = mounted ? saved : 0;
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,20 +47,20 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-night text-white">
-      <div className="container-x flex h-[58px] items-center justify-between md:h-[clamp(58px,6vw,84px)]">
+      <div className="container-x flex h-[60px] items-center justify-between md:h-[clamp(68px,6vw,96px)]">
         <button className="-ml-1 p-1 md:hidden" aria-label="Open menu" onClick={() => setMenuOpen((v) => !v)}>
           {menuOpen ? <X className="size-5" strokeWidth={1.5} /> : <Menu className="size-5" strokeWidth={1.5} />}
         </button>
 
         <Logo className="md:flex-1" />
 
-        <nav className="hidden items-center gap-[clamp(28px,4.6vw,72px)] md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-[clamp(24px,3.6vw,64px)] md:flex" aria-label="Main">
           {site.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cx(
-                "relative py-2 text-[clamp(10px,0.98vw,13px)] font-medium tracking-[0.12em] uppercase transition-opacity hover:opacity-100",
+                "relative py-2 text-[clamp(11px,0.95vw,14px)] font-medium tracking-[0.12em] uppercase transition-opacity hover:opacity-100",
                 isActive(item.href) ? "opacity-100" : "opacity-85",
               )}
             >
@@ -69,15 +72,23 @@ export function Header() {
 
         <div className="flex items-center justify-end gap-5 md:flex-1 md:gap-7">
           <button aria-label="Search" onClick={() => setSearchOpen((v) => !v)} className="hidden sm:block">
-            <Search className="size-[19px]" strokeWidth={1.5} />
+            <Search className="size-[21px]" strokeWidth={1.5} />
           </button>
+          <Link href="/wishlist" aria-label={`Wishlist, ${savedCount} items`} className="relative hidden sm:block">
+            <Heart className="size-[21px]" strokeWidth={1.5} />
+            {savedCount > 0 && (
+              <span className="absolute -top-1.5 -right-2 grid size-[16px] place-items-center rounded-full bg-white text-[9px] font-bold text-black">
+                {savedCount}
+              </span>
+            )}
+          </Link>
           <Link href="/account" aria-label="Account">
-            <User className="size-[19px]" strokeWidth={1.5} />
+            <User className="size-[21px]" strokeWidth={1.5} />
           </Link>
           <button aria-label={`Cart, ${count} items`} className="relative" onClick={() => setOpen(true)}>
-            <ShoppingBag className="size-[19px]" strokeWidth={1.5} />
+            <ShoppingBag className="size-[21px]" strokeWidth={1.5} />
             {count > 0 && (
-              <span className="absolute -top-1.5 -right-2 grid size-[15px] place-items-center rounded-full bg-white text-[9px] font-bold text-black">
+              <span className="absolute -top-1.5 -right-2 grid size-[16px] place-items-center rounded-full bg-white text-[9px] font-bold text-black">
                 {count}
               </span>
             )}
@@ -114,6 +125,16 @@ export function Header() {
             {site.nav.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="border-b border-white/10 py-4 text-xs tracking-[0.16em] uppercase">
                 {item.label}
+              </Link>
+            ))}
+            {[
+              { label: "Wishlist", href: "/wishlist" },
+              { label: "Gift cards", href: "/gift-cards" },
+              { label: "Track order", href: "/track" },
+              { label: "Help", href: "/help" },
+            ].map((l) => (
+              <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="border-b border-white/10 py-4 text-xs tracking-[0.16em] text-white/70 uppercase">
+                {l.label}
               </Link>
             ))}
             <Link href="/search" onClick={() => setMenuOpen(false)} className="py-4 text-xs tracking-[0.16em] uppercase">

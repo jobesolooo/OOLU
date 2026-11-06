@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import type Stripe from "stripe";
-import { getProducts } from "@/lib/catalog";
+import { getProducts, isUpcoming } from "@/lib/catalog";
+import { findActiveGiftCard } from "@/lib/giftcards";
+import { createGiftCardCoupon } from "@/lib/promotions";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { getStockMap, stockKey } from "@/lib/inventory";
 import { attachCheckoutSession, createPendingOrder } from "@/lib/orders";
@@ -20,6 +22,7 @@ const Body = z.object({
     )
     .min(1)
     .max(50),
+  giftCardCode: z.string().max(40).optional(),
 });
 
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
@@ -47,6 +50,7 @@ export async function POST(req: Request) {
     const product = catalog.get(item.productId);
     if (!product) return fail("An item in your bag is no longer available. Please remove it and try again.", 409);
     if (product.isDemo) return fail("This store still shows demo products. Add products in Stripe (or run `npm run stripe:seed`).", 409);
+    if (isUpcoming(product)) return fail(`${product.name} hasn't dropped yet.`, 409);
     if (!product.sizes.includes(item.size)) return fail(`Size ${item.size} isn't available for ${product.name}.`, 409);
     const left = stock.get(stockKey(product.id, item.size));
     if (left !== undefined && left < item.quantity) {
@@ -72,16 +76,29 @@ export async function POST(req: Request) {
   const currency = orderItems[0].currency;
   if (orderItems.some((i) => i.currency !== currency)) return fail("Mixed currencies in one order aren't supported.");
 
+  const subtotal = orderItems.reduce((s, i) => s + i.unitAmount * i.quantity, 0);
+
+  // Gift card: applied to the items (not shipping) as a one-off Stripe coupon.
+  let giftCard: Awaited<ReturnType<typeof findActiveGiftCard>> | null = null;
+  let giftCardAmount = 0;
+  if (parsed.data.giftCardCode?.trim()) {
+    giftCard = await findActiveGiftCard(parsed.data.giftCardCode);
+    if (!giftCard || giftCard.balance <= 0) return fail("That gift card code isn't valid or has no balance left.");
+    if (giftCard.currency !== currency) return fail("That gift card is in a different currency.");
+    giftCardAmount = Math.min(giftCard.balance, subtotal);
+  }
+
   const user = await getCurrentUser();
   const order = await createPendingOrder({
     userId: user?.id ?? null,
     email: user?.email ?? null,
     currency,
     items: orderItems.map((i) => ({ ...i, currency: undefined })),
+    giftCardId: giftCard?.id ?? null,
+    giftCardAmount,
   });
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin;
-  const subtotal = orderItems.reduce((s, i) => s + i.unitAmount * i.quantity, 0);
   const ship = shippingConfig();
   const freeShipping = ship.freeShippingThreshold > 0 && subtotal >= ship.freeShippingThreshold;
 
@@ -99,6 +116,7 @@ export async function POST(req: Request) {
 
   try {
     const stripe = getStripe();
+    const giftCoupon = giftCard && giftCardAmount > 0 ? await createGiftCardCoupon(giftCardAmount, currency, giftCard.code.slice(-4)) : null;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       client_reference_id: order.id,
@@ -124,7 +142,8 @@ export async function POST(req: Request) {
         : [shippingRate("Standard shipping", ship.flatRate, 3, 7)],
       phone_number_collection: { enabled: true },
       automatic_tax: { enabled: process.env.STRIPE_AUTOMATIC_TAX === "true" },
-      allow_promotion_codes: true,
+      // Stripe allows either a pre-applied discount or the promo code box, not both.
+      ...(giftCoupon ? { discounts: [{ coupon: giftCoupon.id }] } : { allow_promotion_codes: true }),
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cart`,
     });

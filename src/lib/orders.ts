@@ -4,6 +4,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import type { Order, OrderItem, OrderStatus } from "./db/schema";
 import { decrementStock } from "./inventory";
+import { redeemGiftCard } from "./giftcards";
 import { sendAdminNewOrder, sendOrderConfirmation, sendRefundNotice } from "./email";
 
 export type NewOrderItem = {
@@ -21,6 +22,8 @@ export async function createPendingOrder(input: {
   email: string | null;
   currency: string;
   items: NewOrderItem[];
+  giftCardId?: string | null;
+  giftCardAmount?: number;
 }) {
   const db = await getDb();
   const subtotal = input.items.reduce((s, i) => s + i.unitAmount * i.quantity, 0);
@@ -34,6 +37,8 @@ export async function createPendingOrder(input: {
         subtotal,
         total: subtotal,
         status: "pending",
+        giftCardId: input.giftCardId ?? null,
+        giftCardAmount: input.giftCardAmount ?? 0,
       })
       .returning();
     await tx.insert(schema.orderItems).values(input.items.map((i) => ({ ...i, orderId: order.id })));
@@ -121,6 +126,8 @@ export async function markOrderPaid(session: Stripe.Checkout.Session) {
         subtotal: session.amount_subtotal ?? existing.subtotal,
         shipping: session.total_details?.amount_shipping ?? 0,
         tax: session.total_details?.amount_tax ?? 0,
+        // Stripe reports the gift card coupon as a discount; keep the two apart.
+        discount: Math.max(0, (session.total_details?.amount_discount ?? 0) - existing.giftCardAmount),
         total: session.amount_total ?? existing.total,
         currency: session.currency ?? existing.currency,
         shippingAddress: shipping
@@ -138,6 +145,15 @@ export async function markOrderPaid(session: Stripe.Checkout.Session) {
 
     const items = await tx.select().from(schema.orderItems).where(eq(schema.orderItems.orderId, orderId));
     await decrementStock(tx, items);
+    if (order.giftCardId && order.giftCardAmount > 0) {
+      const ok = await redeemGiftCard(tx, order.giftCardId, order.id, order.giftCardAmount);
+      if (!ok) {
+        await tx
+          .update(schema.orders)
+          .set({ notes: "⚠ Gift card balance was short at payment time — check the gift card ledger." })
+          .where(eq(schema.orders.id, order.id));
+      }
+    }
     return { order, items };
   });
 
@@ -194,3 +210,13 @@ export function orderStatusLabel(status: OrderStatus) {
 }
 
 export type OrderWithItems = { order: Order; items: OrderItem[] };
+
+/** Look up an order for the public tracking page (order number + email must match). */
+export async function findOrderForTracking(number: number, email: string) {
+  const db = await getDb();
+  const [order] = await db.select().from(schema.orders).where(eq(schema.orders.number, number)).limit(1);
+  if (!order || !order.email || order.email.toLowerCase() !== email.trim().toLowerCase()) return null;
+  if (order.status === "pending" || order.status === "cancelled") return null;
+  const items = await db.select().from(schema.orderItems).where(eq(schema.orderItems.orderId, order.id));
+  return { order, items };
+}

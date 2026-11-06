@@ -33,10 +33,10 @@ export const site = {
   },
 
   categories: [
-    { label: "T-Shirts", href: "/shop?category=t-shirts", image: "/images/tile-tshirts.svg" },
-    { label: "Collections", href: "/collections", image: "/images/tile-collections.svg" },
-    { label: "Caps", href: "/shop?category=caps", image: "/images/tile-caps.svg" },
-    { label: "New Arrivals", href: "/shop?sort=new", image: "/images/tile-new.svg" },
+    { label: "T-Shirts", href: "/shop?category=t-shirts", image: "/images/tile-tshirts.jpg" },
+    { label: "Collections", href: "/collections", image: "/images/tile-collections.jpg" },
+    { label: "Caps", href: "/shop?category=caps", image: "/images/tile-caps.jpg" },
+    { label: "New Arrivals", href: "/shop?sort=new", image: "/images/tile-new.jpg" },
   ],
 
   drops: {
@@ -45,7 +45,7 @@ export const site = {
     body: ["The latest pieces from", "Wstablished. Limited stock.", "Don't miss out."],
     cta: { label: "View all", href: "/shop?sort=new" },
     aside: ["Same mindset.", "Different", "energy."],
-    image: "/images/drops.svg",
+    image: "/images/drops-photo.jpg",
   },
 
   perks: [
@@ -59,6 +59,7 @@ export const site = {
     { label: "Home", href: "/" },
     { label: "Shop", href: "/shop" },
     { label: "Collections", href: "/collections" },
+    { label: "Journal", href: "/journal" },
     { label: "About", href: "/about" },
   ],
 

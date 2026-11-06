@@ -144,6 +144,21 @@ const products = {
 
 for (const [slug, body] of Object.entries(products)) write(`products/${slug}.svg`, garmentSvg(body));
 
+// Back views (second gallery image)
+const backMark = (fill) =>
+  `<text x="200" y="104" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="22" fill="${fill}">W</text>`;
+const backs = {
+  "brushstroke-tee-black": tee("#151515", backMark("#c9b8f0"), "#ffffff22"),
+  "brushstroke-tee-red": tee("#b4151c", backMark("#f3f0ee")),
+  "paint-the-west": tee("#ece6da", backMark("#111"), "#00000022"),
+  "west-side-testament-tee": tee("#4a2f22", backMark("#b98a5e")),
+  "wst-sunday-service-cap": cap("#4a2f22", `<path d="M150 196 Q200 186 250 196" stroke="#2a1a12" stroke-width="10" fill="none"/>`),
+  "sunday-service-tee-brown": tee("#4a2f22", `${backMark("#c7a684")}${palm(200, 300, 1.4, "#c7a684")}`),
+  "west-side-tee-cream": tee("#e7dcc8", backMark("#1d1d1d"), "#00000022"),
+  "w-monogram-hoodie-black": hoodie("#141414", ""),
+};
+for (const [slug, body] of Object.entries(backs)) write(`products/${slug}-back.svg`, garmentSvg(body));
+
 // ── Category tiles (dark concrete + garment) ──────────────────────────────
 const tile = (body) => `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 360" width="900" height="720">

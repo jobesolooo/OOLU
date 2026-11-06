@@ -1,17 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Leaf, RefreshCw, ShieldCheck, Truck } from "lucide-react";
-import { getProductBySlug, getProducts } from "@/lib/catalog";
+import { Leaf, Plus, RefreshCw, ShieldCheck, Truck } from "lucide-react";
+import { getProductBySlug, getProducts, getVariants, isUpcoming } from "@/lib/catalog";
 import { getStockMap, stockKey } from "@/lib/inventory";
-import { COLLECTIONS } from "@/lib/demo-catalog";
-import { formatMoney, formatMoneyShort } from "@/lib/format";
+import { getApprovedReviews, getRatingsMap, getUserReview, summarize } from "@/lib/reviews";
+import { getCurrentUser } from "@/lib/auth";
+import { COLLECTIONS, SIZE_GUIDES } from "@/lib/demo-catalog";
+import { cx, formatMoneyShort } from "@/lib/format";
 import { shippingConfig } from "@/lib/shipping";
+import { RETURN_WINDOW_DAYS } from "@/lib/returns";
 import { AddToCart } from "@/components/AddToCart";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductCard, toSaved } from "@/components/ProductCard";
+import { Price, Stars } from "@/components/Price";
+import { Countdown } from "@/components/Countdown";
+import { Gallery } from "@/components/product/Gallery";
+import { Reviews } from "@/components/product/Reviews";
+import { RecentlyViewed, RecordView } from "@/components/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
   const product = await getProductBySlug((await params).slug);
@@ -19,7 +28,8 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
   return {
     title: product.name,
     description: product.description,
-    openGraph: { images: product.images.slice(0, 1) },
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: { title: product.name, description: product.description, images: product.images.slice(0, 1) },
   };
 }
 
@@ -28,84 +38,185 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const stockMap = await getStockMap([product.id]);
+  const [stockMap, variants, reviews, ratings, user, all] = await Promise.all([
+    getStockMap([product.id]),
+    getVariants(product),
+    getApprovedReviews([product.id]),
+    getRatingsMap(),
+    getCurrentUser(),
+    getProducts(),
+  ]);
   const stock: Record<string, number> = {};
   for (const s of product.sizes) {
     const v = stockMap.get(stockKey(product.id, s));
     if (v !== undefined) stock[s] = v;
   }
+  const summary = summarize(reviews);
+  const alreadyReviewed = user ? Boolean(await getUserReview(user.id, product.id)) : false;
+  const upcoming = isUpcoming(product);
 
-  const related = (await getProducts())
-    .filter((p) => p.id !== product.id && (p.collection === product.collection || p.category === product.category))
+  const related = all
+    .filter((p) => p.id !== product.id && p.group !== product.group && (p.collection === product.collection || p.category === product.category))
     .slice(0, 4);
   const { freeShippingThreshold } = shippingConfig();
   const collection = product.collection ? COLLECTIONS[product.collection] : null;
+  const sizeChart = SIZE_GUIDES[product.category] ?? null;
+  const saved = toSaved(product);
+  const allSoldOut = product.sizes.every((s) => stock[s] !== undefined && stock[s] <= 0);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images.map((i) => (i.startsWith("http") ? i : `${SITE_URL}${i}`)),
+    sku: product.id,
+    brand: { "@type": "Brand", name: "Wstablished" },
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/products/${product.slug}`,
+      priceCurrency: product.currency.toUpperCase(),
+      price: (product.unitAmount / 100).toFixed(2),
+      availability: upcoming
+        ? "https://schema.org/PreOrder"
+        : allSoldOut
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+    },
+    ...(summary.count
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: summary.average.toFixed(1), reviewCount: summary.count } }
+      : {}),
+  };
 
   return (
     <>
-      <div className="container-x py-6 text-[10px] tracking-[0.14em] text-ash uppercase">
+      <RecordView product={saved} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+
+      <nav aria-label="Breadcrumb" className="container-x py-6 text-[11px] tracking-[0.14em] text-ash uppercase">
         <Link href="/" className="hover:text-ink">Home</Link> <span className="mx-2">/</span>
         <Link href="/shop" className="hover:text-ink">Shop</Link> <span className="mx-2">/</span>
         <span className="text-ink">{product.name}</span>
-      </div>
+      </nav>
 
-      <div className="container-x grid gap-10 pb-16 md:grid-cols-[1.15fr_1fr] md:gap-14">
-        <div className="grid gap-3">
-          {(product.images.length ? product.images : [null]).map((src, i) => (
-            <div key={src ?? i} className="relative aspect-square bg-stone">
-              {src && (
-                <Image src={src} alt={`${product.name}${i ? ` view ${i + 1}` : ""}`} fill priority={i === 0} sizes="(min-width:768px) 55vw, 100vw" className="object-contain" />
-              )}
-            </div>
-          ))}
-        </div>
+      <div className="container-x grid gap-10 pb-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-16">
+        <Gallery images={product.images} name={product.name} />
 
-        <div className="md:sticky md:top-28 md:self-start">
+        <div className="lg:sticky lg:top-28 lg:self-start">
           {collection && (
-            <Link href={`/shop?collection=${product.collection}`} className="text-[10px] tracking-[0.3em] text-ash uppercase hover:text-ink">
+            <Link href={`/shop?collection=${product.collection}`} className="eyebrow text-ash hover:text-ink">
               {collection.title}
             </Link>
           )}
-          <h1 className="mt-2 font-display text-3xl leading-tight font-[800] uppercase md:text-4xl">{product.name}</h1>
-          <p className="mt-3 text-lg">{formatMoney(product.unitAmount, product.currency)}</p>
-          <p className="mt-6 text-sm leading-relaxed text-black/75">{product.description}</p>
+          <h1 className="mt-3 font-display text-[clamp(32px,3vw,52px)] leading-[0.98] font-[800] uppercase">{product.name}</h1>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Price amount={product.unitAmount} compareAt={product.compareAtAmount} currency={product.currency} className="text-xl" />
+            {summary.count > 0 && (
+              <a href="#reviews" className="flex items-center gap-2 text-sm">
+                <Stars value={summary.average} size={15} /> <span className="underline underline-offset-4">{summary.count} review{summary.count === 1 ? "" : "s"}</span>
+              </a>
+            )}
+          </div>
+          <p className="mt-6 text-[15px] leading-relaxed text-black/75">{product.description}</p>
+
+          {variants.length > 1 && (
+            <div className="mt-8">
+              <p className="label mb-3 font-semibold">Colour: {product.color}</p>
+              <div className="flex gap-3">
+                {variants.map((v) => (
+                  <Link
+                    key={v.id}
+                    href={`/products/${v.slug}`}
+                    aria-label={v.color ?? v.name}
+                    aria-current={v.id === product.id}
+                    title={v.color ?? v.name}
+                    className={cx("grid size-10 place-items-center rounded-full ring-offset-2", v.id === product.id ? "ring-1 ring-ink" : "hover:ring-1 hover:ring-black/30")}
+                  >
+                    <span className="size-8 rounded-full border border-black/10" style={{ background: v.colorHex ?? "#ccc" }} />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {upcoming && product.releaseAt && (
+            <div className="mt-8 bg-ink p-6 text-white">
+              <p className="eyebrow text-white/70">Drops in</p>
+              <Countdown to={product.releaseAt} className="mt-4" />
+            </div>
+          )}
 
           <div className="mt-8">
-            <AddToCart
-              product={{
-                id: product.id,
-                slug: product.slug,
-                name: product.name,
-                image: product.images[0] ?? null,
-                unitAmount: product.unitAmount,
-                currency: product.currency,
-                sizes: product.sizes,
-              }}
-              stock={stock}
-            />
+            <AddToCart product={{ ...saved, sizes: product.sizes, upcoming }} stock={stock} sizeChart={sizeChart} />
           </div>
 
-          <ul className="mt-10 space-y-3 border-t border-black/10 pt-6 text-xs">
-            <li className="flex items-center gap-3"><Truck className="size-4" strokeWidth={1.3} /> Free shipping over {formatMoneyShort(freeShippingThreshold)}, worldwide delivery</li>
-            <li className="flex items-center gap-3"><RefreshCw className="size-4" strokeWidth={1.3} /> Hassle-free 30-day returns</li>
-            <li className="flex items-center gap-3"><ShieldCheck className="size-4" strokeWidth={1.3} /> Secure checkout with Stripe</li>
-            <li className="flex items-center gap-3"><Leaf className="size-4" strokeWidth={1.3} /> Premium quality, built to last</li>
+          <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-black/10 pt-6 text-[13px]">
+            <li className="flex items-center gap-3"><Truck className="size-4 shrink-0" strokeWidth={1.3} /> Free shipping over {formatMoneyShort(freeShippingThreshold)}</li>
+            <li className="flex items-center gap-3"><RefreshCw className="size-4 shrink-0" strokeWidth={1.3} /> {RETURN_WINDOW_DAYS}-day returns</li>
+            <li className="flex items-center gap-3"><ShieldCheck className="size-4 shrink-0" strokeWidth={1.3} /> Secure checkout</li>
+            <li className="flex items-center gap-3"><Leaf className="size-4 shrink-0" strokeWidth={1.3} /> Built to last</li>
           </ul>
+
+          <div className="mt-8 divide-y divide-black/10 border-y border-black/10">
+            {product.details.length > 0 && (
+              <Accordion title="Details" open>
+                <ul className="list-disc space-y-1.5 pl-5">
+                  {product.details.map((d) => (
+                    <li key={d}>{d}</li>
+                  ))}
+                </ul>
+              </Accordion>
+            )}
+            <Accordion title="Shipping">
+              Orders ship within 1–2 business days. Standard delivery takes 3–7 business days. Free shipping on orders over{" "}
+              {formatMoneyShort(freeShippingThreshold)}. <Link href="/help#shipping" className="underline">More info</Link>
+            </Accordion>
+            <Accordion title="Returns">
+              Unworn items with tags can be returned within {RETURN_WINDOW_DAYS} days. Start a return from your account or the{" "}
+              <Link href="/track" className="underline">order tracking page</Link>.
+            </Accordion>
+            <Accordion title="Care">Wash cold, inside out. Do not tumble dry. Iron on reverse, avoiding the print.</Accordion>
+          </div>
         </div>
       </div>
 
+      <Reviews
+        reviews={reviews}
+        summary={summary}
+        productId={product.id}
+        slug={product.slug}
+        sizes={product.sizes}
+        canReview={Boolean(user) && !alreadyReviewed}
+        signedIn={Boolean(user)}
+        alreadyReviewed={alreadyReviewed}
+      />
+
       {related.length > 0 && (
-        <section className="border-t border-black/10 bg-mist py-10">
+        <section className="section-y border-t border-black/10 bg-mist">
           <div className="container-x">
-            <h2 className="mb-4 text-[11px] font-medium tracking-[0.3em] uppercase">You may also like</h2>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <h2 className="eyebrow mb-8">You may also like</h2>
+            <div className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-10 lg:grid-cols-4">
               {related.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} rating={ratings.get(p.id)} />
               ))}
             </div>
           </div>
         </section>
       )}
+
+      <RecentlyViewed excludeId={product.id} />
     </>
+  );
+}
+
+function Accordion({ title, children, open = false }: { title: string; children: React.ReactNode; open?: boolean }) {
+  return (
+    <details open={open} className="group py-4">
+      <summary className="flex items-center justify-between text-[12px] font-semibold tracking-[0.14em] uppercase">
+        {title}
+        <Plus className="rotate-open size-4 transition-transform" strokeWidth={1.5} />
+      </summary>
+      <div className="pt-3 text-[14px] leading-relaxed text-black/75">{children}</div>
+    </details>
   );
 }

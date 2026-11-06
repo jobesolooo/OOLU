@@ -2,36 +2,53 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { shippingConfig } from "@/lib/shipping";
+import { getSettings } from "@/lib/settings";
 import { AnnouncementBar, Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
+import { NewsletterPopup } from "@/components/Newsletter";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${site.name} | Streetwear, West Side Clothing, Graphic Tees & Caps`,
     template: `%s | ${site.name}`,
   },
   description: site.description,
-  openGraph: { siteName: site.name, type: "website" },
+  openGraph: { siteName: site.name, type: "website", images: ["/images/hero-photo.jpg"] },
+  twitter: { card: "summary_large_image" },
+  alternates: { canonical: "/" },
 };
 
 export const viewport: Viewport = { themeColor: "#111111" };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSettings();
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: site.name,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    sameAs: Object.values(site.social),
+  };
   return (
     <html lang="en">
       <body className="flex min-h-dvh flex-col">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">
           Skip to content
         </a>
-        <AnnouncementBar />
+        <AnnouncementBar text={settings.announcement} />
         <Header />
         <main id="main" className="flex-1">
           {children}
         </main>
         <Footer />
         <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
+        {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </body>
     </html>
   );

@@ -4,7 +4,7 @@ import { site } from "./site";
 import { formatMoney } from "./format";
 import type { Order, OrderItem, ShippingAddress } from "./db/schema";
 
-type Mail = { to: string; subject: string; html: string };
+type Mail = { to: string; subject: string; html: string; replyTo?: string };
 
 export async function sendEmail(mail: Mail) {
   const key = process.env.RESEND_API_KEY;
@@ -135,5 +135,140 @@ export async function sendWelcome(email: string, name?: string | null) {
       `<p style="font-size:14px;line-height:1.6">Your account is set up. Track orders and check out faster next time.</p>
 <p><a href="${siteUrl()}/shop" style="display:inline-block;background:#0b0b0b;color:#fff;padding:12px 22px;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase">Shop now</a></p>`,
     ),
+  });
+}
+
+const button = (href: string, label: string) =>
+  `<p style="margin-top:24px"><a href="${href}" style="display:inline-block;background:#0b0b0b;color:#fff;padding:12px 22px;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase">${esc(label)}</a></p>`;
+
+export async function sendNewsletterWelcome(email: string, code: string | null, percentOff: number) {
+  await sendEmail({
+    to: email,
+    subject: code ? `Your ${percentOff}% off code — ${site.name}` : `You're on the list — ${site.name}`,
+    html: layout(
+      "You're in.",
+      `<p style="font-size:14px;line-height:1.6">First access to drops, restocks and stories from the West Side.</p>${
+        code
+          ? `<p style="font-size:14px;line-height:1.6">Here's ${percentOff}% off your first order:</p>
+<p style="font-size:24px;letter-spacing:4px;font-weight:bold;border:1px dashed #111;padding:14px;text-align:center">${esc(code)}</p>
+<p style="font-size:12px;color:#777">One use, first order only. Enter it at checkout.</p>`
+          : ""
+      }${button(`${siteUrl()}/shop`, "Shop now")}`,
+    ),
+  });
+}
+
+export async function sendStockAlert(email: string, productName: string, size: string, slug: string, launch = false) {
+  await sendEmail({
+    to: email,
+    subject: launch ? `${productName} just dropped` : `Back in stock: ${productName}${size ? ` (${size})` : ""}`,
+    html: layout(
+      launch ? "It's live." : "It's back.",
+      `<p style="font-size:14px;line-height:1.6"><strong>${esc(productName)}</strong>${
+        size ? ` in size ${esc(size)}` : ""
+      } is available now. Stock is limited — first come, first served.</p>${button(`${siteUrl()}/products/${slug}`, "Shop now")}`,
+    ),
+  });
+}
+
+export async function sendGiftCardEmail(card: {
+  code: string;
+  initialAmount: number;
+  currency: string;
+  recipientEmail: string | null;
+  recipientName: string | null;
+  senderName: string | null;
+  message: string | null;
+  purchaserEmail: string | null;
+}) {
+  const to = card.recipientEmail || card.purchaserEmail;
+  if (!to) return;
+  const from = card.senderName ? `${esc(card.senderName)} sent you` : "You've got";
+  await sendEmail({
+    to,
+    subject: `${card.senderName ? `${card.senderName} sent you` : "Your"} a ${site.name} gift card`,
+    html: layout(
+      `${formatMoney(card.initialAmount, card.currency)} gift card`,
+      `<p style="font-size:14px;line-height:1.6">${card.recipientName ? `${esc(card.recipientName)}, ` : ""}${from} a ${site.name} gift card.</p>
+${card.message ? `<p style="font-size:14px;line-height:1.6;font-style:italic;border-left:3px solid #111;padding-left:12px">“${esc(card.message)}”</p>` : ""}
+<p style="font-size:22px;letter-spacing:3px;font-weight:bold;border:1px dashed #111;padding:14px;text-align:center">${esc(card.code)}</p>
+<p style="font-size:12px;color:#777">Enter the code in your bag before checkout. Any remaining balance stays on the card.</p>
+${button(`${siteUrl()}/shop`, "Start shopping")}`,
+    ),
+  });
+  if (card.recipientEmail && card.purchaserEmail && card.recipientEmail !== card.purchaserEmail) {
+    await sendEmail({
+      to: card.purchaserEmail,
+      subject: `Your gift card was sent`,
+      html: layout(
+        "Gift card sent",
+        `<p style="font-size:14px;line-height:1.6">We emailed a ${formatMoney(card.initialAmount, card.currency)} gift card to ${esc(
+          card.recipientEmail,
+        )}.</p>`,
+      ),
+    });
+  }
+}
+
+const RETURN_COPY: Record<string, { subject: string; title: string; body: string }> = {
+  requested: {
+    subject: "We got your return request",
+    title: "Return requested",
+    body: "We'll review it within 1–2 business days and email you the next steps.",
+  },
+  approved: {
+    subject: "Your return is approved",
+    title: "Return approved",
+    body: "Pack the items with your order number inside and send them back to the address below. We'll refund you as soon as they arrive.",
+  },
+  received: { subject: "We received your return", title: "Return received", body: "We're checking the items and will process your refund shortly." },
+  refunded: {
+    subject: "Your refund is on its way",
+    title: "Refund issued",
+    body: "Your refund has been issued. It can take 5–10 business days to show up on your statement.",
+  },
+  rejected: {
+    subject: "About your return request",
+    title: "Return not accepted",
+    body: "Unfortunately we can't accept this return. Reply to this email if you have any questions.",
+  },
+};
+
+export async function sendReturnUpdate(email: string | null, orderNumber: number, status: string, note?: string | null) {
+  const copy = RETURN_COPY[status];
+  if (!email || !copy) return;
+  const address = process.env.RETURN_ADDRESS;
+  await sendEmail({
+    to: email,
+    subject: `${copy.subject} (order #${orderNumber})`,
+    html: layout(
+      copy.title,
+      `<p style="font-size:14px;line-height:1.6">${copy.body}</p>${
+        note ? `<p style="font-size:14px;line-height:1.6">${esc(note)}</p>` : ""
+      }${
+        status === "approved" && address
+          ? `<p style="font-size:14px;line-height:1.6"><strong>Return address</strong><br>${esc(address).replace(/\|/g, "<br>")}</p>`
+          : ""
+      }`,
+    ),
+  });
+}
+
+export async function sendContactNotification(msg: { name: string; email: string; topic: string; orderNumber: string | null; message: string }) {
+  const to = process.env.ORDER_NOTIFICATION_EMAIL;
+  if (!to) return;
+  await sendEmail({
+    to,
+    subject: `[${msg.topic}] Message from ${msg.name}`,
+    html: layout(
+      "New message",
+      `<p style="font-size:14px">From <strong>${esc(msg.name)}</strong> &lt;${esc(msg.email)}&gt;${
+        msg.orderNumber ? ` · Order #${esc(msg.orderNumber)}` : ""
+      }</p><p style="font-size:14px;line-height:1.6;white-space:pre-wrap">${esc(msg.message)}</p>${button(
+        `${siteUrl()}/admin/messages`,
+        "Open inbox",
+      )}`,
+    ),
+    replyTo: msg.email,
   });
 }

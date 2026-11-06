@@ -9,6 +9,7 @@ import { formatMoney } from "@/lib/format";
 
 export function useCheckout() {
   const lines = useCart((s) => s.lines);
+  const giftCard = useCart((s) => s.giftCard);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +22,7 @@ export function useCheckout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: lines.map((l) => ({ productId: l.productId, size: l.size, quantity: l.quantity })),
+          giftCardCode: giftCard?.code,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
@@ -82,6 +84,53 @@ export function CartLineRow({ line, compact = false }: { line: CartLine; compact
         </div>
       </div>
     </li>
+  );
+}
+
+export function GiftCardInput({ subtotal }: { subtotal: number }) {
+  const giftCard = useCart((s) => s.giftCard);
+  const setGiftCard = useCart((s) => s.setGiftCard);
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  if (giftCard) {
+    const applied = Math.min(giftCard.balance, subtotal);
+    return (
+      <div className="flex items-center justify-between py-2 text-[13px]">
+        <span>
+          Gift card <span className="font-mono">••{giftCard.code.slice(-4)}</span>
+          <span className="block text-xs text-ash">Balance {formatMoney(giftCard.balance, giftCard.currency)}</span>
+        </span>
+        <span className="flex items-center gap-3">
+          −{formatMoney(applied, giftCard.currency)}
+          <button className="text-xs text-ash underline" onClick={() => setGiftCard(null)}>Remove</button>
+        </span>
+      </div>
+    );
+  }
+  return (
+    <details className="py-2">
+      <summary className="text-[12px] underline underline-offset-4">Have a gift card?</summary>
+      <form
+        className="mt-3 flex gap-2"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setBusy(true);
+          setError(null);
+          const res = await fetch(`/api/gift-cards/check?code=${encodeURIComponent(code)}`);
+          const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string; balance?: number; currency?: string };
+          setBusy(false);
+          if (!res.ok || !data.code) return setError(data.error ?? "Invalid code.");
+          setGiftCard({ code: data.code, balance: data.balance!, currency: data.currency! });
+        }}
+      >
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="WST-XXXX-XXXX-XXXX" className="input py-2.5 font-mono text-sm uppercase" aria-label="Gift card code" />
+        <button className="btn-solid shrink-0 px-4 py-2.5" disabled={busy || !code.trim()}>{busy ? "…" : "Apply"}</button>
+      </form>
+      {error && <p className="mt-2 text-xs text-red-700">{error}</p>}
+      <p className="mt-2 text-[11px] text-ash">Discount codes can be added at checkout.</p>
+    </details>
   );
 }
 
@@ -164,6 +213,7 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
                 <span className="label">Subtotal</span>
                 <span className="font-medium">{formatMoney(subtotal)}</span>
               </div>
+              <GiftCardInput subtotal={subtotal} />
               <p className="mt-1 text-xs text-ash">Shipping and taxes calculated at checkout.</p>
               {error && <p className="mt-3 text-xs text-red-700">{error}</p>}
               <button className="btn-solid mt-4 w-full py-4" onClick={checkout} disabled={pending}>
