@@ -7,7 +7,7 @@ import { signIn } from "@/lib/auth";
 import { checkStaffCredentials, isPasscodeConfigured, staffEmail, adminUsername } from "@/lib/admin-auth";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
-export type CaveState =
+export type StudioState =
   | { step: "username"; error?: string }
   | { step: "code"; username: string; error?: string; nonce?: number }
   | undefined;
@@ -16,7 +16,7 @@ export type CaveState =
  * Step 1 only records the username (it isn't checked yet, so the screen never reveals
  * whether a username exists). Step 2 checks username + passcode together.
  */
-export async function caveAction(prev: CaveState, form: FormData): Promise<CaveState> {
+export async function studioAction(prev: StudioState, form: FormData): Promise<StudioState> {
   const intent = String(form.getAll("intent").at(-1) ?? "username");
   if (intent === "back") return { step: "username" };
 
@@ -33,8 +33,8 @@ export async function caveAction(prev: CaveState, form: FormData): Promise<CaveS
   // 6 digits = 1,000,000 combinations, so guesses are tightly limited:
   // 5 per 15 min per network, and 20 per hour for the staff account overall.
   const ip = await clientIp();
-  const perIp = rateLimit(`cave-ip:${ip}`, 5, 15 * 60_000);
-  const perAccount = rateLimit(`cave-user:${adminUsername().toLowerCase()}`, 20, 60 * 60_000);
+  const perIp = rateLimit(`studio-ip:${ip}`, 5, 15 * 60_000);
+  const perAccount = rateLimit(`studio-user:${adminUsername().toLowerCase()}`, 20, 60 * 60_000);
   if (!perIp.ok || !perAccount.ok) {
     const minutes = Math.ceil(Math.max(perIp.retryAfter, perAccount.retryAfter) / 60);
     return { step: "code", username, nonce: Date.now(), error: `Too many attempts. Try again in ${minutes} minutes.` };

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
-import { caveAction, type CaveState } from "./actions";
+import { studioAction, type StudioState } from "./actions";
 import { StaffMark } from "@/components/auth/StaffMark";
 
 /* ── Passcode boxes ──────────────────────────────────────── */
@@ -94,7 +94,7 @@ function Door({ side }: { side: "l" | "r" }) {
   return (
     <div
       aria-hidden
-      className={`absolute inset-y-0 ${side === "l" ? "left-0 cave-door-l" : "right-0 cave-door-r"} w-1/2 overflow-hidden`}
+      className={`absolute inset-y-0 ${side === "l" ? "left-0 studio-door-l" : "right-0 studio-door-r"} w-1/2 overflow-hidden`}
       style={{
         background:
           "repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 64px), radial-gradient(120% 80% at 50% 50%, #1d1c1a 0%, #0c0b0a 70%), #0b0a09",
@@ -121,8 +121,8 @@ function Door({ side }: { side: "l" | "r" }) {
   );
 }
 
-export function CaveLogin({ next, notice }: { next?: string; notice?: string | null }) {
-  const [state, action, pending] = useActionState<CaveState, FormData>(caveAction, { step: "username" });
+export function StudioLogin({ next, notice }: { next?: string; notice?: string | null }) {
+  const [state, action, pending] = useActionState<StudioState, FormData>(studioAction, { step: "username" });
   const formRef = useRef<HTMLFormElement>(null);
   const step = state?.step ?? "username";
   // Controlled so the username survives a failed attempt.
@@ -130,8 +130,8 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
 
   return (
     <div className="fixed inset-0 z-[90] overflow-hidden bg-[#050505] text-[#f4efe3]">
-      {/* ── Inside the cave ── */}
-      <div className="cave-lights absolute inset-0" aria-hidden>
+      {/* ── Inside the studio ── */}
+      <div className="studio-lights absolute inset-0" aria-hidden>
         <div className="absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_42%,rgba(165,146,255,0.16),transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(40%_30%_at_50%_0%,rgba(244,239,227,0.10),transparent_70%)]" />
         {/* rock walls */}
@@ -152,14 +152,14 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
           <div key={l} className="absolute top-0 h-[2px] w-24 -translate-x-1/2 bg-[#f4efe3]/70 shadow-[0_0_40px_10px_rgba(244,239,227,0.25)]" style={{ left: `${l}%` }} />
         ))}
         {/* scan line */}
-        <div className="cave-scan absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-[#a592ff]/[0.05] to-transparent" />
+        <div className="studio-scan absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-[#a592ff]/[0.05] to-transparent" />
         {/* grain */}
         <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
       </div>
 
       {/* ── Panel ── */}
       <div className="relative flex h-full flex-col">
-        <header className="cave-rise flex items-center justify-between px-6 py-5 font-mono text-[10px] tracking-[0.3em] text-[#f4efe3]/50 uppercase sm:px-10">
+        <header className="studio-rise flex items-center justify-between px-6 py-5 font-mono text-[10px] tracking-[0.3em] text-[#f4efe3]/50 uppercase sm:px-10">
           <Link href="/" className="flex items-center gap-2 hover:text-[#f4efe3]">
             <ArrowLeft className="size-3.5" /> Back to store
           </Link>
@@ -167,14 +167,14 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
         </header>
 
         <main className="flex flex-1 items-center justify-center px-6">
-          <div className="cave-rise w-full max-w-[460px]">
+          <div className="studio-rise w-full max-w-[460px]">
             <div className="mb-10 flex flex-col items-center text-center">
               <StaffMark className="w-[88px] drop-shadow-[0_0_32px_rgba(165,146,255,0.55)]" />
               <p className="mt-6 font-mono text-[10px] tracking-[0.4em] text-[#a592ff] uppercase">
                 {step === "username" ? "Identify yourself" : "Enter passcode"}
-                <span className="cave-caret ml-1">_</span>
+                <span className="studio-caret ml-1">_</span>
               </p>
-              <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(40px,6vw,64px)] leading-none">The Cave</h1>
+              <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(40px,6vw,64px)] leading-none">The Studio</h1>
             </div>
 
             {notice && <p className="mb-6 border border-[#a592ff]/30 bg-[#a592ff]/5 p-4 text-center text-[13px] text-[#f4efe3]/80">{notice}</p>}
@@ -235,10 +235,10 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
       </div>
 
       {/* ── Blast doors (open on load) ── */}
-      <div className="cave-doors pointer-events-none absolute inset-0">
+      <div className="studio-doors pointer-events-none absolute inset-0">
         <Door side="l" />
         <Door side="r" />
-        <div aria-hidden className="cave-seam absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-[#a592ff] shadow-[0_0_30px_6px_rgba(165,146,255,0.5)]" />
+        <div aria-hidden className="studio-seam absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-[#a592ff] shadow-[0_0_30px_6px_rgba(165,146,255,0.5)]" />
       </div>
     </div>
   );
