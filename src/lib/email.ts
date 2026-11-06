@@ -316,3 +316,18 @@ export async function sendSecurityNotice(email: string, what: string) {
     ),
   });
 }
+
+export async function sendAdminCode(email: string, code: string, ttlMinutes: number) {
+  await sendEmail({
+    to: email,
+    subject: `${code} is your ${site.name} admin code`,
+    html: layout(
+      "Admin sign-in",
+      `<p style="font-size:14px;line-height:1.6">Use this code to open the ${esc(site.name)} admin. It expires in ${ttlMinutes} minutes.</p>
+<p style="font-size:36px;letter-spacing:12px;font-weight:bold;text-align:center;border:1px solid #111;padding:18px;font-family:Menlo,Consolas,monospace">${esc(code)}</p>
+<p style="font-size:12px;color:#777">Didn't try to sign in? Someone may know your email — you can ignore this, the code is useless without access to your inbox.</p>`,
+    ),
+  });
+  // Dev convenience: show the code itself in the terminal (emails are only logged when Resend isn't set up).
+  if (!process.env.RESEND_API_KEY) console.info(`[email:dev] admin code for ${email}: ${code}`);
+}

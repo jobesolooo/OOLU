@@ -151,3 +151,52 @@
 details > summary { list-style: none; cursor: pointer; }
 details > summary::-webkit-details-marker { display: none; }
 details[open] .rotate-open { transform: rotate(45deg); }
+
+/* ── Staff cave ─────────────────────────────────────────── */
+@keyframes cave-rumble {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -2px); }
+}
+@keyframes cave-seam {
+  0% { opacity: 0; transform: scaleY(0); }
+  40% { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 1; transform: scaleY(1); }
+}
+@keyframes cave-door-left { to { transform: translateX(-102%); } }
+@keyframes cave-door-right { to { transform: translateX(102%); } }
+@keyframes cave-lights {
+  0% { opacity: 0; }
+  10% { opacity: 0.6; }
+  14% { opacity: 0.1; }
+  22% { opacity: 0.8; }
+  26% { opacity: 0.3; }
+  40%, 100% { opacity: 1; }
+}
+@keyframes cave-rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes cave-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes cave-blink { 50% { opacity: 0; } }
+
+.cave-doors { animation: cave-rumble 0.12s linear 0.5s 6; }
+@keyframes cave-fade { to { opacity: 0; } }
+.cave-seam { transform-origin: center; animation: cave-seam 0.6s ease-out 0.2s both, cave-fade 0.5s ease-in 1.3s forwards; }
+.cave-door-l { animation: cave-door-left 1.5s cubic-bezier(0.7, 0, 0.2, 1) 1.2s forwards; }
+.cave-door-r { animation: cave-door-right 1.5s cubic-bezier(0.7, 0, 0.2, 1) 1.2s forwards; }
+.cave-lights { opacity: 0; animation: cave-lights 1.4s steps(1, end) 2.3s forwards; }
+.cave-rise { opacity: 0; animation: cave-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 2.7s forwards; }
+.cave-scan { animation: cave-scan 4s linear 3s infinite; }
+.cave-caret { animation: cave-blink 1s steps(1) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cave-doors, .cave-seam, .cave-scan, .cave-caret { animation: none; }
+  .cave-door-l, .cave-door-r { animation: none; display: none; }
+  .cave-lights, .cave-rise { animation: none; opacity: 1; }
+}

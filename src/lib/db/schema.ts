@@ -147,6 +147,21 @@ export const authTokens = pgTable(
   (t) => [index("auth_tokens_user_idx").on(t.userId)],
 );
 
+/* ── Staff sign-in codes (email + 6 digits) ─────────────── */
+export const adminCodes = pgTable(
+  "admin_codes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    codeHash: text("code_hash").notNull(), // HMAC of the code; the code itself only lives in the email
+    attempts: integer("attempts").notNull().default(0),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("admin_codes_email_idx").on(t.email)],
+);
+
 /* ── Wishlist saved to the account (syncs across devices) ── */
 export const wishlistItems = pgTable(
   "wishlist_items",

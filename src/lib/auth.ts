@@ -58,8 +58,8 @@ export async function requireUser(next = "/account") {
 
 export async function requireAdmin() {
   const user = await getCurrentUser();
-  if (!user) redirect(`/account/login?next=/admin`);
-  if (user.role !== "admin") redirect("/account");
+  if (!user) redirect(`/admin/login`);
+  if (user.role !== "admin") redirect("/admin/login?denied=1");
   return user;
 }
 

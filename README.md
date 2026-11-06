@@ -74,9 +74,15 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 Copy the `whsec_...` it prints into `STRIPE_WEBHOOK_SECRET` and restart `npm run dev`. Pay with test card `4242 4242 4242 4242`, any future date, any CVC.
 
-### 3. Become admin
+### 3. Open the admin ("The Cave")
 
-Register at `/account/register` with an email listed in `ADMIN_EMAILS`, then open `/admin`.
+Go to `/admin` (or tap the small key icon on the sign-in page). Enter an email listed in `ADMIN_EMAILS` and you'll get a 6-digit code by email — in local dev it's printed in the terminal:
+
+```
+[email:dev] admin code for you@example.com: 482913
+```
+
+Codes expire after 10 minutes and lock after 5 wrong tries. No password needed; the account is created on first sign-in if it doesn't exist.
 
 ## Setting up Google & Apple sign-in
 
