@@ -1,27 +1,35 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { JOURNAL } from "@/content/journal";
-import { cx, formatDate } from "@/lib/format";
+import { JOURNAL, localizePost } from "@/content/journal";
+import { cx } from "@/lib/format";
 import { PageHeader } from "@/components/PageHeader";
+import { getT } from "@/i18n/server";
+import { intlLocale } from "@/i18n/config";
 
-export const metadata: Metadata = { title: "Journal", description: "Lookbooks, stories and process from OOLU — rooted in Africa, created in Amsterdam." };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return { title: t("journal.meta"), description: t("journal.metaDesc") };
+}
 
 const CATS = ["Lookbook", "Story", "Process"] as const;
 
 export default async function JournalPage({ searchParams }: PageProps<"/journal">) {
   const raw = (await searchParams).category;
   const cat = (Array.isArray(raw) ? raw[0] : raw)?.toLowerCase();
+  const { t, locale } = await getT();
+  const fmtDate = (d: string) => new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(d));
   const posts = [...JOURNAL]
     .sort((a, b) => b.date.localeCompare(a.date))
-    .filter((p) => !cat || p.category.toLowerCase() === cat);
+    .filter((p) => !cat || p.category.toLowerCase() === cat)
+    .map((p) => localizePost(p, locale));
   const [lead, ...rest] = posts;
 
   return (
     <>
-      <PageHeader eyebrow="Wear your roots. Tell your story." title="Journal" />
+      <PageHeader eyebrow={t("shop.eyebrow")} title={t("journal.meta")} />
       <div className="container-x section-y">
-        <nav className="mb-12 flex flex-wrap gap-2" aria-label="Categories">
+        <nav className="mb-12 flex flex-wrap gap-2" aria-label={t("shop.categories")}>
           {[undefined, ...CATS].map((c) => (
             <Link
               key={c ?? "all"}
@@ -31,7 +39,7 @@ export default async function JournalPage({ searchParams }: PageProps<"/journal"
                 (c?.toLowerCase() ?? undefined) === cat ? "border-ink bg-ink text-white" : "border-black/15 hover:border-ink",
               )}
             >
-              {c ?? "All"}
+              {c ? t(`journal.cat.${c}`) : t("journal.all")}
             </Link>
           ))}
         </nav>
@@ -42,7 +50,7 @@ export default async function JournalPage({ searchParams }: PageProps<"/journal"
               <Image src={lead.cover} alt="" fill priority sizes="(min-width:1024px) 60vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: lead.coverPosition ?? "center" }} />
             </div>
             <div>
-              <p className="eyebrow text-ash">{lead.category} · {formatDate(lead.date)}</p>
+              <p className="eyebrow text-ash">{t(`journal.cat.${lead.category}`)} · {fmtDate(lead.date)}</p>
               <h2 className="h-display mt-4 group-hover:underline underline-offset-8">{lead.title}</h2>
               <p className="mt-5 text-[16px] leading-relaxed text-black/75">{lead.excerpt}</p>
             </div>
@@ -55,13 +63,13 @@ export default async function JournalPage({ searchParams }: PageProps<"/journal"
               <div className="relative aspect-[4/3] overflow-hidden bg-ink">
                 <Image src={p.cover} alt="" fill sizes="(min-width:1024px) 33vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
               </div>
-              <p className="mt-4 text-[11px] tracking-[0.18em] text-ash uppercase">{p.category} · {formatDate(p.date)}</p>
-              <h3 className="mt-2 text-xl font-semibold group-hover:underline underline-offset-4">{p.title}</h3>
+              <p className="mt-4 text-[11px] tracking-[0.18em] text-ash uppercase">{t(`journal.cat.${p.category}`)} · {fmtDate(p.date)}</p>
+              <h3 className="mt-2 font-display text-2xl tracking-[-0.01em] group-hover:underline underline-offset-4">{p.title}</h3>
               <p className="mt-2 text-[14px] text-black/70">{p.excerpt}</p>
             </Link>
           ))}
         </div>
-        {!posts.length && <p className="text-ash">No posts in this category yet.</p>}
+        {!posts.length && <p className="text-ash">{t("journal.none")}</p>}
       </div>
     </>
   );

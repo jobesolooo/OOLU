@@ -1,16 +1,9 @@
+"use client";
+
+import { useT } from "@/components/Prefs";
+
 import type { OrderStatus } from "@/lib/db/schema";
 import { cx } from "@/lib/format";
-
-const LABELS: Record<OrderStatus, string> = {
-  pending: "Awaiting payment",
-  paid: "Paid",
-  fulfilled: "Packed",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-  partially_refunded: "Part refunded",
-};
 
 const TONES: Record<OrderStatus, string> = {
   pending: "bg-black/5 text-black/60",
@@ -24,9 +17,10 @@ const TONES: Record<OrderStatus, string> = {
 };
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+  const t = useT();
   return (
     <span className={cx("inline-block px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase", TONES[status])}>
-      {LABELS[status]}
+      {t(`status.${status}`)}
     </span>
   );
 }

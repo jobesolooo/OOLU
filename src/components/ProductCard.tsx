@@ -4,6 +4,7 @@ import { isOnSale, isUpcoming, type Product } from "@/lib/catalog";
 import { Price, Stars } from "./Price";
 import { WishlistButton } from "./WishlistButton";
 import { allVariantKeys } from "@/lib/variants";
+import { getT } from "@/i18n/server";
 
 export const toSaved = (p: Product) => ({
   id: p.id,
@@ -15,7 +16,7 @@ export const toSaved = (p: Product) => ({
   currency: p.currency,
 });
 
-export function ProductCard({
+export async function ProductCard({
   product,
   priority = false,
   rating,
@@ -24,6 +25,7 @@ export function ProductCard({
   priority?: boolean;
   rating?: { average: number; count: number };
 }) {
+  const { t } = await getT();
   const upcoming = isUpcoming(product);
   const sale = isOnSale(product);
   const [front, back] = product.images;
@@ -52,9 +54,9 @@ export function ProductCard({
             />
           )}
           <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
-            {upcoming && <Badge>Coming soon</Badge>}
-            {soldOut && <Badge>Sold out</Badge>}
-            {!upcoming && !soldOut && sale && <Badge tone="sale">Sale</Badge>}
+            {upcoming && <Badge>{t("badge.comingSoon")}</Badge>}
+            {soldOut && <Badge>{t("badge.soldOut")}</Badge>}
+            {!upcoming && !soldOut && sale && <Badge tone="sale">{t("badge.sale")}</Badge>}
           </div>
         </div>
         <div className="pt-3 pb-1">

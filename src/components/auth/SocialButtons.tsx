@@ -1,4 +1,6 @@
 import { AppleBrandIcon } from "../icons";
+import { getT } from "@/i18n/server";
+import { dictionaries, type MessageKey } from "@/i18n/messages";
 
 export function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -16,26 +18,27 @@ export function AppleIcon({ className }: { className?: string }) {
 }
 
 /** Plain links (not JS) so they work everywhere and keep the OAuth redirect server-side. */
-export function SocialButtons({ next, mode }: { next?: string; mode: "login" | "register" }) {
+export async function SocialButtons({ next, mode }: { next?: string; mode: "login" | "register" }) {
+  const { t } = await getT();
   const q = next ? `?next=${encodeURIComponent(next)}` : "";
-  const verb = mode === "login" ? "Continue" : "Sign up";
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <a href={`/api/auth/google${q}`} aria-label={`${verb} with Google`} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 border border-black/20 bg-white px-4 text-[15px] font-medium transition-colors hover:border-ink">
+      <a href={`/api/auth/google${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Google" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 border border-black/20 bg-white px-4 text-[15px] font-medium transition-colors hover:border-ink">
         <GoogleIcon className="size-5" /> Google
       </a>
-      <a href={`/api/auth/apple${q}`} aria-label={`${verb} with Apple`} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 bg-black px-4 text-[15px] font-medium text-white transition-opacity hover:opacity-85">
+      <a href={`/api/auth/apple${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Apple" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 bg-black px-4 text-[15px] font-medium text-white transition-opacity hover:opacity-85">
         <AppleIcon className="size-5" /> Apple
       </a>
     </div>
   );
 }
 
-export function OrDivider({ label = "or with email" }: { label?: string }) {
+export async function OrDivider({ label }: { label?: string }) {
+  const { t } = await getT();
   return (
     <div className="my-[clamp(16px,3.4vh,36px)] flex items-center gap-5 text-[11px] tracking-[0.2em] whitespace-nowrap text-ash uppercase">
       <span className="h-px flex-1 bg-black/15" />
-      {label}
+      {label ?? t("auth.orEmail")}
       <span className="h-px flex-1 bg-black/15" />
     </div>
   );
@@ -50,7 +53,10 @@ const ERRORS: Record<string, string> = {
   sign_in_first: "Sign in first to connect another login method.",
 };
 
-export function authErrorMessage(code: string | undefined) {
+export function authErrorMessage(code: string | undefined, t?: (key: MessageKey) => string) {
   if (!code) return null;
+  const key = `auth.err.${code}` as MessageKey;
+  // Setup hints (env var names) only make sense in English for the developer.
+  if (t && !code.endsWith("_not_configured") && key in dictionaries.en) return t(key);
   return ERRORS[code] ?? code.slice(0, 200);
 }

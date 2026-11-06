@@ -2,17 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getPost, JOURNAL } from "@/content/journal";
+import { getPost, JOURNAL, localizePost } from "@/content/journal";
 import { getProducts } from "@/lib/catalog";
 import { getRatingsMap } from "@/lib/reviews";
-import { formatDate } from "@/lib/format";
 import { ProductCard } from "@/components/ProductCard";
+import { getT } from "@/i18n/server";
+import { intlLocale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps<"/journal/[slug]">): Promise<Metadata> {
-  const post = getPost((await params).slug);
-  if (!post) return { title: "Not found" };
+  const { t, locale } = await getT();
+  const post = getPost((await params).slug, locale);
+  if (!post) return { title: t("legal.notFound") };
   return {
     title: post.title,
     description: post.excerpt,
@@ -21,11 +23,12 @@ export async function generateMetadata({ params }: PageProps<"/journal/[slug]">)
 }
 
 export default async function JournalPost({ params }: PageProps<"/journal/[slug]">) {
-  const post = getPost((await params).slug);
+  const { t, locale } = await getT();
+  const post = getPost((await params).slug, locale);
   if (!post) notFound();
   const [products, ratings] = await Promise.all([getProducts(), getRatingsMap()]);
   const bySlug = new Map(products.map((p) => [p.slug, p]));
-  const more = JOURNAL.filter((p) => p.slug !== post.slug).slice(0, 2);
+  const more = JOURNAL.filter((p) => p.slug !== post.slug).slice(0, 2).map((p) => localizePost(p, locale));
 
   return (
     <article>
@@ -34,10 +37,10 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="container-x pb-14">
           <Link href={`/journal?category=${post.category.toLowerCase()}`} className="eyebrow text-white/80 hover:text-white">
-            {post.category}
+            {t(`journal.cat.${post.category}`)}
           </Link>
           <h1 className="h-display mt-4 max-w-4xl">{post.title}</h1>
-          <p className="mt-4 text-sm text-white/70">{formatDate(post.date)}</p>
+          <p className="mt-4 text-sm text-white/70">{new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long" }).format(new Date(post.date))}</p>
         </div>
       </header>
 
@@ -71,7 +74,7 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
                 if (!items.length) return null;
                 return (
                   <section key={i} className="bg-mist p-6 sm:-mx-[8%] sm:p-10">
-                    <h2 className="eyebrow mb-6">{b.title ?? "Shop the look"}</h2>
+                    <h2 className="eyebrow mb-6">{b.title ?? t("journal.shopLook")}</h2>
                     <div className="grid grid-cols-2 gap-6">
                       {items.map((p) => (
                         <ProductCard key={p.id} product={p} rating={ratings.get(p.id)} />
@@ -88,14 +91,14 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
       {more.length > 0 && (
         <section className="section-y border-t border-black/10 bg-bone">
           <div className="container-x">
-            <h2 className="eyebrow mb-8">More from the journal</h2>
+            <h2 className="eyebrow mb-8">{t("journal.more")}</h2>
             <div className="grid gap-8 md:grid-cols-2">
               {more.map((p) => (
                 <Link key={p.slug} href={`/journal/${p.slug}`} className="group">
                   <div className="relative aspect-[16/9] overflow-hidden bg-ink">
                     <Image src={p.cover} alt="" fill sizes="50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
                   </div>
-                  <h3 className="mt-4 text-xl font-semibold group-hover:underline underline-offset-4">{p.title}</h3>
+                  <h3 className="mt-4 font-display text-2xl tracking-[-0.01em] group-hover:underline underline-offset-4">{p.title}</h3>
                 </Link>
               ))}
             </div>

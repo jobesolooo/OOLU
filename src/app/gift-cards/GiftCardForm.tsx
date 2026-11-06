@@ -1,9 +1,12 @@
 "use client";
 
+import { useT, useTx } from "@/components/Prefs";
 import { useState } from "react";
 import { cx, formatMoneyShort } from "@/lib/format";
 
 export function GiftCardForm({ amounts }: { amounts: number[] }) {
+  const t = useT();
+  const tx = useTx();
   const [amount, setAmount] = useState(amounts[1] ?? amounts[0]);
   const [forSomeone, setForSomeone] = useState(true);
   const [pending, setPending] = useState(false);
@@ -22,7 +25,7 @@ export function GiftCardForm({ amounts }: { amounts: number[] }) {
     const res = await fetch("/api/gift-cards", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
     if (!res.ok || !data.url) {
-      setError(data.error ?? "Something went wrong.");
+      setError(data.error ?? t("common.error"));
       setPending(false);
       return;
     }
@@ -32,7 +35,7 @@ export function GiftCardForm({ amounts }: { amounts: number[] }) {
   return (
     <form action={submit} className="mt-8 space-y-6">
       <fieldset>
-        <legend className="label mb-3 font-semibold">Amount</legend>
+        <legend className="label mb-3 font-semibold">{t("gift.amount")}</legend>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
           {amounts.map((a) => (
             <button
@@ -49,23 +52,23 @@ export function GiftCardForm({ amounts }: { amounts: number[] }) {
       </fieldset>
       <fieldset className="flex gap-6 text-sm">
         <label className="flex items-center gap-2">
-          <input type="radio" checked={forSomeone} onChange={() => setForSomeone(true)} /> Send to someone
+          <input type="radio" checked={forSomeone} onChange={() => setForSomeone(true)} /> {t("gift.toSomeone")}
         </label>
         <label className="flex items-center gap-2">
-          <input type="radio" checked={!forSomeone} onChange={() => setForSomeone(false)} /> Send to me
+          <input type="radio" checked={!forSomeone} onChange={() => setForSomeone(false)} /> {t("gift.toMe")}
         </label>
       </fieldset>
       {forSomeone && (
         <div className="grid gap-3 sm:grid-cols-2">
-          <input name="recipientName" placeholder="Their name" maxLength={80} className="input" />
-          <input name="recipientEmail" type="email" required placeholder="Their email" className="input" />
-          <textarea name="message" rows={3} maxLength={400} placeholder="Add a message (optional)" className="input sm:col-span-2" />
+          <input name="recipientName" placeholder={t("gift.theirName")} maxLength={80} className="input" />
+          <input name="recipientEmail" type="email" required placeholder={t("gift.theirEmail")} className="input" />
+          <textarea name="message" rows={3} maxLength={400} placeholder={t("gift.message")} className="input sm:col-span-2" />
         </div>
       )}
-      <input name="senderName" placeholder="Your name (optional)" maxLength={80} className="input" />
-      {error && <p className="text-[13px] text-red-700">{error}</p>}
+      <input name="senderName" placeholder={t("gift.yourName")} maxLength={80} className="input" />
+      {error && <p className="text-[13px] text-red-700">{tx(error)}</p>}
       <button className="btn-solid w-full py-5 text-[13px]" disabled={pending}>
-        {pending ? "Redirecting…" : `Buy ${formatMoneyShort(amount)} gift card`}
+        {pending ? t("cart.redirecting") : t("gift.buy", { amount: formatMoneyShort(amount) })}
       </button>
     </form>
   );

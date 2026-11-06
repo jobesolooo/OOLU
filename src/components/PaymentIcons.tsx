@@ -13,9 +13,9 @@ export const PAYMENTS = [
   { name: "PayPal", file: "paypal" },
 ] as const;
 
-export function PaymentIcons({ className, size = "md" }: { className?: string; size?: "sm" | "md" }) {
+export function PaymentIcons({ className, size = "md", label = "Accepted payment methods" }: { className?: string; size?: "sm" | "md"; label?: string }) {
   return (
-    <ul className={cx("flex flex-wrap gap-1.5", className)} aria-label="Accepted payment methods">
+    <ul className={cx("flex flex-wrap gap-1.5", className)} aria-label={label}>
       {PAYMENTS.map((p) => (
         <li key={p.file}>
           <Image

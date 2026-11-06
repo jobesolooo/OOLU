@@ -1,10 +1,13 @@
 "use client";
 
+import { useT, useTx } from "@/components/Prefs";
+
 import Image from "next/image";
 import { useActionState } from "react";
 import { requestReturn, type ReturnState } from "@/app/returns/actions";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/variants";
+import type { MessageKey } from "@/i18n/messages";
 
 export type ReturnableItem = {
   id: string;
@@ -32,17 +35,19 @@ export function ReturnForm({
   email?: string;
   deadline: string;
 }) {
+  const t = useT();
+  const tx = useTx();
   const [state, action, pending] = useActionState<ReturnState, FormData>(requestReturn, undefined);
-  if (state?.ok) return <p className="bg-white p-6 text-[15px]">{state.ok}</p>;
+  if (state?.ok) return <p className="bg-white p-6 text-[15px]">{tx(state.ok)}</p>;
   const any = items.some((i) => i.available > 0);
-  if (!any) return <p className="text-sm text-ash">All items from this order are already in a return.</p>;
+  if (!any) return <p className="text-sm text-ash">{t("ret.allInReturn")}</p>;
 
   return (
     <form action={action} className="space-y-5 bg-white p-6">
       <input type="hidden" name="orderId" value={orderId} />
       {orderNumber && <input type="hidden" name="orderNumber" value={orderNumber} />}
       {email && <input type="hidden" name="email" value={email} />}
-      <p className="text-sm text-black/70">Choose what you&apos;re sending back. Return by {deadline}.</p>
+      <p className="text-sm text-black/70">{t("ret.choose", { date: deadline })}</p>
       <ul className="divide-y divide-black/10">
         {items.map((i) => (
           <li key={i.id} className="flex items-center gap-4 py-3">
@@ -56,7 +61,7 @@ export function ReturnForm({
                 {formatMoney(i.unitAmount, currency)}
               </p>
             </div>
-            <select name={`qty:${i.id}`} defaultValue="0" disabled={i.available === 0} className="input w-20 py-2 text-sm" aria-label={`Quantity of ${i.name} to return`}>
+            <select name={`qty:${i.id}`} defaultValue="0" disabled={i.available === 0} className="input w-20 py-2 text-sm" aria-label={t("ret.qtyAria", { name: i.name })}>
               {Array.from({ length: i.available + 1 }, (_, n) => (
                 <option key={n} value={n}>
                   {n}
@@ -67,19 +72,21 @@ export function ReturnForm({
         ))}
       </ul>
       <label className="block">
-        <span className="label mb-2 block font-semibold">Reason</span>
+        <span className="label mb-2 block font-semibold">{t("ret.reason")}</span>
         <select name="reason" required defaultValue="" className="input">
           <option value="" disabled>
-            Choose a reason
+            {t("ret.chooseReason")}
           </option>
           {REASONS.map((r) => (
-            <option key={r}>{r}</option>
+            <option key={r} value={r}>
+              {t(`ret.r.${r}` as MessageKey)}
+            </option>
           ))}
         </select>
       </label>
-      <textarea name="comment" rows={3} maxLength={1000} placeholder="Anything we should know? (optional)" className="input" />
-      {state?.error && <p className="text-[13px] text-red-700">{state.error}</p>}
-      <button className="btn-solid" disabled={pending}>{pending ? "Sending…" : "Request return"}</button>
+      <textarea name="comment" rows={3} maxLength={1000} placeholder={t("ret.comment")} className="input" />
+      {state?.error && <p className="text-[13px] text-red-700">{tx(state.error)}</p>}
+      <button className="btn-solid" disabled={pending}>{pending ? t("common.sending") : t("ret.submit")}</button>
     </form>
   );
 }

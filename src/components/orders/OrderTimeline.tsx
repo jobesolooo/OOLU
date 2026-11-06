@@ -1,6 +1,10 @@
+"use client";
+
+import { useMoney, useT } from "@/components/Prefs";
+
 import { Check } from "lucide-react";
 import type { Order } from "@/lib/db/schema";
-import { cx, formatDate } from "@/lib/format";
+import { cx } from "@/lib/format";
 
 const CARRIER_URLS: Record<string, (n: string) => string> = {
   postnl: (n) => `https://jouw.postnl.nl/track-and-trace/${encodeURIComponent(n)}`,
@@ -18,18 +22,20 @@ export function trackingUrl(carrier: string | null, number: string | null) {
 }
 
 export function OrderTimeline({ order }: { order: Order }) {
+  const t = useT();
+  const { date } = useMoney();
   const rank = { paid: 1, partially_refunded: 1, fulfilled: 2, shipped: 3, delivered: 4 } as Record<string, number>;
   const at = rank[order.status] ?? (order.deliveredAt ? 4 : order.shippedAt ? 3 : 1);
   const steps = [
-    { label: "Order placed", date: order.paidAt ?? order.createdAt },
-    { label: "Packed", date: null },
-    { label: "Shipped", date: order.shippedAt },
-    { label: "Delivered", date: order.deliveredAt },
+    { label: t("tl.placed"), date: order.paidAt ?? order.createdAt },
+    { label: t("tl.packed"), date: null },
+    { label: t("tl.shipped"), date: order.shippedAt },
+    { label: t("tl.delivered"), date: order.deliveredAt },
   ];
   const url = trackingUrl(order.trackingCarrier, order.trackingNumber);
 
   if (order.status === "refunded" || order.status === "cancelled") {
-    return <p className="bg-white p-5 text-sm">This order was {order.status}.</p>;
+    return <p className="bg-white p-5 text-sm">{order.status === "refunded" ? t("tl.wasRefunded") : t("tl.wasCancelled")}</p>;
   }
 
   return (
@@ -49,14 +55,14 @@ export function OrderTimeline({ order }: { order: Order }) {
                 {done && <Check className="size-3.5" />}
               </span>
               <p className={cx("mt-3 text-center text-[11px] font-semibold tracking-[0.1em] uppercase sm:text-xs", !done && "text-ash")}>{s.label}</p>
-              {done && s.date && <p className="mt-1 text-center text-[11px] text-ash">{formatDate(s.date)}</p>}
+              {done && s.date && <p className="mt-1 text-center text-[11px] text-ash">{date(s.date)}</p>}
             </li>
           );
         })}
       </ol>
       {order.trackingNumber && (
         <p className="mt-6 border-t border-black/10 pt-4 text-sm">
-          {order.trackingCarrier} tracking:{" "}
+          {t("tl.tracking", { carrier: order.trackingCarrier ?? "" })}{" "}
           {url ? (
             <a href={url} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
               {order.trackingNumber}

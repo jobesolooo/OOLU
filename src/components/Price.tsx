@@ -1,5 +1,7 @@
-import { formatMoney } from "@/lib/format";
+"use client";
+
 import { cx } from "@/lib/format";
+import { useMoney, useT } from "./Prefs";
 
 export function Price({
   amount,
@@ -12,13 +14,14 @@ export function Price({
   currency: string;
   className?: string;
 }) {
+  const { money } = useMoney();
   const sale = compareAt != null && compareAt > amount;
   return (
     <span className={cx("inline-flex flex-wrap items-baseline gap-x-2", className)}>
-      <span className={sale ? "text-[#a3271b]" : undefined}>{formatMoney(amount, currency)}</span>
+      <span className={sale ? "text-[#a3271b]" : undefined}>{money(amount, currency)}</span>
       {sale && (
         <>
-          <s className="text-ash">{formatMoney(compareAt!, currency)}</s>
+          <s className="text-ash">{money(compareAt!, currency)}</s>
           <span className="text-[0.85em] font-semibold text-[#a3271b]">−{Math.round((1 - amount / compareAt!) * 100)}%</span>
         </>
       )}
@@ -27,8 +30,9 @@ export function Price({
 }
 
 export function Stars({ value, size = 14, className }: { value: number; size?: number; className?: string }) {
+  const t = useT();
   return (
-    <span className={cx("inline-flex items-center", className)} aria-label={`${value.toFixed(1)} out of 5 stars`} role="img">
+    <span className={cx("inline-flex items-center", className)} aria-label={t("reviews.starsLabel", { value: value.toFixed(1) })} role="img">
       {[1, 2, 3, 4, 5].map((i) => {
         const fill = Math.max(0, Math.min(1, value - (i - 1)));
         return (

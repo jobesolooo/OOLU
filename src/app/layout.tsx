@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { ViewTransition } from "react";
 import { RevealObserver } from "@/components/Reveal";
+import { PrefsProvider } from "@/components/Prefs";
+import { getLocale, getT } from "@/i18n/server";
+import { dictionaries } from "@/i18n/messages";
+import { getCurrency, getRates } from "@/lib/rates";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { shippingConfig } from "@/lib/shipping";
@@ -13,22 +17,22 @@ import { AccountSync } from "@/components/auth/AccountSync";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${site.name} | ${site.motto} — T-shirts, tanks & tracksuits from Amsterdam`,
-    template: `%s | ${site.name}`,
-  },
-  description: site.description,
-  openGraph: { siteName: site.name, type: "website", images: ["/images/brand/hero.jpg"] },
-  twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t, locale } = await getT();
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: { default: t("meta.default", { name: site.name }), template: `%s | ${site.name}` },
+    description: t("brand.description"),
+    openGraph: { siteName: site.name, type: "website", images: ["/images/brand/hero.jpg"], locale: locale === "nl" ? "nl_NL" : "en_GB" },
+    twitter: { card: "summary_large_image" },
+    alternates: { canonical: "/" },
+  };
+}
 
 export const viewport: Viewport = { themeColor: "#060606" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const settings = await getSettings();
+  const [settings, locale, currency, rates] = await Promise.all([getSettings(), getLocale(), getCurrency(), getRates()]);
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -38,10 +42,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     sameAs: Object.values(site.social),
   };
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body id="top" className="flex min-h-dvh flex-col">
+        <PrefsProvider locale={locale} messages={dictionaries[locale]} currency={currency} rates={rates}>
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">
-          Skip to content
+          {dictionaries[locale]["a11y.skip"]}
         </a>
         <Header />
         <main id="main" className="flex-1">
@@ -52,6 +57,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <RevealObserver />
         <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
         {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
+        </PrefsProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </body>
     </html>

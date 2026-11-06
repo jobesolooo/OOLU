@@ -2,53 +2,54 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
-import { formatMoneyShort } from "@/lib/format";
+import { RETURN_WINDOW_DAYS } from "@/lib/returns";
 import { shippingConfig } from "@/lib/shipping";
 import { PageHeader } from "@/components/PageHeader";
+import { getT } from "@/i18n/server";
+import { getMoney } from "@/lib/rates";
 
-export const metadata: Metadata = { title: "About" };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return { title: t("meta.about") };
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
   const { freeShippingThreshold, flatRate } = shippingConfig();
+  const [{ t }, { money }] = await Promise.all([getT(), getMoney()]);
   return (
     <>
-      <PageHeader eyebrow={`${site.name} · ${site.established}`} title="About" />
+      <PageHeader eyebrow={`${site.name} · ${t("brand.established")}`} title={t("about.title")} />
       <div className="relative aspect-[16/7] max-h-[560px] w-full overflow-hidden bg-stone">
-        <Image src={site.story.image} alt="Three friends in OOLU “Your Roots.” t-shirts" fill priority sizes="100vw" className="object-cover object-[center_40%]" />
+        <Image src={site.story.image} alt={t("about.imageAlt")} fill priority sizes="100vw" className="object-cover object-[center_40%]" />
       </div>
       <div className="container-x grid gap-12 py-14 md:grid-cols-[1.2fr_1fr]">
         <div className="max-w-xl">
-          <p className="font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{site.story.title}</p>
+          <p className="font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{t("story.title")}</p>
           <div className="mt-6 space-y-4 text-[14px] leading-relaxed text-black/80">
-            {site.story.body.map((para) => (
-              <p key={para}>{para}</p>
-            ))}
+            <p>{t("story.p1")}</p>
+            <p>{t("story.p2")}</p>
+            <p>{t("story.p3")}</p>
           </div>
-          <p className="mt-8 text-[13px] uppercase">{site.story.signoff}</p>
+          <p className="mt-8 text-[13px] uppercase">{t("story.signoff")}</p>
           <Image src="/images/brand/logo.png" alt={site.name} width={120} height={138} className="mt-10 h-auto w-[110px]" />
         </div>
         <div id="shipping" className="scroll-mt-24 space-y-8 border-t border-black/10 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-12">
           <div>
-            <h2 className="label font-semibold">Shipping</h2>
+            <h2 className="label font-semibold">{t("about.shipping")}</h2>
             <p className="mt-3 text-sm leading-relaxed text-black/75">
-              Free shipping on orders over {formatMoneyShort(freeShippingThreshold)}. Otherwise a flat {formatMoneyShort(flatRate)}.
-              Orders ship within 2–4 business days, worldwide.
+              {t("about.shippingBody", { free: money(freeShippingThreshold, "EUR", true), flat: money(flatRate, "EUR", true) })}
             </p>
           </div>
           <div>
-            <h2 className="label font-semibold">Returns</h2>
-            <p className="mt-3 text-sm leading-relaxed text-black/75">
-              Unworn items with tags can be returned within 30 days. Reach out with your order number and we&apos;ll sort it.
-            </p>
+            <h2 className="label font-semibold">{t("about.returns")}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">{t("about.returnsBody", { days: RETURN_WINDOW_DAYS })}</p>
           </div>
           <div>
-            <h2 className="label font-semibold">Payments</h2>
-            <p className="mt-3 text-sm leading-relaxed text-black/75">
-              Checkout is handled by Stripe. We never see or store your card details.
-            </p>
+            <h2 className="label font-semibold">{t("about.payments")}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">{t("about.paymentsBody")}</p>
           </div>
           <Link href="/shop" className="btn-solid">
-            Shop now
+            {t("common.shopNow")}
           </Link>
         </div>
       </div>

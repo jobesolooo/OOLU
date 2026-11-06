@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Copy, X } from "lucide-react";
 import { cx } from "@/lib/format";
+import { useT, useTx } from "./Prefs";
 
 function useSubscribe(source: string) {
+  const t = useT();
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
   const [code, setCode] = useState<string | null>(null);
@@ -20,7 +22,7 @@ function useSubscribe(source: string) {
     });
     const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string | null; already?: boolean };
     if (!res.ok) {
-      setMessage(data.error ?? "Something went wrong.");
+      setMessage(data.error ?? t("newsletter.error"));
       setState("error");
       return;
     }
@@ -28,13 +30,14 @@ function useSubscribe(source: string) {
       localStorage.setItem("oolu-subscribed", "1");
     } catch {}
     setCode(data.code ?? null);
-    setMessage(data.already ? "You're already on the list." : data.code ? "You're in. Here's your code:" : "You're in. Check your inbox.");
+    setMessage(data.already ? t("newsletter.already") : data.code ? t("newsletter.inCode") : t("newsletter.inInbox"));
     setState("done");
   }
   return { state, message, code, subscribe };
 }
 
 function CodeBox({ code }: { code: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -46,7 +49,7 @@ function CodeBox({ code }: { code: string }) {
     >
       {code}
       <span className="flex items-center gap-1 font-sans text-[10px] tracking-[0.14em] uppercase">
-        <Copy className="size-3.5" /> {copied ? "Copied" : "Copy"}
+        <Copy className="size-3.5" /> {copied ? t("newsletter.copied") : t("newsletter.copy")}
       </span>
     </button>
   );
@@ -64,12 +67,14 @@ export function NewsletterForm({
   /** "box" = the large OOLU field with a black arrow button */
   variant?: "line" | "box";
 }) {
+  const t = useT();
+  const tx = useTx();
   const { state, message, code, subscribe } = useSubscribe(source);
   const [email, setEmail] = useState("");
   if (state === "done") {
     return (
       <div className="text-sm">
-        <p>{message}</p>
+        <p>{tx(message)}</p>
         {code && <CodeBox code={code} />}
       </div>
     );
@@ -89,8 +94,8 @@ export function NewsletterForm({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
-            aria-label="Email address"
+            placeholder={t("newsletter.emailAddress")}
+            aria-label={t("newsletter.emailAddress")}
             className="w-full bg-transparent py-3 text-[14px] placeholder:text-black/45 focus:outline-none"
           />
           <button aria-label={cta} className="grid size-11 shrink-0 place-items-center bg-ink text-white transition-opacity hover:opacity-85" disabled={state === "sending"}>
@@ -104,8 +109,8 @@ export function NewsletterForm({
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your email"
-          aria-label="Email address"
+          placeholder={t("newsletter.placeholder")}
+          aria-label={t("newsletter.emailAddress")}
           className={cx("w-full bg-transparent py-3 text-[15px] focus:outline-none", dark ? "placeholder:text-white/50" : "placeholder:text-black/40")}
         />
         <button className="flex shrink-0 items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase" disabled={state === "sending"}>
@@ -113,10 +118,10 @@ export function NewsletterForm({
         </button>
       </div>
       )}
-      {state === "error" && <p className="mt-2 text-xs text-red-500">{message}</p>}
+      {state === "error" && <p className="mt-2 text-xs text-red-500">{tx(message)}</p>}
       <p className={cx("mt-3 text-[11px]", dark ? "text-white/50" : "text-ash")}>
-        By subscribing you agree to receive marketing emails. Unsubscribe anytime. See our{" "}
-        <Link href="/legal/privacy" className="underline">privacy policy</Link>.
+        {t("newsletter.consent")}{" "}
+        <Link href="/legal/privacy" className="underline">{t("newsletter.privacyLink")}</Link>.
       </p>
     </form>
   );
@@ -125,6 +130,7 @@ export function NewsletterForm({
 const HIDE_ON = ["/admin", "/checkout", "/account", "/cart"];
 
 export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: number; delaySeconds: number }) {
+  const t = useT();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -163,21 +169,21 @@ export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: numb
           aria-hidden
         />
         <div className="p-8 sm:p-10">
-          <button onClick={close} aria-label="Close" className="absolute top-4 right-4">
+          <button onClick={close} aria-label={t("popup.close")} className="absolute top-4 right-4">
             <X className="size-5" strokeWidth={1.5} />
           </button>
-          <p className="eyebrow text-accent">OOLU · Built on trust</p>
+          <p className="eyebrow text-accent">{t("popup.eyebrow")}</p>
           <h2 id="popup-title" className="mt-3 font-display font-normal tracking-[-0.02em] text-[44px] leading-[1]">
-            {percentOff}% off
+            {t("popup.title1", { percent: percentOff })}
             <br />
-            your first order
+            {t("popup.title2")}
           </h2>
-          <p className="mt-4 text-sm text-white/75">Early drops, restocks and stories from Amsterdam — plus a one-time code for your first order.</p>
+          <p className="mt-4 text-sm text-white/75">{t("popup.body")}</p>
           <div className="mt-6">
-            <NewsletterForm source="popup" dark cta="Get code" />
+            <NewsletterForm source="popup" dark cta={t("popup.cta")} />
           </div>
           <button onClick={close} className="mt-5 text-[11px] tracking-[0.14em] text-white/60 uppercase underline-offset-4 hover:underline">
-            No thanks
+            {t("popup.noThanks")}
           </button>
         </div>
       </div>

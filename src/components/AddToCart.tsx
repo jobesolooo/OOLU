@@ -8,6 +8,7 @@ import { variantKey, variantLabel, type ColorOption } from "@/lib/variants";
 import { NotifyMe } from "./NotifyMe";
 import { SizeGuide, type SizeChart } from "./product/SizeGuide";
 import { WishlistButton } from "./WishlistButton";
+import { useT } from "./Prefs";
 import type { SavedProduct } from "@/store/saved";
 
 type Props = {
@@ -15,9 +16,11 @@ type Props = {
   /** variant key → units left; missing = not tracked (unlimited) */
   stock: Record<string, number>;
   sizeChart?: SizeChart | null;
+  category?: string;
 };
 
-export function AddToCart({ product, stock, sizeChart }: Props) {
+export function AddToCart({ product, stock, sizeChart, category }: Props) {
+  const t = useT();
   const add = useCart((s) => s.add);
   const hasColors = product.colors.length > 0;
   const oneSize = product.sizes.length === 1;
@@ -40,15 +43,15 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
   if (product.upcoming) {
     return (
       <div className="space-y-4">
-        <NotifyMe productId={product.id} size="" label="Get an email the moment it drops" />
+        <NotifyMe productId={product.id} size="" label={t("notify.dropLabel")} />
         <WishlistButton product={product} label className="border border-black/20 px-5 py-3.5 hover:border-ink" />
       </div>
     );
   }
 
   function onAdd() {
-    if (hasColors && !color) return setError("Pick a colour first.");
-    if (!size || !key) return setError("Pick a size first.");
+    if (hasColors && !color) return setError(t("pdp.pickColour"));
+    if (!size || !key) return setError(t("pdp.pickSize"));
     add({
       productId: product.id,
       slug: product.slug,
@@ -68,7 +71,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
     <div className="space-y-7">
       {hasColors && (
         <fieldset>
-          <legend className="label mb-3 font-semibold">Colour: <span className="font-normal normal-case">{color}</span></legend>
+          <legend className="label mb-3 font-semibold">{t("pdp.colour")}: <span className="font-normal normal-case">{color}</span></legend>
           <div className="flex flex-wrap gap-2">
             {product.colors.map((c) => {
               const out = colorOut(c.name);
@@ -77,7 +80,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
                   key={c.name}
                   type="button"
                   aria-pressed={color === c.name}
-                  aria-label={out ? `${c.name}, sold out` : c.name}
+                  aria-label={out ? t("pdp.soldOutAria", { name: c.name }) : c.name}
                   onClick={() => {
                     setColor(c.name);
                     setQty(1);
@@ -101,8 +104,8 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
       {!oneSize && (
         <fieldset>
           <div className="mb-3 flex items-center justify-between">
-            <legend className="label font-semibold">Size{size ? `: ${size}` : ""}</legend>
-            {sizeChart && <SizeGuide chart={sizeChart} productName={product.name} />}
+            <legend className="label font-semibold">{t("pdp.size")}{size ? `: ${size}` : ""}</legend>
+            {sizeChart && <SizeGuide chart={sizeChart} productName={product.name} category={category} />}
           </div>
           <div className="grid grid-cols-5 gap-2">
             {product.sizes.map((s) => {
@@ -120,7 +123,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
                     setError(null);
                   }}
                   aria-pressed={size === s}
-                  aria-label={missing ? `${s}, not made in this colour` : out ? `${s}, sold out — get notified` : s}
+                  aria-label={missing ? t("pdp.notMadeAria", { size: s }) : out ? t("pdp.sizeOutAria", { size: s }) : s}
                   className={cx(
                     "border py-3.5 text-[13px] font-medium transition-colors",
                     size === s ? "border-ink bg-ink text-white" : "border-black/20 hover:border-ink",
@@ -133,7 +136,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
               );
             })}
           </div>
-          {left !== undefined && left > 0 && left <= 5 && <p className="mt-3 text-[13px] text-[#a3271b]">Only {left} left</p>}
+          {left !== undefined && left > 0 && left <= 5 && <p className="mt-3 text-[13px] text-[#a3271b]">{t("pdp.onlyLeft", { count: left })}</p>}
         </fieldset>
       )}
 
@@ -141,18 +144,18 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
         <NotifyMe
           productId={product.id}
           size={key ?? ""}
-          label={`${key && !oneSize ? `${variantLabel(key)} is sold out` : "Sold out"} — get notified when it's back`}
+          label={key && !oneSize ? t("notify.variantOut", { variant: variantLabel(key) }) : t("notify.soldOut")}
         />
       ) : (
         <div className="flex gap-3">
           <div className="flex items-center border border-black/20">
-            <button type="button" aria-label="Decrease quantity" className="grid size-12 place-items-center sm:size-14" onClick={() => setQty((q) => Math.max(1, q - 1))}>
+            <button type="button" aria-label={t("pdp.decrease")} className="grid size-12 place-items-center sm:size-14" onClick={() => setQty((q) => Math.max(1, q - 1))}>
               <Minus className="size-3.5" />
             </button>
             <span className="w-8 text-center text-sm tabular-nums">{qty}</span>
             <button
               type="button"
-              aria-label="Increase quantity"
+              aria-label={t("pdp.increase")}
               className="grid size-12 place-items-center disabled:opacity-30 sm:size-14"
               disabled={qty >= maxQty}
               onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
@@ -161,7 +164,7 @@ export function AddToCart({ product, stock, sizeChart }: Props) {
             </button>
           </div>
           <button type="button" className="btn-solid flex-1 px-4 py-[18px] text-[13px] whitespace-nowrap" onClick={onAdd} disabled={everythingOut}>
-            {everythingOut ? "Sold out" : added ? <span key="added" className="animate-fade-in">Added ✓</span> : "Add to bag"}
+            {everythingOut ? t("pdp.soldOut") : added ? <span key="added" className="animate-fade-in">{t("pdp.added")}</span> : t("pdp.addToBag")}
           </button>
           <WishlistButton product={product} className="grid w-12 shrink-0 place-items-center border border-black/20 hover:border-ink sm:w-14" />
         </div>

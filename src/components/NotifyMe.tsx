@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { Bell, Check } from "lucide-react";
+import { useT, useTx } from "./Prefs";
 
 export function NotifyMe({ productId, size, label }: { productId: string; size: string; label: string }) {
+  const t = useT();
+  const tx = useTx();
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState("");
@@ -18,7 +21,7 @@ export function NotifyMe({ productId, size, label }: { productId: string; size: 
     });
     if (res.ok) setState("done");
     else {
-      setError(((await res.json().catch(() => ({}))) as { error?: string }).error ?? "Something went wrong.");
+      setError(((await res.json().catch(() => ({}))) as { error?: string }).error ?? t("common.error"));
       setState("error");
     }
   }
@@ -26,7 +29,7 @@ export function NotifyMe({ productId, size, label }: { productId: string; size: 
   if (state === "done") {
     return (
       <p className="flex items-center gap-2 border border-black/15 bg-white p-4 text-sm">
-        <Check className="size-4" /> We&apos;ll email {email} the moment it&apos;s available.
+        <Check className="size-4" /> {t("notify.done", { email })}
       </p>
     );
   }
@@ -42,15 +45,15 @@ export function NotifyMe({ productId, size, label }: { productId: string; size: 
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@email.com"
-          aria-label="Email"
+          placeholder={t("notify.placeholder")}
+          aria-label={t("newsletter.emailAddress")}
           className="input py-3"
         />
         <button className="btn-solid shrink-0 px-5" disabled={state === "sending"}>
-          {state === "sending" ? "…" : "Notify me"}
+          {state === "sending" ? "…" : t("notify.button")}
         </button>
       </div>
-      {state === "error" && <p className="text-xs text-red-700">{error}</p>}
+      {state === "error" && <p className="text-xs text-red-700">{tx(error)}</p>}
     </form>
   );
 }

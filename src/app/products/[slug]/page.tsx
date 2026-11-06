@@ -7,7 +7,10 @@ import { getStockMap, stockKey } from "@/lib/inventory";
 import { getApprovedReviews, getRatingsMap, getUserReview, summarize } from "@/lib/reviews";
 import { getCurrentUser } from "@/lib/auth";
 import { COLLECTIONS, SIZE_GUIDES } from "@/lib/demo-catalog";
-import { cx, formatMoneyShort } from "@/lib/format";
+import { cx } from "@/lib/format";
+import { getT } from "@/i18n/server";
+import { getMoney } from "@/lib/rates";
+import type { MessageKey } from "@/i18n/messages";
 import { shippingConfig } from "@/lib/shipping";
 import { RETURN_WINDOW_DAYS } from "@/lib/returns";
 import { AddToCart } from "@/components/AddToCart";
@@ -40,6 +43,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
+  const [{ t }, { money }] = await Promise.all([getT(), getMoney()]);
   const [stockMap, variants, reviews, ratings, user, all] = await Promise.all([
     getStockMap([product.id]),
     getVariants(product),
@@ -96,9 +100,9 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       <RecordView product={saved} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
-      <nav aria-label="Breadcrumb" className="container-x py-4 text-[11px] tracking-[0.14em] text-ash uppercase">
-        <Link href="/" className="hover:text-ink">Home</Link> <span className="mx-2">/</span>
-        <Link href="/shop" className="hover:text-ink">Shop</Link> <span className="mx-2">/</span>
+      <nav aria-label={t("pdp.breadcrumb")} className="container-x py-4 text-[11px] tracking-[0.14em] text-ash uppercase">
+        <Link href="/" className="hover:text-ink">{t("common.home")}</Link> <span className="mx-2">/</span>
+        <Link href="/shop" className="hover:text-ink">{t("common.shop")}</Link> <span className="mx-2">/</span>
         <span className="text-ink">{product.name}</span>
       </nav>
 
@@ -108,7 +112,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+24px)] lg:self-start">
           {collection && (
             <Link href={`/shop?collection=${product.collection}`} className="eyebrow text-ash hover:text-ink">
-              {collection.title}
+              {t(`cat.${product.collection}` as MessageKey) === `cat.${product.collection}` ? collection.title : t(`cat.${product.collection}` as MessageKey)}
             </Link>
           )}
           <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(32px,3vw,52px)] leading-[0.98]">{product.name}</h1>
@@ -116,7 +120,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             <Price amount={product.unitAmount} compareAt={product.compareAtAmount} currency={product.currency} className="text-xl" />
             {summary.count > 0 && (
               <a href="#reviews" className="flex items-center gap-2 text-sm">
-                <Stars value={summary.average} size={15} /> <span className="underline underline-offset-4">{summary.count} review{summary.count === 1 ? "" : "s"}</span>
+                <Stars value={summary.average} size={15} /> <span className="underline underline-offset-4">{t(summary.count === 1 ? "pdp.reviewCount" : "pdp.reviewsCount", { count: summary.count })}</span>
               </a>
             )}
           </div>
@@ -124,7 +128,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
           {variants.length > 1 && (
             <div className="mt-8">
-              <p className="label mb-3 font-semibold">Colour: {product.color}</p>
+              <p className="label mb-3 font-semibold">{t("pdp.colour")}: {product.color}</p>
               <div className="flex gap-3">
                 {variants.map((v) => (
                   <Link
@@ -144,26 +148,26 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
           {upcoming && product.releaseAt && (
             <div className="mt-8 bg-ink p-6 text-white">
-              <p className="eyebrow text-white/70">Drops in</p>
+              <p className="eyebrow text-white/70">{t("pdp.dropsIn")}</p>
               <Countdown to={product.releaseAt} className="mt-4" />
             </div>
           )}
 
           <div className="mt-8">
-            <AddToCart product={{ ...saved, sizes: product.sizes, colors: product.colors, variants: keys, upcoming }} stock={stock} sizeChart={sizeChart} />
+            <AddToCart product={{ ...saved, sizes: product.sizes, colors: product.colors, variants: keys, upcoming }} stock={stock} sizeChart={sizeChart} category={product.category} />
           </div>
 
           <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-black/10 pt-6 text-[13px]">
-            <li className="flex items-center gap-3"><Truck className="size-4 shrink-0" strokeWidth={1.3} /> Free shipping over {formatMoneyShort(freeShippingThreshold)}</li>
-            <li className="flex items-center gap-3"><RefreshCw className="size-4 shrink-0" strokeWidth={1.3} /> {RETURN_WINDOW_DAYS}-day returns</li>
-            <li className="flex items-center gap-3"><ShieldCheck className="size-4 shrink-0" strokeWidth={1.3} /> Secure checkout</li>
-            <li className="flex items-center gap-3"><Leaf className="size-4 shrink-0" strokeWidth={1.3} /> Built to last</li>
+            <li className="flex items-center gap-3"><Truck className="size-4 shrink-0" strokeWidth={1.3} /> {t("pdp.freeShipping", { amount: money(freeShippingThreshold, "EUR", true) })}</li>
+            <li className="flex items-center gap-3"><RefreshCw className="size-4 shrink-0" strokeWidth={1.3} /> {t("pdp.returns", { days: RETURN_WINDOW_DAYS })}</li>
+            <li className="flex items-center gap-3"><ShieldCheck className="size-4 shrink-0" strokeWidth={1.3} /> {t("pdp.secure")}</li>
+            <li className="flex items-center gap-3"><Leaf className="size-4 shrink-0" strokeWidth={1.3} /> {t("pdp.builtToLast")}</li>
           </ul>
-          <PaymentIcons size="sm" className="mt-5" />
+          <PaymentIcons size="sm" className="mt-5" label={t("footer.paymentsAria")} />
 
           <div className="mt-8 divide-y divide-black/10 border-y border-black/10">
             {product.details.length > 0 && (
-              <Accordion title="Details" open>
+              <Accordion title={t("pdp.details")} open>
                 <ul className="list-disc space-y-1.5 pl-5">
                   {product.details.map((d) => (
                     <li key={d}>{d}</li>
@@ -171,15 +175,15 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 </ul>
               </Accordion>
             )}
-            <Accordion title="Shipping">
-              Orders ship within 1–2 business days. Standard delivery takes 3–7 business days. Free shipping on orders over{" "}
-              {formatMoneyShort(freeShippingThreshold)}. <Link href="/help#shipping" className="underline">More info</Link>
+            <Accordion title={t("pdp.shipping")}>
+              {t("pdp.shippingBody", { amount: money(freeShippingThreshold, "EUR", true) })}{" "}
+              <Link href="/help#shipping" className="underline">{t("pdp.moreInfo")}</Link>
             </Accordion>
-            <Accordion title="Returns">
-              Unworn items with tags can be returned within {RETURN_WINDOW_DAYS} days. Start a return from your account or the{" "}
-              <Link href="/track" className="underline">order tracking page</Link>.
+            <Accordion title={t("pdp.returnsTitle")}>
+              {t("pdp.returnsBody", { days: RETURN_WINDOW_DAYS })}{" "}
+              <Link href="/track" className="underline">{t("pdp.trackingPage")}</Link>.
             </Accordion>
-            <Accordion title="Care">Wash cold, inside out. Do not tumble dry. Iron on reverse, avoiding the print.</Accordion>
+            <Accordion title={t("pdp.care")}>{t("pdp.careBody")}</Accordion>
           </div>
         </div>
       </div>
@@ -198,7 +202,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       {related.length > 0 && (
         <section className="section-y border-t border-black/10 bg-mist">
           <div className="container-x">
-            <h2 className="eyebrow mb-8">You may also like</h2>
+            <h2 className="eyebrow mb-8">{t("pdp.youMayLike")}</h2>
             <div data-reveal="stagger" className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-10 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} rating={ratings.get(p.id)} />

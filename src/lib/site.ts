@@ -17,60 +17,28 @@ export const site = {
   region: "Worldwide",
   currency: "EUR",
 
-  hero: {
-    eyebrow: "OOLU · Rooted in Africa. Created in Amsterdam.",
-    title: "Live in the present.",
-    cta: { label: "Shop the tracksuit", href: "/products/oolu-tracksuit" },
-    image: "/images/brand/hero.jpg",
-  },
-
-  marquee: [
-    "Rooted in Africa. Created in Amsterdam. Made for the world.",
-    "Wear your roots. Tell your story.",
-    "OOLU — Built on trust.",
-  ],
+  // Copy for these sections lives in the translation files (src/i18n): hero.*, marquee.*, story.*, feature.*
+  hero: { image: "/images/brand/hero.jpg", ctaHref: "/products/oolu-tracksuit" },
 
   categories: [
-    { slug: "t-shirts", label: "T-Shirts", image: "/images/brand/tile-t-shirts.jpg" },
-    { slug: "sleeveless-and-tanks", label: "Sleeveless & Tanks", image: "/images/brand/tile-tanks.jpg" },
-    { slug: "tracksuits", label: "Tracksuits", image: "/images/brand/tile-tracksuits.jpg" },
+    { slug: "t-shirts", image: "/images/brand/tile-t-shirts.jpg" },
+    { slug: "sleeveless-and-tanks", image: "/images/brand/tile-tanks.jpg" },
+    { slug: "tracksuits", image: "/images/brand/tile-tracksuits.jpg" },
   ],
 
-  story: {
-    eyebrow: "Our story",
-    title: "OOLU means trust.",
-    body: [
-      "Born from West African roots and built with a global vision, OOLU represents trust in yourself, trust in your journey and trust in where you come from.",
-      "We create clothing for people who move with confidence, stay true to themselves and carry their identity with pride. Every OOLU piece is more than something you wear. It represents loyalty, connection, ambition and the courage to believe in your own path.",
-      "Rooted in Africa. Created in Amsterdam. Made for the world.",
-    ],
-    signoff: "OOLU — Built on trust.",
-    cta: { label: "Shop the collection", href: "/shop" },
-    image: "/images/brand/story-roots.jpg",
-  },
+  story: { image: "/images/brand/story-roots.jpg", ctaHref: "/shop" },
 
   features: [
-    {
-      title: "Easy comfort always",
-      body: "Soft fabrics and relaxed fits keep you moving naturally from morning commute to late-night hangout",
-      cta: { label: "Shop now", href: "/shop?category=t-shirts" },
-      image: "/images/brand/look-friends.jpg",
-      tone: "#dcdcda",
-    },
-    {
-      title: "Made to move",
-      body: "Each piece is crafted for long-lasting comfort, pared-back style, and quiet confidence on the go",
-      cta: { label: "Shop now", href: "/shop?category=tracksuits" },
-      image: "/images/brand/made-to-move.jpg",
-      tone: "#eeedeb",
-    },
+    { key: "comfort", href: "/shop?category=t-shirts", image: "/images/brand/look-friends.jpg", tone: "#dcdcda" },
+    { key: "move", href: "/shop?category=tracksuits", image: "/images/brand/made-to-move.jpg", tone: "#eeedeb" },
   ],
 
+  // Labels are translation keys (src/i18n).
   nav: [
-    { label: "Home", href: "/" },
-    { label: "Catalog", href: "/shop" },
-    { label: "Journal", href: "/journal" },
-    { label: "Contact", href: "/help/contact" },
+    { key: "nav.home", href: "/" },
+    { key: "nav.catalog", href: "/shop" },
+    { key: "nav.journal", href: "/journal" },
+    { key: "nav.contact", href: "/help/contact" },
   ],
 
   social: {

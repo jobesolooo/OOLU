@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cx } from "@/lib/format";
+import { useT } from "./Prefs";
 
 function parts(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -9,6 +10,7 @@ function parts(ms: number) {
 }
 
 export function Countdown({ to, className, size = "lg" }: { to: number; className?: string; size?: "sm" | "lg" }) {
+  const t = useT();
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     const tick = () => setNow(Date.now());
@@ -21,10 +23,10 @@ export function Countdown({ to, className, size = "lg" }: { to: number; classNam
   }, []);
   const p = parts(to - (now ?? to));
   const cells: [number, string][] = [
-    [p.d, "Days"],
-    [p.h, "Hrs"],
-    [p.m, "Min"],
-    [p.s, "Sec"],
+    [p.d, t("countdown.days")],
+    [p.h, t("countdown.hours")],
+    [p.m, t("countdown.minutes")],
+    [p.s, t("countdown.seconds")],
   ];
   return (
     <div className={cx("flex gap-3 sm:gap-5", className)} role="timer" aria-live="off" suppressHydrationWarning>

@@ -1,6 +1,7 @@
 import { getFeaturedProducts, getProducts, getUpcomingDrops, isOnSale } from "@/lib/catalog";
 import { getRatingsMap } from "@/lib/reviews";
-import { getSettings } from "@/lib/settings";
+import { DEFAULT_SETTINGS, getSettings } from "@/lib/settings";
+import { getT } from "@/i18n/server";
 import { latestPosts } from "@/content/journal";
 import { nowMs } from "@/lib/time";
 import { Hero } from "@/components/home/Hero";
@@ -10,6 +11,7 @@ import { RecentlyViewed } from "@/components/RecentlyViewed";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  const { t, locale } = await getT();
   const [featured, all, drops, ratings, settings] = await Promise.all([
     getFeaturedProducts(8),
     getProducts(),
@@ -24,15 +26,22 @@ export default async function HomePage() {
   const counts: Record<string, number> = {};
   for (const p of all) counts[p.category] = (counts[p.category] ?? 0) + 1;
 
-  const banner = settings.dropBanner;
+  // Admin-edited copy is shown as written; the built-in defaults are translated.
+  const banner = {
+    ...settings.dropBanner,
+    eyebrow: settings.dropBanner.eyebrow === DEFAULT_SETTINGS.dropBanner.eyebrow ? t("drop.eyebrow") : settings.dropBanner.eyebrow,
+    title: settings.dropBanner.title === DEFAULT_SETTINGS.dropBanner.title ? t("drop.title") : settings.dropBanner.title,
+    body: settings.dropBanner.body === DEFAULT_SETTINGS.dropBanner.body ? t("drop.body") : settings.dropBanner.body,
+  };
+  const promo = settings.announcement === DEFAULT_SETTINGS.announcement ? t("promo.text") : settings.announcement;
   const nextDrop = drops[0];
   const launchAt = banner.launchAt ? Date.parse(banner.launchAt) : (nextDrop?.releaseAt ?? null);
   const showBanner = banner.enabled && launchAt != null && launchAt > nowMs();
 
   return (
     <>
-      <Hero promo={settings.announcement} />
-      <ProductRow title="New Arrivals" products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
+      <Hero promo={promo} />
+      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
       <CategoryTiles counts={counts} />
       <Story />
       <Features />
@@ -46,8 +55,8 @@ export default async function HomePage() {
           image="/images/brand/tracksuit-duo-2.jpg"
         />
       )}
-      {onSale.length >= 4 && <ProductRow title="On sale" products={onSale} href="/shop?sale=1" ratings={ratings} />}
-      <JournalTeaser posts={latestPosts(3)} />
+      {onSale.length >= 4 && <ProductRow title={t("home.onSale")} products={onSale} href="/shop?sale=1" ratings={ratings} />}
+      <JournalTeaser posts={latestPosts(3, locale)} />
       <RecentlyViewed />
       <NewsletterBand percentOff={settings.popup.percentOff} />
     </>

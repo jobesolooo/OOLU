@@ -1,16 +1,22 @@
+"use client";
+
+import { useMoney, useT } from "@/components/Prefs";
+
 import Image from "next/image";
 import type { Order, OrderItem } from "@/lib/db/schema";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 import { OrderStatusBadge } from "./OrderStatusBadge";
 import { variantLabel } from "@/lib/variants";
 
 export function OrderDetail({ order, items }: { order: Order; items: OrderItem[] }) {
   const a = order.shippingAddress;
+  const t = useT();
+  const { date } = useMoney();
   return (
     <div className="grid gap-8 md:grid-cols-[1.6fr_1fr]">
       <div className="bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="label font-semibold">Items</h2>
+          <h2 className="label font-semibold">{t("order.items")}</h2>
           <OrderStatusBadge status={order.status} />
         </div>
         <ul className="divide-y divide-black/10">
@@ -22,7 +28,7 @@ export function OrderDetail({ order, items }: { order: Order; items: OrderItem[]
               <div className="flex-1 text-sm">
                 <p className="font-medium">{i.name}</p>
                 <p className="text-xs text-ash">
-                  {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}Qty {i.quantity} × {formatMoney(i.unitAmount, order.currency)}
+                  {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}{t("order.qty", { qty: i.quantity })} × {formatMoney(i.unitAmount, order.currency)}
                 </p>
               </div>
               <p className="text-sm">{formatMoney(i.unitAmount * i.quantity, order.currency)}</p>
@@ -30,29 +36,29 @@ export function OrderDetail({ order, items }: { order: Order; items: OrderItem[]
           ))}
         </ul>
         <dl className="mt-4 ml-auto max-w-xs space-y-1 text-sm">
-          <div className="flex justify-between"><dt className="text-ash">Subtotal</dt><dd>{formatMoney(order.subtotal, order.currency)}</dd></div>
-          <div className="flex justify-between"><dt className="text-ash">Shipping</dt><dd>{formatMoney(order.shipping, order.currency)}</dd></div>
-          {order.tax > 0 && <div className="flex justify-between"><dt className="text-ash">Tax</dt><dd>{formatMoney(order.tax, order.currency)}</dd></div>}
-          <div className="flex justify-between border-t border-black/10 pt-2 font-semibold"><dt>Total</dt><dd>{formatMoney(order.total, order.currency)}</dd></div>
+          <div className="flex justify-between"><dt className="text-ash">{t("order.subtotal")}</dt><dd>{formatMoney(order.subtotal, order.currency)}</dd></div>
+          <div className="flex justify-between"><dt className="text-ash">{t("order.shipping")}</dt><dd>{formatMoney(order.shipping, order.currency)}</dd></div>
+          {order.tax > 0 && <div className="flex justify-between"><dt className="text-ash">{t("order.tax")}</dt><dd>{formatMoney(order.tax, order.currency)}</dd></div>}
+          <div className="flex justify-between border-t border-black/10 pt-2 font-semibold"><dt>{t("order.total")}</dt><dd>{formatMoney(order.total, order.currency)}</dd></div>
           {order.refundedAmount > 0 && (
-            <div className="flex justify-between text-rose-800"><dt>Refunded</dt><dd>−{formatMoney(order.refundedAmount, order.currency)}</dd></div>
+            <div className="flex justify-between text-rose-800"><dt>{t("order.refunded")}</dt><dd>−{formatMoney(order.refundedAmount, order.currency)}</dd></div>
           )}
         </dl>
       </div>
       <div className="space-y-6">
         <div className="bg-white p-6 text-sm">
-          <h2 className="label mb-3 font-semibold">Details</h2>
-          <p className="text-ash">Placed {formatDate(order.createdAt)}</p>
+          <h2 className="label mb-3 font-semibold">{t("order.details")}</h2>
+          <p className="text-ash">{t("order.placed", { date: date(order.createdAt) })}</p>
           {order.email && <p className="mt-1">{order.email}</p>}
           {order.trackingNumber && (
             <p className="mt-3">
-              Tracking: <strong>{order.trackingCarrier} {order.trackingNumber}</strong>
+              {t("order.trackingLabel")} <strong>{order.trackingCarrier} {order.trackingNumber}</strong>
             </p>
           )}
         </div>
         {a && (
           <div className="bg-white p-6 text-sm leading-relaxed">
-            <h2 className="label mb-3 font-semibold">Shipping address</h2>
+            <h2 className="label mb-3 font-semibold">{t("order.address")}</h2>
             {[a.name, a.line1, a.line2, [a.postal_code, a.city].filter(Boolean).join(" "), a.state, a.country, a.phone]
               .filter(Boolean)
               .map((l, i) => (

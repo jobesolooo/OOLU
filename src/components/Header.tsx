@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Search, User, ShoppingBag, ChevronDown, Menu, X, Heart } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, X, Heart } from "lucide-react";
 import Image from "next/image";
 import { useWishlist } from "@/store/saved";
 import { useSession } from "@/store/session";
@@ -11,10 +11,13 @@ import { site } from "@/lib/site";
 import { cx } from "@/lib/format";
 import { useCart, cartCount } from "@/store/cart";
 import { useMounted } from "@/lib/use-mounted";
+import { useT } from "./Prefs";
+import { PreferencesMenu } from "./PreferencesMenu";
 
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useT();
   const lines = useCart((s) => s.lines);
   const setOpen = useCart((s) => s.setOpen);
   const mounted = useMounted();
@@ -73,10 +76,10 @@ export function Header() {
     >
       <div className="container-x grid h-[var(--nav-h)] grid-cols-[1fr_auto_1fr] items-center">
         <div className="flex items-center">
-          <button className="-ml-1 p-1 md:hidden" aria-label="Open menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
+          <button className="-ml-1 p-1 md:hidden" aria-label={t("nav.openMenu")} aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
             <Menu className="size-5" strokeWidth={1.5} />
           </button>
-          <nav className="hidden items-center gap-[clamp(18px,2vw,32px)] md:flex" aria-label="Main">
+          <nav className="hidden items-center gap-[clamp(18px,2vw,32px)] md:flex" aria-label={t("a11y.main")}>
             {site.nav.map((item) => (
               <Link
                 key={item.href}
@@ -85,7 +88,7 @@ export function Header() {
                   "group/nav relative py-2 text-[12px] tracking-[0.04em] uppercase",
                 )}
               >
-                {item.label}
+                {t(item.key)}
                 <span
                   className={cx(
                     "absolute inset-x-0 bottom-1 h-px origin-left bg-current transition-transform duration-300 ease-out",
@@ -97,18 +100,18 @@ export function Header() {
           </nav>
         </div>
 
-        <Link href="/" aria-label={`${site.name} home`} className="block">
+        <Link href="/" aria-label={t("nav.home.aria", { name: site.name })} className="block">
           <Image src="/images/brand/logo.png" alt={site.name} width={70} height={80} priority className="h-[clamp(36px,3.4vw,52px)] w-auto" />
         </Link>
 
         <div className="flex items-center justify-end gap-5 md:gap-6">
-          <span className="hidden items-center gap-1 text-[11px] font-medium tracking-[0.06em] lg:flex">
-            {site.currency} <ChevronDown className="size-3" strokeWidth={1.5} />
-          </span>
-          <button aria-label="Search" onClick={() => setSearchOpen((v) => !v)} className="hidden sm:block">
+          <div className="hidden md:block">
+            <PreferencesMenu />
+          </div>
+          <button aria-label={t("nav.search")} onClick={() => setSearchOpen((v) => !v)} className="hidden sm:block">
             <Search className="size-[19px]" strokeWidth={1.5} />
           </button>
-          <Link href="/wishlist" aria-label={`Wishlist, ${savedCount} items`} className="relative hidden sm:block">
+          <Link href="/wishlist" aria-label={t("nav.wishlistAria", { count: savedCount })} className="relative hidden sm:block">
             <Heart className="size-[19px]" strokeWidth={1.5} />
             {savedCount > 0 && (
               <span className={cx("absolute -top-1.5 -right-2 grid size-[16px] place-items-center rounded-full text-[9px] font-bold", badge)}>
@@ -116,7 +119,7 @@ export function Header() {
               </span>
             )}
           </Link>
-          <Link href="/account" aria-label={me ? `Account (${me.name ?? me.email})` : "Sign in"} className="flex items-center">
+          <Link href="/account" aria-label={me ? `${t("nav.account")} (${me.name ?? me.email})` : t("nav.signIn")} className="flex items-center">
             {me ? (
               <span className={cx("grid size-[26px] place-items-center rounded-full text-[11px] font-bold uppercase", badge)}>
                 {(me.name ?? me.email).trim().charAt(0)}
@@ -125,7 +128,7 @@ export function Header() {
               <User className="size-[19px]" strokeWidth={1.5} />
             )}
           </Link>
-          <button aria-label={`Cart, ${count} items`} className="relative" onClick={() => setOpen(true)}>
+          <button aria-label={t("nav.cartAria", { count })} className="relative" onClick={() => setOpen(true)}>
             <ShoppingBag className="size-[19px]" strokeWidth={1.5} />
             {count > 0 && (
               <span key={count} className={cx("animate-pop absolute -top-1.5 -right-2 grid size-[16px] place-items-center rounded-full text-[9px] font-bold", badge)}>
@@ -151,7 +154,7 @@ export function Header() {
             <input
               ref={inputRef}
               name="q"
-              placeholder="Search t-shirts, tracksuits, tanks…"
+              placeholder={t("nav.searchPlaceholder")}
               className="w-full bg-transparent py-2 text-sm placeholder:text-black/40 focus:outline-none"
               onKeyDown={(e) => e.key === "Escape" && setSearchOpen(false)}
             />
@@ -166,7 +169,7 @@ export function Header() {
           onClick={() => setMenuOpen(false)}
         />
         <nav
-          aria-label="Mobile"
+          aria-label={t("a11y.mobile")}
           inert={!menuOpen}
           onClickCapture={(e) => (e.target as HTMLElement).closest("a") && setMenuOpen(false)}
           className={cx(
@@ -176,7 +179,7 @@ export function Header() {
         >
           <div className="flex h-[var(--nav-h)] items-center justify-between border-b border-black/10 px-5">
             <Image src="/images/brand/logo-mark.png" alt={site.name} width={40} height={38} className="h-9 w-auto" />
-            <button aria-label="Close menu" onClick={() => setMenuOpen(false)} className="p-1 transition-transform duration-300 hover:rotate-90">
+            <button aria-label={t("nav.closeMenu")} onClick={() => setMenuOpen(false)} className="p-1 transition-transform duration-300 hover:rotate-90">
               <X className="size-5" strokeWidth={1.5} />
             </button>
           </div>
@@ -192,26 +195,31 @@ export function Header() {
                 )}
                 style={{ transitionDelay: menuOpen ? `${120 + i * 50}ms` : "0ms" }}
               >
-                {item.label}
+                {t(item.key)}
               </Link>
             ))}
             <div className="mt-4 grid grid-cols-2 gap-x-4">
-              {[
-                { label: "Wishlist", href: "/wishlist" },
-                { label: "Account", href: "/account" },
-                { label: "Gift cards", href: "/gift-cards" },
-                { label: "Track order", href: "/track" },
-                { label: "Help", href: "/help" },
-                { label: "Search", href: "/search" },
-              ].map((l) => (
-                <Link key={l.href} href={l.href} className="py-3 text-[11px] tracking-[0.08em] text-black/60 uppercase hover:text-ink">
-                  {l.label}
+              {(
+                [
+                  ["nav.wishlist", "/wishlist"],
+                  ["nav.account", "/account"],
+                  ["nav.giftCards", "/gift-cards"],
+                  ["nav.track", "/track"],
+                  ["nav.help", "/help"],
+                  ["nav.search", "/search"],
+                ] as const
+              ).map(([key, href]) => (
+                <Link key={href} href={href} className="py-3 text-[11px] tracking-[0.08em] text-black/60 uppercase hover:text-ink">
+                  {t(key)}
                 </Link>
               ))}
             </div>
+            <div className="mt-6 border-t border-black/10 pt-5">
+              <PreferencesMenu variant="panel" />
+            </div>
           </div>
           <p className="border-t border-black/10 px-5 py-4 text-[11px] tracking-[0.06em] text-accent uppercase">
-            {site.name} · {site.established}
+            {site.name} · {t("brand.established")}
           </p>
         </nav>
       </div>

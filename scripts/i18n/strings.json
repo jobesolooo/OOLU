@@ -1,0 +1,2602 @@
+{
+ "a11y.main": [
+  "Main",
+  "Hoofdmenu"
+ ],
+ "a11y.mobile": [
+  "Mobile menu",
+  "Mobiel menu"
+ ],
+ "a11y.skip": [
+  "Skip to content",
+  "Naar de inhoud"
+ ],
+ "about.imageAlt": [
+  "Three friends in OOLU “Your Roots.” t-shirts",
+  "Drie vrienden in OOLU “Your Roots.” t-shirts"
+ ],
+ "about.payments": [
+  "Payments",
+  "Betalen"
+ ],
+ "about.paymentsBody": [
+  "Checkout is handled by Stripe. We never see or store your card details. You always pay in euros.",
+  "Afrekenen gaat via Stripe. Wij zien of bewaren nooit je kaartgegevens. Je betaalt altijd in euro."
+ ],
+ "about.returns": [
+  "Returns",
+  "Retourneren"
+ ],
+ "about.returnsBody": [
+  "Unworn items with tags can be returned within {days} days. Reach out with your order number and we'll sort it.",
+  "Ongedragen artikelen met labels kun je binnen {days} dagen retourneren. Stuur ons je bestelnummer en we regelen het."
+ ],
+ "about.shipping": [
+  "Shipping",
+  "Verzending"
+ ],
+ "about.shippingBody": [
+  "Free shipping on orders over {free}. Otherwise a flat {flat}. Orders ship within 2–4 business days, worldwide.",
+  "Gratis verzending vanaf {free}. Anders een vast tarief van {flat}. Bestellingen worden binnen 2–4 werkdagen verzonden, wereldwijd."
+ ],
+ "about.title": [
+  "About",
+  "Over ons"
+ ],
+ "acct.admin": [
+  "Admin",
+  "Admin"
+ ],
+ "acct.hey": [
+  "Hey",
+  "Hoi"
+ ],
+ "acct.meta": [
+  "Account",
+  "Account"
+ ],
+ "acct.noOrders": [
+  "No orders yet.",
+  "Nog geen bestellingen."
+ ],
+ "acct.noOrdersVerify": [
+  "No orders yet — confirm your email to pull in orders you placed as a guest.",
+  "Nog geen bestellingen — bevestig je e-mailadres om gastbestellingen op te halen."
+ ],
+ "acct.openReturns": [
+  "Open returns",
+  "Lopende retouren"
+ ],
+ "acct.orderNo": [
+  "Order #{number}",
+  "Bestelling #{number}"
+ ],
+ "acct.orders": [
+  "Orders",
+  "Bestellingen"
+ ],
+ "acct.pwUpdated": [
+  "Password updated. You're signed in.",
+  "Wachtwoord bijgewerkt. Je bent ingelogd."
+ ],
+ "acct.returnsInProgress": [
+  "Returns in progress",
+  "Lopende retouren"
+ ],
+ "acct.reviews": [
+  "Reviews",
+  "Reviews"
+ ],
+ "acct.signOut": [
+  "Sign out",
+  "Uitloggen"
+ ],
+ "acct.tabOrders": [
+  "Orders & returns",
+  "Bestellingen & retouren"
+ ],
+ "acct.tabSettings": [
+  "Profile & security",
+  "Profiel & beveiliging"
+ ],
+ "acct.welcome": [
+  "Welcome to OOLU. Your account is ready.",
+  "Welkom bij OOLU. Je account is klaar."
+ ],
+ "acct.wishlist": [
+  "Wishlist",
+  "Verlanglijst"
+ ],
+ "acct.yourOrders": [
+  "Your orders",
+  "Je bestellingen"
+ ],
+ "auth.account": [
+  "Account",
+  "Account"
+ ],
+ "auth.agree1": [
+  "By joining you agree to our",
+  "Door je aan te melden ga je akkoord met onze"
+ ],
+ "auth.and": [
+  "and",
+  "en"
+ ],
+ "auth.backToSignIn": [
+  "Back to sign in",
+  "Terug naar inloggen"
+ ],
+ "auth.confirmMeta": [
+  "Confirm email",
+  "E-mail bevestigen"
+ ],
+ "auth.confirmed": [
+  "Email confirmed",
+  "E-mailadres bevestigd"
+ ],
+ "auth.confirmedBody": [
+  "Thanks — your email is confirmed. Any orders you placed as a guest with this email are now in your account.",
+  "Bedankt — je e-mailadres is bevestigd. Bestellingen die je als gast met dit adres plaatste, staan nu in je account."
+ ],
+ "auth.continueWith": [
+  "Continue with {provider}",
+  "Doorgaan met {provider}"
+ ],
+ "auth.createAccount": [
+  "Create account",
+  "Account aanmaken"
+ ],
+ "auth.createLink": [
+  "Create an account",
+  "Maak een account aan"
+ ],
+ "auth.currentPw": [
+  "Current password",
+  "Huidig wachtwoord"
+ ],
+ "auth.email": [
+  "Email",
+  "E-mail"
+ ],
+ "auth.err.apple_not_configured": [
+  "Apple sign-in isn't set up yet.",
+  "Inloggen met Apple is nog niet ingesteld."
+ ],
+ "auth.err.cancelled": [
+  "Sign-in was cancelled.",
+  "Inloggen is geannuleerd."
+ ],
+ "auth.err.expired": [
+  "That sign-in attempt expired. Please try again.",
+  "Die inlogpoging is verlopen. Probeer het opnieuw."
+ ],
+ "auth.err.google_not_configured": [
+  "Google sign-in isn't set up yet.",
+  "Inloggen met Google is nog niet ingesteld."
+ ],
+ "auth.err.last_login_method": [
+  "Add a password first — otherwise you'd have no way to sign in.",
+  "Voeg eerst een wachtwoord toe — anders kun je niet meer inloggen."
+ ],
+ "auth.err.provider_error": [
+  "We couldn't complete sign-in with that provider. Please try again.",
+  "Inloggen via die dienst is niet gelukt. Probeer het opnieuw."
+ ],
+ "auth.err.sign_in_first": [
+  "Sign in first to connect another login method.",
+  "Log eerst in om een andere inlogmethode te koppelen."
+ ],
+ "auth.expired": [
+  "Link expired",
+  "Link verlopen"
+ ],
+ "auth.expiredBody": [
+  "This confirmation link is invalid, expired or already used. Sign in and request a new one from your account.",
+  "Deze bevestigingslink is ongeldig, verlopen of al gebruikt. Log in en vraag een nieuwe aan vanuit je account."
+ ],
+ "auth.forgot": [
+  "Forgot password?",
+  "Wachtwoord vergeten?"
+ ],
+ "auth.forgotIntro": [
+  "Enter your email and we'll send a link to choose a new password. Works for Google and Apple accounts too — it adds a password.",
+  "Vul je e-mailadres in en we sturen je een link om een nieuw wachtwoord te kiezen. Werkt ook voor Google- en Apple-accounts — dan voeg je een wachtwoord toe."
+ ],
+ "auth.forgotMeta": [
+  "Forgot password",
+  "Wachtwoord vergeten"
+ ],
+ "auth.goAccount": [
+  "Go to my account",
+  "Naar mijn account"
+ ],
+ "auth.haveAccount": [
+  "Already have an account?",
+  "Heb je al een account?"
+ ],
+ "auth.hidePw": [
+  "Hide password",
+  "Wachtwoord verbergen"
+ ],
+ "auth.joinEyebrow": [
+  "Join OOLU",
+  "Word lid van OOLU"
+ ],
+ "auth.joinMeta": [
+  "Create account",
+  "Account aanmaken"
+ ],
+ "auth.missingToken": [
+  "This link is missing its token.",
+  "Deze link mist een token."
+ ],
+ "auth.name": [
+  "Name",
+  "Naam"
+ ],
+ "auth.newHere": [
+  "New here?",
+  "Nieuw hier?"
+ ],
+ "auth.newPw": [
+  "New password",
+  "Nieuw wachtwoord"
+ ],
+ "auth.newPwMeta": [
+  "Choose a new password",
+  "Kies een nieuw wachtwoord"
+ ],
+ "auth.newPwTitle": [
+  "New password",
+  "Nieuw wachtwoord"
+ ],
+ "auth.newsletterOptIn": [
+  "Email me drops, restocks and offers.",
+  "Mail me over drops, restocks en aanbiedingen."
+ ],
+ "auth.oneSec": [
+  "One sec…",
+  "Momentje…"
+ ],
+ "auth.orEmail": [
+  "or with email",
+  "of met e-mail"
+ ],
+ "auth.password": [
+  "Password",
+  "Wachtwoord"
+ ],
+ "auth.perk1": [
+  "Track orders and start returns in two taps",
+  "Volg bestellingen en start retouren in twee tikken"
+ ],
+ "auth.perk2": [
+  "Wishlist saved across all your devices",
+  "Je verlanglijst op al je apparaten"
+ ],
+ "auth.perk3": [
+  "Early access to every drop",
+  "Als eerste toegang tot elke drop"
+ ],
+ "auth.privacy": [
+  "privacy policy",
+  "privacybeleid"
+ ],
+ "auth.pwHint": [
+  "8+ characters, letters and numbers",
+  "8+ tekens, letters en cijfers"
+ ],
+ "auth.pwRules": [
+  "At least 8 characters, with letters and numbers. You'll be signed out on other devices.",
+  "Minstens 8 tekens, met letters en cijfers. Je wordt op andere apparaten uitgelogd."
+ ],
+ "auth.repeatPw": [
+  "Repeat new password",
+  "Herhaal nieuw wachtwoord"
+ ],
+ "auth.requestNew": [
+  "Request a new one",
+  "Vraag een nieuwe aan"
+ ],
+ "auth.requestNewLink": [
+  "Request a new link",
+  "Vraag een nieuwe link aan"
+ ],
+ "auth.resetTitle": [
+  "Reset password",
+  "Wachtwoord herstellen"
+ ],
+ "auth.savePw": [
+  "Save password",
+  "Wachtwoord opslaan"
+ ],
+ "auth.saving": [
+  "Saving…",
+  "Opslaan…"
+ ],
+ "auth.sendReset": [
+  "Send reset link",
+  "Resetlink versturen"
+ ],
+ "auth.showPw": [
+  "Show password",
+  "Wachtwoord tonen"
+ ],
+ "auth.signIn": [
+  "Sign in",
+  "Inloggen"
+ ],
+ "auth.signInMeta": [
+  "Sign in",
+  "Inloggen"
+ ],
+ "auth.signUpWith": [
+  "Sign up with {provider}",
+  "Aanmelden met {provider}"
+ ],
+ "auth.signedOutAll": [
+  "You've been signed out on all devices.",
+  "Je bent op alle apparaten uitgelogd."
+ ],
+ "auth.staff": [
+  "Staff",
+  "Staf"
+ ],
+ "auth.staffAria": [
+  "Staff sign-in",
+  "Inloggen voor medewerkers"
+ ],
+ "auth.terms": [
+  "terms",
+  "voorwaarden"
+ ],
+ "auth.welcomeBack": [
+  "Welcome back",
+  "Welkom terug"
+ ],
+ "badge.comingSoon": [
+  "Coming soon",
+  "Binnenkort"
+ ],
+ "badge.new": [
+  "New",
+  "Nieuw"
+ ],
+ "badge.sale": [
+  "Sale",
+  "Sale"
+ ],
+ "badge.soldOut": [
+  "Sold out",
+  "Uitverkocht"
+ ],
+ "brand.description": [
+  "OOLU means trust. Clothing born from West African roots and built with a global vision — rooted in Africa, created in Amsterdam, made for the world.",
+  "OOLU betekent vertrouwen. Kleding geboren uit West-Afrikaanse wortels, met een wereldwijde blik — geworteld in Afrika, gemaakt in Amsterdam, voor de wereld."
+ ],
+ "brand.established": [
+  "Built on trust",
+  "Gebouwd op vertrouwen"
+ ],
+ "brand.motto": [
+  "Live in the present",
+  "Leef in het nu"
+ ],
+ "brand.tagline": [
+  "Rooted in Africa. Created in Amsterdam. Made for the world.",
+  "Geworteld in Afrika. Gemaakt in Amsterdam. Voor de wereld."
+ ],
+ "cart.added": [
+  "Added to bag:",
+  "Toegevoegd aan tas:"
+ ],
+ "cart.apply": [
+  "Apply",
+  "Toepassen"
+ ],
+ "cart.awayFree": [
+  "You're {amount} away from free shipping",
+  "Nog {amount} tot gratis verzending"
+ ],
+ "cart.balance": [
+  "Balance {amount}",
+  "Saldo {amount}"
+ ],
+ "cart.chargedInEur": [
+  "Prices in {currency} are estimates. You'll pay {amount} in euros at checkout.",
+  "Prijzen in {currency} zijn schattingen. Je betaalt {amount} in euro bij het afrekenen."
+ ],
+ "cart.checkout": [
+  "Checkout",
+  "Afrekenen"
+ ],
+ "cart.checkoutUnavailable": [
+  "Checkout is unavailable right now.",
+  "Afrekenen is nu niet beschikbaar."
+ ],
+ "cart.close": [
+  "Close bag",
+  "Tas sluiten"
+ ],
+ "cart.discountLater": [
+  "Discount codes can be added at checkout.",
+  "Kortingscodes voer je in bij het afrekenen."
+ ],
+ "cart.empty": [
+  "Your bag is empty.",
+  "Je tas is leeg."
+ ],
+ "cart.giftAria": [
+  "Gift card code",
+  "Cadeaukaartcode"
+ ],
+ "cart.giftCard": [
+  "Gift card",
+  "Cadeaukaart"
+ ],
+ "cart.haveGiftCard": [
+  "Have a gift card?",
+  "Heb je een cadeaukaart?"
+ ],
+ "cart.invalidCode": [
+  "Invalid code.",
+  "Ongeldige code."
+ ],
+ "cart.redirecting": [
+  "Redirecting…",
+  "Doorsturen…"
+ ],
+ "cart.remove": [
+  "Remove {name}",
+  "{name} verwijderen"
+ ],
+ "cart.removeGift": [
+  "Remove",
+  "Verwijderen"
+ ],
+ "cart.secureStripe": [
+  "Secure checkout by Stripe",
+  "Veilig afrekenen via Stripe"
+ ],
+ "cart.subtotal": [
+  "Subtotal",
+  "Subtotaal"
+ ],
+ "cart.summary": [
+  "Summary",
+  "Overzicht"
+ ],
+ "cart.taxes": [
+  "Shipping and taxes calculated at checkout.",
+  "Verzendkosten en btw worden berekend bij het afrekenen."
+ ],
+ "cart.title": [
+  "Your bag",
+  "Je tas"
+ ],
+ "cart.unlocked": [
+  "You've unlocked free shipping",
+  "Je verzending is gratis"
+ ],
+ "cart.viewBag": [
+  "View bag",
+  "Bekijk tas"
+ ],
+ "cat.hoodies": [
+  "Hoodies",
+  "Hoodies"
+ ],
+ "cat.sleeveless-and-tanks": [
+  "Sleeveless & Tanks",
+  "Mouwloos & tanktops"
+ ],
+ "cat.t-shirts": [
+  "T-Shirts",
+  "T-shirts"
+ ],
+ "cat.tracksuits": [
+  "Tracksuits",
+  "Trainingspakken"
+ ],
+ "coll.eyebrow": [
+  "Find your fit",
+  "Vind jouw fit"
+ ],
+ "coll.hoodies": [
+  "Zip hoodies with the OOLU logo.",
+  "Zip-hoodies met het OOLU-logo."
+ ],
+ "coll.piece": [
+  "1 piece",
+  "1 item"
+ ],
+ "coll.pieces": [
+  "{count} pieces",
+  "{count} items"
+ ],
+ "coll.sleeveless-and-tanks": [
+  "Clean cuts for warm days and late nights.",
+  "Strakke snitten voor warme dagen en lange avonden."
+ ],
+ "coll.t-shirts": [
+  "Everyday, washed and cropped tees with the OOLU mark.",
+  "Everyday-, washed- en cropped tees met het OOLU-logo."
+ ],
+ "coll.title": [
+  "Collections",
+  "Collecties"
+ ],
+ "coll.tracksuits": [
+  "The OOLU tracksuit, windbreaker and hoodie sets.",
+  "Het OOLU-trainingspak, windbreaker- en hoodiesets."
+ ],
+ "common.close": [
+  "Close",
+  "Sluiten"
+ ],
+ "common.error": [
+  "Something went wrong.",
+  "Er ging iets mis."
+ ],
+ "common.home": [
+  "Home",
+  "Home"
+ ],
+ "common.optional": [
+  "optional",
+  "optioneel"
+ ],
+ "common.sending": [
+  "Sending…",
+  "Versturen…"
+ ],
+ "common.shop": [
+  "Shop",
+  "Shop"
+ ],
+ "common.shopNow": [
+  "Shop now",
+  "Shop nu"
+ ],
+ "contact.dm": [
+  "DM us · {handle}",
+  "Stuur een DM · {handle}"
+ ],
+ "contact.email": [
+  "Email",
+  "E-mail"
+ ],
+ "contact.eyebrow": [
+  "Help",
+  "Help"
+ ],
+ "contact.intro": [
+  "Questions about an order, sizing or a collab? Send a message and we'll reply within one business day (Mon–Fri).",
+  "Vragen over een bestelling, maten of een samenwerking? Stuur een bericht en we reageren binnen één werkdag (ma–vr)."
+ ],
+ "contact.message": [
+  "How can we help?",
+  "Waarmee kunnen we helpen?"
+ ],
+ "contact.meta": [
+  "Contact us",
+  "Contact"
+ ],
+ "contact.name": [
+  "Name",
+  "Naam"
+ ],
+ "contact.order": [
+  "Order number (optional)",
+  "Bestelnummer (optioneel)"
+ ],
+ "contact.quick1": [
+  "Quick answers live in the",
+  "Snelle antwoorden vind je in het"
+ ],
+ "contact.quick2": [
+  "help centre",
+  "helpcentrum"
+ ],
+ "contact.quick3": [
+  "To check an order, use",
+  "Wil je een bestelling checken, gebruik dan"
+ ],
+ "contact.quick4": [
+  "order tracking",
+  "bestelling volgen"
+ ],
+ "contact.send": [
+  "Send message",
+  "Bericht versturen"
+ ],
+ "contact.sent": [
+  "Message sent.",
+  "Bericht verstuurd."
+ ],
+ "contact.sentBody": [
+  "Thanks — we'll get back to you within one business day.",
+  "Bedankt — we reageren binnen één werkdag."
+ ],
+ "contact.t.Order question": [
+  "Order question",
+  "Vraag over een bestelling"
+ ],
+ "contact.t.Other": [
+  "Other",
+  "Anders"
+ ],
+ "contact.t.Press": [
+  "Press",
+  "Pers"
+ ],
+ "contact.t.Product question": [
+  "Product question",
+  "Vraag over een product"
+ ],
+ "contact.t.Returns": [
+  "Returns",
+  "Retouren"
+ ],
+ "contact.t.Wholesale / collabs": [
+  "Wholesale / collabs",
+  "Groothandel / samenwerking"
+ ],
+ "contact.title": [
+  "Contact us",
+  "Neem contact op"
+ ],
+ "contact.topic": [
+  "Topic",
+  "Onderwerp"
+ ],
+ "countdown.days": [
+  "Days",
+  "Dagen"
+ ],
+ "countdown.hours": [
+  "Hours",
+  "Uren"
+ ],
+ "countdown.minutes": [
+  "Min",
+  "Min"
+ ],
+ "countdown.seconds": [
+  "Sec",
+  "Sec"
+ ],
+ "drop.body": [
+  "Limited run, made in Amsterdam. Get notified before everyone else.",
+  "Beperkte oplage, gemaakt in Amsterdam. Hoor het als eerste."
+ ],
+ "drop.eyebrow": [
+  "Next drop",
+  "Volgende drop"
+ ],
+ "drop.notify": [
+  "Get notified",
+  "Houd me op de hoogte"
+ ],
+ "drop.title": [
+  "The next OOLU drop",
+  "De volgende OOLU-drop"
+ ],
+ "drops.eyebrow": [
+  "Limited runs. No restocks.",
+  "Beperkte oplage. Geen restocks."
+ ],
+ "drops.none": [
+  "Nothing scheduled right now. Join the list and you'll be first to know.",
+  "Er staat nu niets gepland. Schrijf je in en je hoort het als eerste."
+ ],
+ "drops.notify": [
+  "Email me when it drops",
+  "Mail me als het dropt"
+ ],
+ "drops.on": [
+  "Drops {date}",
+  "Dropt op {date}"
+ ],
+ "drops.title": [
+  "Upcoming drops",
+  "Aankomende drops"
+ ],
+ "feature.comfort.body": [
+  "Soft fabrics and relaxed fits keep you moving naturally from morning commute to late-night hangout",
+  "Zachte stoffen en een relaxte pasvorm houden je in beweging, van de ochtendspits tot laat op de avond"
+ ],
+ "feature.comfort.title": [
+  "Easy comfort always",
+  "Altijd makkelijk comfort"
+ ],
+ "feature.move.body": [
+  "Each piece is crafted for long-lasting comfort, pared-back style, and quiet confidence on the go",
+  "Elk stuk is gemaakt voor langdurig comfort, ingetogen stijl en stil zelfvertrouwen onderweg"
+ ],
+ "feature.move.title": [
+  "Made to move",
+  "Gemaakt om te bewegen"
+ ],
+ "footer.about": [
+  "About OOLU",
+  "Over OOLU"
+ ],
+ "footer.allProducts": [
+  "All products",
+  "Alle producten"
+ ],
+ "footer.backToTop": [
+  "Back to top ↑",
+  "Terug naar boven ↑"
+ ],
+ "footer.cookies": [
+  "Cookies",
+  "Cookies"
+ ],
+ "footer.follow": [
+  "Follow",
+  "Volg ons"
+ ],
+ "footer.help": [
+  "Help",
+  "Help"
+ ],
+ "footer.helpCentre": [
+  "Help centre",
+  "Helpcentrum"
+ ],
+ "footer.imprint": [
+  "Imprint",
+  "Colofon"
+ ],
+ "footer.legal": [
+  "Legal",
+  "Juridisch"
+ ],
+ "footer.newArrivals": [
+  "New arrivals",
+  "Nieuw binnen"
+ ],
+ "footer.paymentsAria": [
+  "Accepted payment methods",
+  "Geaccepteerde betaalmethodes"
+ ],
+ "footer.privacy": [
+  "Privacy policy",
+  "Privacybeleid"
+ ],
+ "footer.privacyShort": [
+  "Privacy",
+  "Privacy"
+ ],
+ "footer.returnsPolicy": [
+  "Returns policy",
+  "Retourbeleid"
+ ],
+ "footer.shippingReturns": [
+  "Shipping & returns",
+  "Verzenden & retourneren"
+ ],
+ "footer.shop": [
+  "Shop",
+  "Shop"
+ ],
+ "footer.sizeGuide": [
+  "Size guide",
+  "Maattabel"
+ ],
+ "footer.socialAria": [
+  "{brand} on {network} ({handle})",
+  "{brand} op {network} ({handle})"
+ ],
+ "footer.terms": [
+  "Terms",
+  "Voorwaarden"
+ ],
+ "footer.trackOrder": [
+  "Track your order",
+  "Volg je bestelling"
+ ],
+ "gift.amount": [
+  "Amount",
+  "Bedrag"
+ ],
+ "gift.buy": [
+  "Buy {amount} gift card",
+  "Koop cadeaukaart van {amount}"
+ ],
+ "gift.card": [
+  "Gift card",
+  "Cadeaukaart"
+ ],
+ "gift.eyebrow": [
+  "Delivered instantly by email",
+  "Direct per e-mail bezorgd"
+ ],
+ "gift.intro": [
+  "Pick an amount, add a note and we'll email the code — to them, or to you to pass on. Gift cards never expire and can be used across multiple orders until the balance runs out.",
+  "Kies een bedrag, voeg een berichtje toe en we mailen de code — naar hen, of naar jou om door te geven. Cadeaukaarten verlopen nooit en zijn te gebruiken voor meerdere bestellingen tot het saldo op is."
+ ],
+ "gift.message": [
+  "Add a message (optional)",
+  "Voeg een bericht toe (optioneel)"
+ ],
+ "gift.meta": [
+  "Gift cards",
+  "Cadeaukaarten"
+ ],
+ "gift.metaDesc": [
+  "Digital OOLU gift cards, delivered by email.",
+  "Digitale OOLU-cadeaukaarten, per e-mail bezorgd."
+ ],
+ "gift.onItsWay": [
+  "It's on its way.",
+  "Hij is onderweg."
+ ],
+ "gift.pendingBody": [
+  "Your payment is being confirmed. The gift card will be emailed as soon as it clears.",
+  "Je betaling wordt bevestigd. De cadeaukaart wordt gemaild zodra het rond is."
+ ],
+ "gift.sentBody": [
+  "We've emailed the {amount} gift card to {email}.",
+  "We hebben de cadeaukaart van {amount} gemaild naar {email}."
+ ],
+ "gift.sentMeta": [
+  "Gift card sent",
+  "Cadeaukaart verstuurd"
+ ],
+ "gift.theirEmail": [
+  "Their email",
+  "E-mail ontvanger"
+ ],
+ "gift.theirName": [
+  "Their name",
+  "Naam ontvanger"
+ ],
+ "gift.title": [
+  "Gift cards",
+  "Cadeaukaarten"
+ ],
+ "gift.toMe": [
+  "Send to me",
+  "Naar mij"
+ ],
+ "gift.toSomeone": [
+  "Send to someone",
+  "Naar iemand anders"
+ ],
+ "gift.you": [
+  "you",
+  "jou"
+ ],
+ "gift.yourName": [
+  "Your name (optional)",
+  "Je naam (optioneel)"
+ ],
+ "help.a.account": [
+  "No — you can check out as a guest. An account lets you see order history, start returns faster and write reviews.",
+  "Nee — je kunt als gast afrekenen. Met een account zie je je bestelgeschiedenis, start je sneller een retour en kun je reviews schrijven."
+ ],
+ "help.a.back": [
+  "Some do. Hit “Notify me” on the product page and we'll email you if your size returns.",
+  "Sommige wel. Klik op “Mail me” op de productpagina en we laten het weten als jouw maat terug is."
+ ],
+ "help.a.care": [
+  "Wash cold, inside out. Don't tumble dry. Iron on the reverse, avoiding the print.",
+  "Koud wassen, binnenstebuiten. Niet in de droger. Strijken op de binnenkant, niet over de print."
+ ],
+ "help.a.change": [
+  "We pack fast. Contact us within 2 hours of ordering and we'll do our best before it ships.",
+  "We pakken snel in. Neem binnen 2 uur na je bestelling contact op en we doen ons best voordat het verzonden wordt."
+ ],
+ "help.a.code": [
+  "Enter it in the promotion code field on the checkout page.",
+  "Vul hem in bij het veld voor de kortingscode op de afrekenpagina."
+ ],
+ "help.a.cost": [
+  "Free on orders over {free}. Otherwise a flat {flat}.",
+  "Gratis vanaf {free}. Anders een vast tarief van {flat}."
+ ],
+ "help.a.currency": [
+  "You can view prices in 12 currencies with the switcher at the top of the page. These are estimates based on daily exchange rates — you always pay in euros, and your bank converts the amount.",
+  "Met de keuzeknop bovenaan de pagina zie je prijzen in 12 valuta. Dat zijn schattingen op basis van dagkoersen — je betaalt altijd in euro en je bank rekent het bedrag om."
+ ],
+ "help.a.drops1": [
+  "Drops are limited runs released at a set time. See what's next on",
+  "Drops zijn beperkte oplages die op een vast moment uitkomen. Zie wat er komt bij"
+ ],
+ "help.a.drops2": [
+  "upcoming drops",
+  "aankomende drops"
+ ],
+ "help.a.drops3": [
+  "and sign up for an alert.",
+  "en meld je aan voor een bericht."
+ ],
+ "help.a.duties": [
+  "Orders shipped outside the EU may be charged duties by your local customs office. These are the customer's responsibility.",
+  "Bij bestellingen buiten de EU kan de douane invoerrechten rekenen. Die zijn voor rekening van de klant."
+ ],
+ "help.a.exchange": [
+  "Return the item for a refund and place a new order — that's the fastest way to get the right size before it sells out.",
+  "Retourneer het artikel voor een terugbetaling en plaats een nieuwe bestelling — zo heb je het snelst de juiste maat voordat die uitverkocht is."
+ ],
+ "help.a.gift": [
+  "Enter the code in your bag before checkout. Any remaining balance stays on the card.",
+  "Vul de code in je tas in voordat je afrekent. Het resterende saldo blijft op de kaart staan."
+ ],
+ "help.a.giftLink": [
+  "Buy a gift card",
+  "Koop een cadeaukaart"
+ ],
+ "help.a.methods": [
+  "All major cards, Apple Pay, Google Pay, Klarna, PayPal and local methods shown at checkout. Payments are processed securely by Stripe, in euros.",
+  "Alle gangbare kaarten, Apple Pay, Google Pay, Klarna, PayPal en lokale methodes die je bij het afrekenen ziet. Betalingen gaan veilig via Stripe, in euro."
+ ],
+ "help.a.policy": [
+  "Unworn items with tags attached can be returned within {days} days of delivery for a full refund.",
+  "Ongedragen artikelen met labels kun je binnen {days} dagen na levering retourneren voor een volledige terugbetaling."
+ ],
+ "help.a.refund": [
+  "As soon as your return arrives and is checked, usually within 3 business days. Your bank may take 5–10 days to show it.",
+  "Zodra je retour binnen is en gecontroleerd, meestal binnen 3 werkdagen. Het kan 5–10 dagen duren voordat je bank het laat zien."
+ ],
+ "help.a.start1": [
+  "From your",
+  "Vanuit je"
+ ],
+ "help.a.start2": [
+  "(open the order → Start a return) or via",
+  "(open de bestelling → Retour starten) of via"
+ ],
+ "help.a.start3": [
+  "if you checked out as a guest.",
+  "als je als gast hebt afgerekend."
+ ],
+ "help.a.time": [
+  "Orders ship within 1–2 business days. Delivery usually takes 3–7 business days depending on where you are.",
+  "Bestellingen worden binnen 1–2 werkdagen verzonden. Levering duurt meestal 3–7 werkdagen, afhankelijk van waar je woont."
+ ],
+ "help.a.where1": [
+  "Use",
+  "Gebruik"
+ ],
+ "help.a.where2": [
+  "order tracking",
+  "bestelling volgen"
+ ],
+ "help.a.where3": [
+  "with your order number and email, or check your",
+  "met je bestelnummer en e-mailadres, of kijk in je"
+ ],
+ "help.a.where4": [
+  "account",
+  "account"
+ ],
+ "help.a.world": [
+  "We ship to most countries across Europe, North America, the UK, Australia and parts of Asia. Available countries show at checkout.",
+  "We verzenden naar de meeste landen in Europa, Noord-Amerika, het VK, Australië en delen van Azië. Beschikbare landen zie je bij het afrekenen."
+ ],
+ "help.contact": [
+  "Contact us",
+  "Contact"
+ ],
+ "help.eyebrow": [
+  "We've got you",
+  "We helpen je graag"
+ ],
+ "help.meta": [
+  "Help centre",
+  "Helpcentrum"
+ ],
+ "help.metaDesc": [
+  "Shipping, returns, sizing, payments and order help.",
+  "Hulp bij verzending, retouren, maten, betalen en bestellingen."
+ ],
+ "help.orders": [
+  "Orders",
+  "Bestellingen"
+ ],
+ "help.payments": [
+  "Payments & promotions",
+  "Betalen & acties"
+ ],
+ "help.products": [
+  "Products & drops",
+  "Producten & drops"
+ ],
+ "help.q.account": [
+  "Do I need an account?",
+  "Heb ik een account nodig?"
+ ],
+ "help.q.back": [
+  "Will sold-out items come back?",
+  "Komen uitverkochte artikelen terug?"
+ ],
+ "help.q.care": [
+  "How should I care for my pieces?",
+  "Hoe verzorg ik mijn kleding?"
+ ],
+ "help.q.change": [
+  "Can I change or cancel my order?",
+  "Kan ik mijn bestelling wijzigen of annuleren?"
+ ],
+ "help.q.code": [
+  "How do I use a discount code?",
+  "Hoe gebruik ik een kortingscode?"
+ ],
+ "help.q.cost": [
+  "How much is shipping?",
+  "Wat kost verzending?"
+ ],
+ "help.q.currency": [
+  "Can I pay in my own currency?",
+  "Kan ik in mijn eigen valuta betalen?"
+ ],
+ "help.q.drops": [
+  "How do drops work?",
+  "Hoe werken drops?"
+ ],
+ "help.q.duties": [
+  "Will I pay customs or import duties?",
+  "Betaal ik invoerrechten of douanekosten?"
+ ],
+ "help.q.exchange": [
+  "Can I exchange for a different size?",
+  "Kan ik ruilen voor een andere maat?"
+ ],
+ "help.q.gift": [
+  "How do gift cards work?",
+  "Hoe werken cadeaukaarten?"
+ ],
+ "help.q.methods": [
+  "Which payment methods do you accept?",
+  "Welke betaalmethodes accepteren jullie?"
+ ],
+ "help.q.policy": [
+  "What's your return policy?",
+  "Wat is jullie retourbeleid?"
+ ],
+ "help.q.refund": [
+  "When do I get my refund?",
+  "Wanneer krijg ik mijn geld terug?"
+ ],
+ "help.q.start": [
+  "How do I start a return?",
+  "Hoe start ik een retour?"
+ ],
+ "help.q.time": [
+  "How long does delivery take?",
+  "Hoe lang duurt de levering?"
+ ],
+ "help.q.where": [
+  "Where is my order?",
+  "Waar is mijn bestelling?"
+ ],
+ "help.q.world": [
+  "Do you ship worldwide?",
+  "Verzenden jullie wereldwijd?"
+ ],
+ "help.return": [
+  "Start a return",
+  "Retour starten"
+ ],
+ "help.returns": [
+  "Returns & exchanges",
+  "Retourneren & ruilen"
+ ],
+ "help.shipping": [
+  "Shipping",
+  "Verzending"
+ ],
+ "help.size": [
+  "Size guide",
+  "Maattabel"
+ ],
+ "help.sizing": [
+  "Sizing",
+  "Maten"
+ ],
+ "help.still": [
+  "Still need help?",
+  "Nog vragen?"
+ ],
+ "help.stillBody": [
+  "We reply within one business day.",
+  "We reageren binnen één werkdag."
+ ],
+ "help.title": [
+  "Help centre",
+  "Helpcentrum"
+ ],
+ "help.topics": [
+  "Help topics",
+  "Helponderwerpen"
+ ],
+ "help.track": [
+  "Track an order",
+  "Bestelling volgen"
+ ],
+ "hero.alt": [
+  "Model in the OOLU tracksuit walking through a tunnel",
+  "Model in het OOLU-trainingspak loopt door een tunnel"
+ ],
+ "hero.cta": [
+  "Shop the tracksuit",
+  "Shop het trainingspak"
+ ],
+ "hero.eyebrow": [
+  "OOLU · Rooted in Africa. Created in Amsterdam.",
+  "OOLU · Geworteld in Afrika. Gemaakt in Amsterdam."
+ ],
+ "hero.title": [
+  "Live in the present.",
+  "Leef in het nu."
+ ],
+ "home.findYourFit": [
+  "Find your fit",
+  "Vind jouw fit"
+ ],
+ "home.journalEyebrow": [
+  "Journal",
+  "Journal"
+ ],
+ "home.journalTitle": [
+  "Stories & lookbooks",
+  "Verhalen & lookbooks"
+ ],
+ "home.newArrivals": [
+  "New Arrivals",
+  "Nieuw binnen"
+ ],
+ "home.newsletterNote": [
+  "New here? You'll get a one-time {percent}% code for your first order.",
+  "Nieuw hier? Je krijgt een eenmalige code met {percent}% korting voor je eerste bestelling."
+ ],
+ "home.newsletterTitle": [
+  "Don't want to miss anything? For early drops, discounts and more, leave your email address below",
+  "Wil je niets missen? Laat hieronder je e-mailadres achter voor vroege drops, kortingen en meer"
+ ],
+ "home.onSale": [
+  "On sale",
+  "Sale"
+ ],
+ "home.pieces": [
+  "{count} pieces",
+  "{count} items"
+ ],
+ "home.readJournal": [
+  "Read the journal",
+  "Lees het journal"
+ ],
+ "home.shopByCategory": [
+  "Shop by category",
+  "Shop per categorie"
+ ],
+ "home.viewAll": [
+  "View all",
+  "Bekijk alles"
+ ],
+ "journal.all": [
+  "All",
+  "Alles"
+ ],
+ "journal.back": [
+  "← Journal",
+  "← Journal"
+ ],
+ "journal.cat.Lookbook": [
+  "Lookbook",
+  "Lookbook"
+ ],
+ "journal.cat.Process": [
+  "Process",
+  "Proces"
+ ],
+ "journal.cat.Story": [
+  "Story",
+  "Verhaal"
+ ],
+ "journal.meta": [
+  "Journal",
+  "Journal"
+ ],
+ "journal.metaDesc": [
+  "Lookbooks, stories and process from OOLU — rooted in Africa, created in Amsterdam.",
+  "Lookbooks, verhalen en het maakproces van OOLU — geworteld in Afrika, gemaakt in Amsterdam."
+ ],
+ "journal.more": [
+  "More stories",
+  "Meer verhalen"
+ ],
+ "journal.none": [
+  "No posts in this category yet.",
+  "Nog geen berichten in deze categorie."
+ ],
+ "journal.shopLook": [
+  "Shop the look",
+  "Shop de look"
+ ],
+ "legal.englishOnly": [
+  "These legal texts are currently available in English. The English version applies.",
+  "Deze juridische teksten zijn momenteel in het Engels beschikbaar. De Engelse versie is leidend."
+ ],
+ "legal.eyebrow": [
+  "Legal",
+  "Juridisch"
+ ],
+ "legal.notFound": [
+  "Not found",
+  "Niet gevonden"
+ ],
+ "legal.pages": [
+  "Legal pages",
+  "Juridische pagina's"
+ ],
+ "legal.updated": [
+  "Last updated {date}",
+  "Laatst bijgewerkt op {date}"
+ ],
+ "marquee.1": [
+  "Rooted in Africa. Created in Amsterdam. Made for the world.",
+  "Geworteld in Afrika. Gemaakt in Amsterdam. Voor de wereld."
+ ],
+ "marquee.2": [
+  "Wear your roots. Tell your story.",
+  "Draag je wortels. Vertel je verhaal."
+ ],
+ "marquee.3": [
+  "OOLU — Built on trust.",
+  "OOLU — Gebouwd op vertrouwen."
+ ],
+ "meta.about": [
+  "About",
+  "Over ons"
+ ],
+ "meta.cart": [
+  "Your bag",
+  "Je tas"
+ ],
+ "meta.collections": [
+  "Collections",
+  "Collecties"
+ ],
+ "meta.default": [
+  "{name} | Live in the present — T-shirts, tanks & tracksuits from Amsterdam",
+  "{name} | Leef in het nu — T-shirts, tanktops & trainingspakken uit Amsterdam"
+ ],
+ "meta.drops": [
+  "Upcoming drops",
+  "Aankomende drops"
+ ],
+ "meta.dropsDesc": [
+  "What's dropping next at OOLU. Get notified the moment it's live.",
+  "Wat er binnenkort dropt bij OOLU. Ontvang een bericht zodra het live is."
+ ],
+ "meta.search": [
+  "Search",
+  "Zoeken"
+ ],
+ "meta.shop": [
+  "Shop",
+  "Shop"
+ ],
+ "meta.wishlist": [
+  "Wishlist",
+  "Verlanglijst"
+ ],
+ "msg.alreadyConfirmed": [
+  "Your email is already confirmed.",
+  "Je e-mailadres is al bevestigd."
+ ],
+ "msg.alreadyReviewed": [
+  "You've already reviewed this product.",
+  "Je hebt dit product al beoordeeld."
+ ],
+ "msg.badLogin": [
+  "Email or password is incorrect.",
+  "E-mailadres of wachtwoord klopt niet."
+ ],
+ "msg.bagInvalid": [
+  "Your bag looks invalid. Try refreshing the page.",
+  "Er klopt iets niet met je tas. Vernieuw de pagina."
+ ],
+ "msg.cantVerify": [
+  "We couldn't verify this order.",
+  "We konden deze bestelling niet controleren."
+ ],
+ "msg.checkForm": [
+  "Check the form.",
+  "Controleer het formulier."
+ ],
+ "msg.checkoutFailed": [
+  "We couldn't start checkout. Please try again in a moment.",
+  "Afrekenen lukte niet. Probeer het zo opnieuw."
+ ],
+ "msg.chooseItem": [
+  "Choose at least one item to return.",
+  "Kies minstens één artikel om te retourneren."
+ ],
+ "msg.currentPw": [
+  "Current password is incorrect.",
+  "Huidig wachtwoord klopt niet."
+ ],
+ "msg.demo": [
+  "This store still shows demo products, so checkout is off.",
+  "Deze winkel toont nog demoproducten, afrekenen staat uit."
+ ],
+ "msg.enterGift": [
+  "Enter a gift card code.",
+  "Vul een cadeaukaartcode in."
+ ],
+ "msg.enterName": [
+  "Enter your name",
+  "Vul je naam in"
+ ],
+ "msg.enterPassword": [
+  "Enter your password",
+  "Vul je wachtwoord in"
+ ],
+ "msg.exists": [
+  "An account with that email already exists. Try signing in.",
+  "Er bestaat al een account met dit e-mailadres. Probeer in te loggen."
+ ],
+ "msg.existsSocial": [
+  "That email is already registered with Google or Apple. Use that button to sign in.",
+  "Dit e-mailadres is al gekoppeld aan Google of Apple. Log in met die knop."
+ ],
+ "msg.giftInvalid": [
+  "That gift card code isn't valid or has no balance left.",
+  "Deze cadeaukaartcode is ongeldig of heeft geen saldo meer."
+ ],
+ "msg.itemGone": [
+  "An item in your bag is no longer available. Please remove it and try again.",
+  "Een artikel in je tas is niet meer beschikbaar. Verwijder het en probeer opnieuw."
+ ],
+ "msg.justSoldOut": [
+  "{name} ({variant}) just sold out.",
+  "{name} ({variant}) is net uitverkocht."
+ ],
+ "msg.lookupFirst": [
+  "Please sign in or look up your order first.",
+  "Log in of zoek eerst je bestelling op."
+ ],
+ "msg.min8": [
+  "Use at least 8 characters",
+  "Gebruik minstens 8 tekens"
+ ],
+ "msg.notDropped": [
+  "{name} hasn't dropped yet.",
+  "{name} is nog niet gedropt."
+ ],
+ "msg.notReturnable": [
+  "This order can't be returned.",
+  "Deze bestelling kan niet worden geretourneerd."
+ ],
+ "msg.onlyLeftOf": [
+  "Only {count} left of {name} ({variant}). Please lower the quantity.",
+  "Nog maar {count} over van {name} ({variant}). Verlaag het aantal."
+ ],
+ "msg.orderEmail": [
+  "Enter the email you ordered with",
+  "Vul het e-mailadres in waarmee je hebt besteld"
+ ],
+ "msg.orderNotFound": [
+  "Order not found.",
+  "Bestelling niet gevonden."
+ ],
+ "msg.orderNumber": [
+  "Enter your order number, e.g. 1001",
+  "Vul je bestelnummer in, bijv. 1001"
+ ],
+ "msg.paymentsOff": [
+  "Payments aren't connected yet.",
+  "Betalingen zijn nog niet gekoppeld."
+ ],
+ "msg.productNotFound": [
+  "Product not found.",
+  "Product niet gevonden."
+ ],
+ "msg.pwAdded": [
+  "Password added. You can now sign in with email too.",
+  "Wachtwoord toegevoegd. Je kunt nu ook met je e-mailadres inloggen."
+ ],
+ "msg.pwChanged": [
+  "Password changed. Other devices were signed out.",
+  "Wachtwoord gewijzigd. Andere apparaten zijn uitgelogd."
+ ],
+ "msg.pwMatch": [
+  "Passwords don't match",
+  "Wachtwoorden komen niet overeen"
+ ],
+ "msg.resetExpired": [
+  "This reset link is invalid or has expired. Request a new one.",
+  "Deze resetlink is ongeldig of verlopen. Vraag een nieuwe aan."
+ ],
+ "msg.resetSent": [
+  "If there's an account for that email, a reset link is on its way. It expires in 1 hour.",
+  "Als er een account bij dit e-mailadres hoort, is er een resetlink onderweg. Die verloopt na 1 uur."
+ ],
+ "msg.returnQty": [
+  "One of those items can't be returned in that quantity.",
+  "Een van die artikelen kan niet in dat aantal worden geretourneerd."
+ ],
+ "msg.returnReason": [
+  "Pick a reason for the return.",
+  "Kies een reden voor de retour."
+ ],
+ "msg.returnRequested": [
+  "Return requested. We'll email you within 1–2 business days with next steps.",
+  "Retour aangevraagd. We mailen je binnen 1–2 werkdagen met de volgende stappen."
+ ],
+ "msg.reviewLive": [
+  "Thanks! Your review is live.",
+  "Bedankt! Je review staat online."
+ ],
+ "msg.reviewPending": [
+  "Thanks! Your review will appear once it's been checked.",
+  "Bedankt! Je review verschijnt zodra die is gecontroleerd."
+ ],
+ "msg.saved": [
+  "Saved",
+  "Opgeslagen"
+ ],
+ "msg.sentFew": [
+  "We've sent a few already — check your spam folder.",
+  "We hebben er al een paar gestuurd — check je spammap."
+ ],
+ "msg.sentLink": [
+  "Sent a new link to {email}.",
+  "Nieuwe link verstuurd naar {email}."
+ ],
+ "msg.signInFirst": [
+  "Sign in first.",
+  "Log eerst in."
+ ],
+ "msg.signInReview": [
+  "Sign in to write a review.",
+  "Log in om een review te schrijven."
+ ],
+ "msg.tooMany": [
+  "Too many requests. Try again later.",
+  "Te veel verzoeken. Probeer het later opnieuw."
+ ],
+ "msg.tooManyAttempts": [
+  "Too many attempts. Try again later.",
+  "Te veel pogingen. Probeer het later opnieuw."
+ ],
+ "msg.tooManyLogin": [
+  "Too many attempts. Try again in {minutes} minutes, or reset your password.",
+  "Te veel pogingen. Probeer het over {minutes} minuten opnieuw of stel je wachtwoord opnieuw in."
+ ],
+ "msg.tooManySignups": [
+  "Too many sign-ups from this network. Try again later.",
+  "Te veel aanmeldingen vanaf dit netwerk. Probeer het later opnieuw."
+ ],
+ "msg.trackNotFound": [
+  "We couldn't find an order with that number and email.",
+  "We konden geen bestelling vinden met dat nummer en e-mailadres."
+ ],
+ "msg.typeDelete": [
+  "Type \"DELETE\" to confirm.",
+  "Typ \"DELETE\" om te bevestigen."
+ ],
+ "msg.usesSocial": [
+  "This account uses {provider} sign-in. Use that button above, or reset your password to add one.",
+  "Dit account logt in via {provider}. Gebruik die knop hierboven, of stel een wachtwoord in."
+ ],
+ "msg.validEmail": [
+  "Enter a valid email.",
+  "Vul een geldig e-mailadres in."
+ ],
+ "msg.variantUnavailable": [
+  "{variant} isn't available for {name}.",
+  "{variant} is niet beschikbaar voor {name}."
+ ],
+ "msg.windowClosed": [
+  "The {days}-day return window has closed.",
+  "De retourtermijn van {days} dagen is verlopen."
+ ],
+ "nav.account": [
+  "Account",
+  "Account"
+ ],
+ "nav.cartAria": [
+  "Bag, {count} items",
+  "Tas, {count} artikelen"
+ ],
+ "nav.catalog": [
+  "Catalog",
+  "Catalogus"
+ ],
+ "nav.closeMenu": [
+  "Close menu",
+  "Menu sluiten"
+ ],
+ "nav.contact": [
+  "Contact",
+  "Contact"
+ ],
+ "nav.giftCards": [
+  "Gift cards",
+  "Cadeaukaarten"
+ ],
+ "nav.help": [
+  "Help",
+  "Help"
+ ],
+ "nav.home": [
+  "Home",
+  "Home"
+ ],
+ "nav.home.aria": [
+  "{name} home",
+  "{name} home"
+ ],
+ "nav.journal": [
+  "Journal",
+  "Journal"
+ ],
+ "nav.openMenu": [
+  "Open menu",
+  "Menu openen"
+ ],
+ "nav.search": [
+  "Search",
+  "Zoeken"
+ ],
+ "nav.searchPlaceholder": [
+  "Search t-shirts, tracksuits, tanks…",
+  "Zoek t-shirts, trainingspakken, tanktops…"
+ ],
+ "nav.signIn": [
+  "Sign in",
+  "Inloggen"
+ ],
+ "nav.track": [
+  "Track order",
+  "Bestelling volgen"
+ ],
+ "nav.wishlist": [
+  "Wishlist",
+  "Verlanglijst"
+ ],
+ "nav.wishlistAria": [
+  "Wishlist, {count} items",
+  "Verlanglijst, {count} artikelen"
+ ],
+ "newsletter.already": [
+  "You're already on the list.",
+  "Je staat al op de lijst."
+ ],
+ "newsletter.consent": [
+  "By subscribing you agree to receive marketing emails. Unsubscribe anytime. See our",
+  "Door je in te schrijven ga je akkoord met marketingmails. Je kunt je altijd afmelden. Zie ons"
+ ],
+ "newsletter.copied": [
+  "Copied",
+  "Gekopieerd"
+ ],
+ "newsletter.copy": [
+  "Copy",
+  "Kopiëren"
+ ],
+ "newsletter.emailAddress": [
+  "Email address",
+  "E-mailadres"
+ ],
+ "newsletter.error": [
+  "Something went wrong.",
+  "Er ging iets mis."
+ ],
+ "newsletter.inCode": [
+  "You're in. Here's your code:",
+  "Je bent erbij. Hier is je code:"
+ ],
+ "newsletter.inInbox": [
+  "You're in. Check your inbox.",
+  "Je bent erbij. Check je inbox."
+ ],
+ "newsletter.join": [
+  "Join",
+  "Aanmelden"
+ ],
+ "newsletter.placeholder": [
+  "Your email",
+  "Je e-mailadres"
+ ],
+ "newsletter.privacyLink": [
+  "privacy policy",
+  "privacybeleid"
+ ],
+ "newsletter.subscribe": [
+  "Subscribe",
+  "Inschrijven"
+ ],
+ "notFound.back": [
+  "Back to the shop",
+  "Terug naar de shop"
+ ],
+ "notFound.body": [
+  "That page doesn't exist (anymore).",
+  "Deze pagina bestaat niet (meer)."
+ ],
+ "notFound.title": [
+  "Lost the plot.",
+  "De weg kwijt."
+ ],
+ "notify.button": [
+  "Notify me",
+  "Mail me"
+ ],
+ "notify.done": [
+  "We'll email {email} the moment it's available.",
+  "We mailen {email} zodra het weer beschikbaar is."
+ ],
+ "notify.dropLabel": [
+  "Get an email the moment it drops",
+  "Ontvang een mail zodra het dropt"
+ ],
+ "notify.placeholder": [
+  "you@email.com",
+  "jij@email.nl"
+ ],
+ "notify.soldOut": [
+  "Sold out — get notified when it's back",
+  "Uitverkocht — ontvang een mail als het terug is"
+ ],
+ "notify.variantOut": [
+  "{variant} is sold out — get notified when it's back",
+  "{variant} is uitverkocht — ontvang een mail als het terug is"
+ ],
+ "order.address": [
+  "Shipping address",
+  "Verzendadres"
+ ],
+ "order.allOrders": [
+  "← All orders",
+  "← Alle bestellingen"
+ ],
+ "order.details": [
+  "Details",
+  "Details"
+ ],
+ "order.items": [
+  "Items",
+  "Artikelen"
+ ],
+ "order.meta": [
+  "Order",
+  "Bestelling"
+ ],
+ "order.paidInEur": [
+  "Charged in euros.",
+  "Afgerekend in euro."
+ ],
+ "order.placed": [
+  "Placed {date}",
+  "Geplaatst op {date}"
+ ],
+ "order.qty": [
+  "Qty {qty}",
+  "Aantal {qty}"
+ ],
+ "order.refunded": [
+  "Refunded",
+  "Terugbetaald"
+ ],
+ "order.shipping": [
+  "Shipping",
+  "Verzending"
+ ],
+ "order.startReturn": [
+  "Start a return",
+  "Retour starten"
+ ],
+ "order.subtotal": [
+  "Subtotal",
+  "Subtotaal"
+ ],
+ "order.tax": [
+  "Tax",
+  "Btw"
+ ],
+ "order.title": [
+  "Order #{number}",
+  "Bestelling #{number}"
+ ],
+ "order.total": [
+  "Total",
+  "Totaal"
+ ],
+ "order.trackingLabel": [
+  "Tracking:",
+  "Track & trace:"
+ ],
+ "pdp.addToBag": [
+  "Add to bag",
+  "In tas"
+ ],
+ "pdp.added": [
+  "Added ✓",
+  "Toegevoegd ✓"
+ ],
+ "pdp.breadcrumb": [
+  "Breadcrumb",
+  "Kruimelpad"
+ ],
+ "pdp.builtToLast": [
+  "Built to last",
+  "Gemaakt om lang mee te gaan"
+ ],
+ "pdp.care": [
+  "Care",
+  "Onderhoud"
+ ],
+ "pdp.careBody": [
+  "Wash cold, inside out. Do not tumble dry. Iron on reverse, avoiding the print.",
+  "Koud wassen, binnenstebuiten. Niet in de droger. Strijken op de binnenkant, niet over de print."
+ ],
+ "pdp.closeZoom": [
+  "Close zoom",
+  "Zoom sluiten"
+ ],
+ "pdp.colour": [
+  "Colour",
+  "Kleur"
+ ],
+ "pdp.decrease": [
+  "Decrease quantity",
+  "Aantal verlagen"
+ ],
+ "pdp.details": [
+  "Details",
+  "Details"
+ ],
+ "pdp.dropsIn": [
+  "Drops in",
+  "Dropt over"
+ ],
+ "pdp.freeShipping": [
+  "Free shipping over {amount}",
+  "Gratis verzending vanaf {amount}"
+ ],
+ "pdp.increase": [
+  "Increase quantity",
+  "Aantal verhogen"
+ ],
+ "pdp.moreInfo": [
+  "More info",
+  "Meer info"
+ ],
+ "pdp.nextImage": [
+  "Next image",
+  "Volgende afbeelding"
+ ],
+ "pdp.notMadeAria": [
+  "{size}, not made in this colour",
+  "{size}, niet in deze kleur"
+ ],
+ "pdp.onlyLeft": [
+  "Only {count} left",
+  "Nog maar {count} over"
+ ],
+ "pdp.pickColour": [
+  "Pick a colour first.",
+  "Kies eerst een kleur."
+ ],
+ "pdp.pickSize": [
+  "Pick a size first.",
+  "Kies eerst een maat."
+ ],
+ "pdp.prevImage": [
+  "Previous image",
+  "Vorige afbeelding"
+ ],
+ "pdp.returns": [
+  "{days}-day returns",
+  "{days} dagen retour"
+ ],
+ "pdp.returnsBody": [
+  "Unworn items with tags can be returned within {days} days. Start a return from your account or the",
+  "Ongedragen artikelen met labels kun je binnen {days} dagen retourneren. Start een retour vanuit je account of de"
+ ],
+ "pdp.returnsTitle": [
+  "Returns",
+  "Retourneren"
+ ],
+ "pdp.reviewCount": [
+  "{count} review",
+  "{count} review"
+ ],
+ "pdp.reviewsCount": [
+  "{count} reviews",
+  "{count} reviews"
+ ],
+ "pdp.secure": [
+  "Secure checkout",
+  "Veilig afrekenen"
+ ],
+ "pdp.shipping": [
+  "Shipping",
+  "Verzending"
+ ],
+ "pdp.shippingBody": [
+  "Orders ship within 1–2 business days. Standard delivery takes 3–7 business days. Free shipping on orders over {amount}.",
+  "Bestellingen worden binnen 1–2 werkdagen verzonden. Standaardlevering duurt 3–7 werkdagen. Gratis verzending vanaf {amount}."
+ ],
+ "pdp.showImage": [
+  "Show image {n}",
+  "Toon afbeelding {n}"
+ ],
+ "pdp.size": [
+  "Size",
+  "Maat"
+ ],
+ "pdp.sizeOutAria": [
+  "{size}, sold out — get notified",
+  "{size}, uitverkocht — ontvang een mail"
+ ],
+ "pdp.soldOut": [
+  "Sold out",
+  "Uitverkocht"
+ ],
+ "pdp.soldOutAria": [
+  "{name}, sold out",
+  "{name}, uitverkocht"
+ ],
+ "pdp.trackingPage": [
+  "order tracking page",
+  "pagina voor het volgen van je bestelling"
+ ],
+ "pdp.youMayLike": [
+  "You may also like",
+  "Dit vind je misschien ook leuk"
+ ],
+ "pdp.zoom": [
+  "Zoom image",
+  "Afbeelding vergroten"
+ ],
+ "popup.body": [
+  "Early drops, restocks and stories from Amsterdam — plus a one-time code for your first order.",
+  "Vroege drops, restocks en verhalen uit Amsterdam — plus een eenmalige code voor je eerste bestelling."
+ ],
+ "popup.close": [
+  "Close",
+  "Sluiten"
+ ],
+ "popup.cta": [
+  "Get code",
+  "Code ontvangen"
+ ],
+ "popup.eyebrow": [
+  "OOLU · Built on trust",
+  "OOLU · Gebouwd op vertrouwen"
+ ],
+ "popup.noThanks": [
+  "No thanks",
+  "Nee, bedankt"
+ ],
+ "popup.title1": [
+  "{percent}% off",
+  "{percent}% korting"
+ ],
+ "popup.title2": [
+  "your first order",
+  "op je eerste bestelling"
+ ],
+ "prefs.currency": [
+  "Currency",
+  "Valuta"
+ ],
+ "prefs.language": [
+  "Language",
+  "Taal"
+ ],
+ "prefs.note": [
+  "Prices in other currencies are estimates. You always pay in euros (EUR).",
+  "Prijzen in andere valuta zijn schattingen. Je betaalt altijd in euro (EUR)."
+ ],
+ "prefs.save": [
+  "Save",
+  "Opslaan"
+ ],
+ "prefs.title": [
+  "Language & currency",
+  "Taal & valuta"
+ ],
+ "promo.cta": [
+  "Shop now",
+  "Shop nu"
+ ],
+ "promo.text": [
+  "25% off OOLU tracksuit set, jacket & pants. Discount applied automatically at checkout.",
+  "25% korting op de OOLU-trainingspakset, jas & broek. Korting wordt automatisch verrekend bij het afrekenen."
+ ],
+ "recent.title": [
+  "Recently viewed",
+  "Recent bekeken"
+ ],
+ "ret.allInReturn": [
+  "All items from this order are already in a return.",
+  "Alle artikelen uit deze bestelling zitten al in een retour."
+ ],
+ "ret.approved": [
+  "approved",
+  "goedgekeurd"
+ ],
+ "ret.choose": [
+  "Choose what you're sending back. Return by {date}.",
+  "Kies wat je terugstuurt. Retourneren kan tot {date}."
+ ],
+ "ret.chooseReason": [
+  "Choose a reason",
+  "Kies een reden"
+ ],
+ "ret.comment": [
+  "Anything we should know? (optional)",
+  "Nog iets wat we moeten weten? (optioneel)"
+ ],
+ "ret.item": [
+  "Item",
+  "Artikel"
+ ],
+ "ret.qtyAria": [
+  "Quantity of {name} to return",
+  "Aantal {name} om te retourneren"
+ ],
+ "ret.r.Arrived damaged": [
+  "Arrived damaged",
+  "Beschadigd aangekomen"
+ ],
+ "ret.r.Changed my mind": [
+  "Changed my mind",
+  "Toch niet nodig"
+ ],
+ "ret.r.Not as described": [
+  "Not as described",
+  "Niet zoals beschreven"
+ ],
+ "ret.r.Other": [
+  "Other",
+  "Anders"
+ ],
+ "ret.r.Too big": [
+  "Too big",
+  "Te groot"
+ ],
+ "ret.r.Too small": [
+  "Too small",
+  "Te klein"
+ ],
+ "ret.r.Wrong item sent": [
+  "Wrong item sent",
+  "Verkeerd artikel ontvangen"
+ ],
+ "ret.reason": [
+  "Reason",
+  "Reden"
+ ],
+ "ret.received": [
+  "received",
+  "ontvangen"
+ ],
+ "ret.refunded": [
+  "refunded",
+  "terugbetaald"
+ ],
+ "ret.rejected": [
+  "rejected",
+  "afgewezen"
+ ],
+ "ret.requested": [
+  "requested",
+  "aangevraagd"
+ ],
+ "ret.s.approved": [
+  "Approved — send it back",
+  "Goedgekeurd — stuur het terug"
+ ],
+ "ret.s.received": [
+  "Received — refund coming",
+  "Ontvangen — terugbetaling volgt"
+ ],
+ "ret.s.refunded": [
+  "Refunded",
+  "Terugbetaald"
+ ],
+ "ret.s.rejected": [
+  "Not accepted",
+  "Niet geaccepteerd"
+ ],
+ "ret.s.requested": [
+  "Requested — under review",
+  "Aangevraagd — wordt bekeken"
+ ],
+ "ret.submit": [
+  "Request return",
+  "Retour aanvragen"
+ ],
+ "ret.title": [
+  "Returns",
+  "Retouren"
+ ],
+ "reviews.based": [
+  "Based on {count} reviews",
+  "Op basis van {count} reviews"
+ ],
+ "reviews.basedOne": [
+  "Based on 1 review",
+  "Op basis van 1 review"
+ ],
+ "reviews.bodyPlaceholder": [
+  "How's the quality, fit, feel?",
+  "Hoe zijn de kwaliteit, pasvorm en het gevoel?"
+ ],
+ "reviews.fit": [
+  "Fit",
+  "Pasvorm"
+ ],
+ "reviews.headline": [
+  "Headline (optional)",
+  "Titel (optioneel)"
+ ],
+ "reviews.howFit": [
+  "How does it fit? (optional)",
+  "Hoe valt het? (optioneel)"
+ ],
+ "reviews.large": [
+  "Runs large",
+  "Valt groot"
+ ],
+ "reviews.none": [
+  "No reviews yet. Be the first.",
+  "Nog geen reviews. Wees de eerste."
+ ],
+ "reviews.signIn": [
+  "Sign in",
+  "Log in"
+ ],
+ "reviews.sizeBought": [
+  "Size you bought (optional)",
+  "Gekochte maat (optioneel)"
+ ],
+ "reviews.small": [
+  "Runs small",
+  "Valt klein"
+ ],
+ "reviews.starAria": [
+  "{n} stars",
+  "{n} sterren"
+ ],
+ "reviews.starsLabel": [
+  "{value} out of 5 stars",
+  "{value} van de 5 sterren"
+ ],
+ "reviews.submit": [
+  "Submit review",
+  "Review plaatsen"
+ ],
+ "reviews.thanks": [
+  "Thanks — you've reviewed this product.",
+  "Bedankt — je hebt dit product al beoordeeld."
+ ],
+ "reviews.title": [
+  "Reviews",
+  "Reviews"
+ ],
+ "reviews.toWrite": [
+  "to write a review.",
+  "om een review te schrijven."
+ ],
+ "reviews.true": [
+  "True to size",
+  "Valt normaal"
+ ],
+ "reviews.verified": [
+  "Verified buyer",
+  "Geverifieerde koper"
+ ],
+ "reviews.write": [
+  "Write a review",
+  "Schrijf een review"
+ ],
+ "reviews.yourRating": [
+  "Your rating",
+  "Jouw beoordeling"
+ ],
+ "search.go": [
+  "Go",
+  "Zoek"
+ ],
+ "search.noResults": [
+  "No matches. Try “tee”, “tracksuit” or a colour.",
+  "Geen resultaten. Probeer “tee”, “trainingspak” of een kleur."
+ ],
+ "search.result": [
+  "1 result",
+  "1 resultaat"
+ ],
+ "search.results": [
+  "{count} results",
+  "{count} resultaten"
+ ],
+ "search.title": [
+  "Search",
+  "Zoeken"
+ ],
+ "set.addPassword": [
+  "Add a password",
+  "Wachtwoord toevoegen"
+ ],
+ "set.addPw": [
+  "Add password",
+  "Wachtwoord toevoegen"
+ ],
+ "set.changePw": [
+  "Change password",
+  "Wachtwoord wijzigen"
+ ],
+ "set.confirmed": [
+  "Confirmed",
+  "Bevestigd"
+ ],
+ "set.connect": [
+  "Connect",
+  "Koppelen"
+ ],
+ "set.connected": [
+  "{provider} is now connected. You can use it to sign in.",
+  "{provider} is nu gekoppeld. Je kunt er voortaan mee inloggen."
+ ],
+ "set.delete": [
+  "Delete account",
+  "Account verwijderen"
+ ],
+ "set.deleteBody": [
+  "Removes your profile, wishlist and sign-in methods, and unsubscribes you. Past orders are kept anonymously for tax records. This can't be undone.",
+  "Verwijdert je profiel, verlanglijst en inlogmethodes en meldt je af voor mails. Eerdere bestellingen bewaren we anoniem voor de belastingadministratie. Dit kan niet ongedaan worden gemaakt."
+ ],
+ "set.deleteMine": [
+  "Delete my account",
+  "Mijn account verwijderen"
+ ],
+ "set.deleting": [
+  "Deleting…",
+  "Verwijderen…"
+ ],
+ "set.devices": [
+  "Devices",
+  "Apparaten"
+ ],
+ "set.devicesBody": [
+  "Signed in on a shared or lost device? Sign out everywhere, including here.",
+  "Ingelogd op een gedeeld of kwijtgeraakt apparaat? Log overal uit, ook hier."
+ ],
+ "set.disconnect": [
+  "Disconnect",
+  "Ontkoppelen"
+ ],
+ "set.disconnected": [
+  "Disconnected.",
+  "Ontkoppeld."
+ ],
+ "set.emailPassword": [
+  "Email + password",
+  "E-mail + wachtwoord"
+ ],
+ "set.emails": [
+  "Emails",
+  "E-mails"
+ ],
+ "set.emailsBody": [
+  "Drops, restocks and offers. Order emails always arrive.",
+  "Drops, restocks en aanbiedingen. Bestelmails ontvang je altijd."
+ ],
+ "set.isConnected": [
+  "Connected",
+  "Gekoppeld"
+ ],
+ "set.marketing": [
+  "Marketing emails",
+  "Marketingmails"
+ ],
+ "set.meta": [
+  "Profile & security",
+  "Profiel & beveiliging"
+ ],
+ "set.methods": [
+  "Sign-in methods",
+  "Inlogmethodes"
+ ],
+ "set.notConfirmed": [
+  "Not confirmed",
+  "Niet bevestigd"
+ ],
+ "set.notConnected": [
+  "Not connected",
+  "Niet gekoppeld"
+ ],
+ "set.off": [
+  "Off",
+  "Uit"
+ ],
+ "set.on": [
+  "On",
+  "Aan"
+ ],
+ "set.password": [
+  "Password",
+  "Wachtwoord"
+ ],
+ "set.profile": [
+  "Profile",
+  "Profiel"
+ ],
+ "set.save": [
+  "Save",
+  "Opslaan"
+ ],
+ "set.signOutAll": [
+  "Sign out of all devices",
+  "Uitloggen op alle apparaten"
+ ],
+ "set.socialOnly": [
+  "You sign in with {providers}. Add a password to also sign in with email.",
+  "Je logt in met {providers}. Voeg een wachtwoord toe om ook met je e-mailadres in te loggen."
+ ],
+ "set.typeDelete": [
+  "Type \"DELETE\" to confirm",
+  "Typ \"DELETE\" om te bevestigen"
+ ],
+ "sg.Body length": [
+  "Body length",
+  "Lengte"
+ ],
+ "sg.Chest width": [
+  "Chest width",
+  "Borstbreedte"
+ ],
+ "sg.Inseam": [
+  "Inseam",
+  "Binnenbeenlengte"
+ ],
+ "sg.Jacket chest": [
+  "Jacket chest",
+  "Borst jas"
+ ],
+ "sg.Jacket length": [
+  "Jacket length",
+  "Lengte jas"
+ ],
+ "sg.Pant waist (relaxed)": [
+  "Pant waist (relaxed)",
+  "Taille broek (ontspannen)"
+ ],
+ "sg.Size": [
+  "Size",
+  "Maat"
+ ],
+ "sg.Sleeve": [
+  "Sleeve",
+  "Mouw"
+ ],
+ "sg.note.hoodies": [
+  "Relaxed fit. Measured flat, in cm.",
+  "Relaxte pasvorm. Plat gemeten, in cm."
+ ],
+ "sg.note.sleeveless-and-tanks": [
+  "Regular fit. Measured flat, in cm.",
+  "Normale pasvorm. Plat gemeten, in cm."
+ ],
+ "sg.note.t-shirts": [
+  "Relaxed, slightly oversized fit. Size down for a closer fit. Measured flat, in cm.",
+  "Relaxte, licht oversized pasvorm. Kies een maat kleiner voor een strakkere fit. Plat gemeten, in cm."
+ ],
+ "sg.note.tracksuits": [
+  "Relaxed fit with elasticated cuffs and hem. Measured flat, in cm.",
+  "Relaxte pasvorm met elastische boorden en zoom. Plat gemeten, in cm."
+ ],
+ "shop.all": [
+  "Shop All",
+  "Alle producten"
+ ],
+ "shop.allShort": [
+  "All",
+  "Alles"
+ ],
+ "shop.apply": [
+  "Apply",
+  "Toepassen"
+ ],
+ "shop.categories": [
+  "Categories",
+  "Categorieën"
+ ],
+ "shop.collection": [
+  "Collection",
+  "Collectie"
+ ],
+ "shop.count": [
+  "{count} products",
+  "{count} producten"
+ ],
+ "shop.countOne": [
+  "1 product",
+  "1 product"
+ ],
+ "shop.empty": [
+  "Nothing here yet.",
+  "Hier staat nog niets."
+ ],
+ "shop.eyebrow": [
+  "Wear your roots. Tell your story.",
+  "Draag je wortels. Vertel je verhaal."
+ ],
+ "shop.newArrivals": [
+  "New Arrivals",
+  "Nieuw binnen"
+ ],
+ "shop.sale": [
+  "Sale",
+  "Sale"
+ ],
+ "shop.sort": [
+  "Sort",
+  "Sorteren"
+ ],
+ "shop.sortAsc": [
+  "Price: low to high",
+  "Prijs: laag naar hoog"
+ ],
+ "shop.sortDesc": [
+  "Price: high to low",
+  "Prijs: hoog naar laag"
+ ],
+ "shop.sortFeatured": [
+  "Featured",
+  "Uitgelicht"
+ ],
+ "shop.sortNew": [
+  "Newest",
+  "Nieuwste"
+ ],
+ "shop.viewEverything": [
+  "View everything",
+  "Bekijk alles"
+ ],
+ "size.between": [
+  "Between sizes? Size up for a looser fit, down for a closer fit. Measurements may vary by ±1–2 cm.",
+  "Twijfel je tussen twee maten? Kies groter voor een ruimere pasvorm, kleiner voor een strakkere. Maten kunnen ±1–2 cm afwijken."
+ ],
+ "size.close": [
+  "Close size guide",
+  "Maattabel sluiten"
+ ],
+ "size.guide": [
+  "Size guide",
+  "Maattabel"
+ ],
+ "status.cancelled": [
+  "Cancelled",
+  "Geannuleerd"
+ ],
+ "status.delivered": [
+  "Delivered",
+  "Bezorgd"
+ ],
+ "status.fulfilled": [
+  "Packed",
+  "Ingepakt"
+ ],
+ "status.paid": [
+  "Paid",
+  "Betaald"
+ ],
+ "status.partially_refunded": [
+  "Part refunded",
+  "Deels terugbetaald"
+ ],
+ "status.pending": [
+  "Awaiting payment",
+  "Wacht op betaling"
+ ],
+ "status.refunded": [
+  "Refunded",
+  "Terugbetaald"
+ ],
+ "status.shipped": [
+  "Shipped",
+  "Verzonden"
+ ],
+ "story.alt": [
+  "Three friends in OOLU “Your Roots.” t-shirts walking down a street",
+  "Drie vrienden in OOLU “Your Roots.” t-shirts lopen door een straat"
+ ],
+ "story.cta": [
+  "Shop the collection",
+  "Shop de collectie"
+ ],
+ "story.eyebrow": [
+  "Our story",
+  "Ons verhaal"
+ ],
+ "story.p1": [
+  "Born from West African roots and built with a global vision, OOLU represents trust in yourself, trust in your journey and trust in where you come from.",
+  "Geboren uit West-Afrikaanse wortels en gebouwd met een wereldwijde visie staat OOLU voor vertrouwen in jezelf, in je eigen pad en in waar je vandaan komt."
+ ],
+ "story.p2": [
+  "We create clothing for people who move with confidence, stay true to themselves and carry their identity with pride. Every OOLU piece is more than something you wear. It represents loyalty, connection, ambition and the courage to believe in your own path.",
+  "We maken kleding voor mensen die met zelfvertrouwen bewegen, trouw blijven aan zichzelf en hun identiteit met trots dragen. Elk OOLU-stuk is meer dan iets wat je draagt. Het staat voor loyaliteit, verbinding, ambitie en de moed om in je eigen pad te geloven."
+ ],
+ "story.p3": [
+  "Rooted in Africa. Created in Amsterdam. Made for the world.",
+  "Geworteld in Afrika. Gemaakt in Amsterdam. Voor de wereld."
+ ],
+ "story.signoff": [
+  "OOLU — Built on trust.",
+  "OOLU — Gebouwd op vertrouwen."
+ ],
+ "story.title": [
+  "OOLU means trust.",
+  "OOLU betekent vertrouwen."
+ ],
+ "success.account": [
+  "Your account",
+  "Je account"
+ ],
+ "success.allSet": [
+  "You're all set.",
+  "Helemaal geregeld."
+ ],
+ "success.body": [
+  "Thanks for shopping with {brand}. A confirmation is on its way to {email}.",
+  "Bedankt voor je bestelling bij {brand}. Er is een bevestiging onderweg naar {email}."
+ ],
+ "success.keepShopping": [
+  "Keep shopping",
+  "Verder winkelen"
+ ],
+ "success.meta": [
+  "Order confirmed",
+  "Bestelling bevestigd"
+ ],
+ "success.notFound": [
+  "We couldn't find that order, but if you paid you'll get a confirmation email shortly.",
+  "We konden die bestelling niet vinden, maar als je hebt betaald krijg je zo een bevestigingsmail."
+ ],
+ "success.pendingBody": [
+  "Your payment is still being confirmed. Refresh in a moment — we'll email you as soon as it clears.",
+  "Je betaling wordt nog bevestigd. Vernieuw zo de pagina — we mailen je zodra het rond is."
+ ],
+ "success.processing": [
+  "Processing payment…",
+  "Betaling wordt verwerkt…"
+ ],
+ "success.thanks": [
+  "Thanks!",
+  "Bedankt!"
+ ],
+ "success.yourInbox": [
+  "your inbox",
+  "je inbox"
+ ],
+ "tl.delivered": [
+  "Delivered",
+  "Bezorgd"
+ ],
+ "tl.packed": [
+  "Packed",
+  "Ingepakt"
+ ],
+ "tl.placed": [
+  "Order placed",
+  "Besteld"
+ ],
+ "tl.shipped": [
+  "Shipped",
+  "Verzonden"
+ ],
+ "tl.tracking": [
+  "{carrier} tracking:",
+  "{carrier} track & trace:"
+ ],
+ "tl.wasCancelled": [
+  "This order was cancelled.",
+  "Deze bestelling is geannuleerd."
+ ],
+ "tl.wasRefunded": [
+  "This order was refunded.",
+  "Deze bestelling is terugbetaald."
+ ],
+ "track.button": [
+  "Track order",
+  "Bestelling volgen"
+ ],
+ "track.email": [
+  "Email",
+  "E-mail"
+ ],
+ "track.eyebrow": [
+  "Help",
+  "Help"
+ ],
+ "track.hint": [
+  "Your order number is in your confirmation email.",
+  "Je bestelnummer staat in je bevestigingsmail."
+ ],
+ "track.looking": [
+  "Looking…",
+  "Zoeken…"
+ ],
+ "track.meta": [
+  "Track your order",
+  "Volg je bestelling"
+ ],
+ "track.number": [
+  "Order number",
+  "Bestelnummer"
+ ],
+ "track.title": [
+  "Track your order",
+  "Volg je bestelling"
+ ],
+ "verify.resend": [
+  "Resend email",
+  "Mail opnieuw sturen"
+ ],
+ "verify.sent": [
+  "Sent",
+  "Verstuurd"
+ ],
+ "verify.text1": [
+  "Confirm",
+  "Bevestig"
+ ],
+ "verify.text2": [
+  "to link past guest orders and secure your account.",
+  "om eerdere gastbestellingen te koppelen en je account te beveiligen."
+ ],
+ "wishlist.addAria": [
+  "Save {name} to wishlist",
+  "{name} bewaren op je verlanglijst"
+ ],
+ "wishlist.chooseSize": [
+  "Choose size",
+  "Kies maat"
+ ],
+ "wishlist.count": [
+  "{count} saved · stored on this device",
+  "{count} bewaard · opgeslagen op dit apparaat"
+ ],
+ "wishlist.empty": [
+  "Nothing saved yet. Tap the heart on any product to keep it here.",
+  "Nog niets bewaard. Tik op het hartje bij een product om het hier te bewaren."
+ ],
+ "wishlist.eyebrow": [
+  "Saved for later",
+  "Bewaard voor later"
+ ],
+ "wishlist.remove": [
+  "Remove {name}",
+  "{name} verwijderen"
+ ],
+ "wishlist.removeAria": [
+  "Remove {name} from wishlist",
+  "{name} verwijderen van je verlanglijst"
+ ],
+ "wishlist.save": [
+  "Save",
+  "Bewaren"
+ ],
+ "wishlist.saved": [
+  "Saved",
+  "Bewaard"
+ ],
+ "wishlist.title": [
+  "Wishlist",
+  "Verlanglijst"
+ ]
+}

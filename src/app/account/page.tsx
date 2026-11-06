@@ -5,11 +5,17 @@ import { desc, eq, sql } from "drizzle-orm";
 import { requireUser } from "@/lib/auth";
 import { listOrdersForUser } from "@/lib/orders";
 import { getDb, schema } from "@/lib/db";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { AccountShell } from "@/components/auth/AccountShell";
+import { getT } from "@/i18n/server";
+import { intlLocale } from "@/i18n/config";
+import type { MessageKey } from "@/i18n/messages";
 
-export const metadata: Metadata = { title: "Account", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT();
+  return { title: t("acct.meta"), robots: { index: false } };
+}
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
@@ -17,6 +23,8 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
   const user = await requireUser("/account");
   const sp = await searchParams;
   const db = await getDb();
+  const { t, locale } = await getT();
+  const fmtDate = (d: Date | string) => new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(d));
   const [orders, [wish], [reviews], returns] = await Promise.all([
     listOrdersForUser(user.id).then((o) => o.filter((x) => x.status !== "pending" && x.status !== "cancelled")),
     db.select({ n: sql<number>`count(*)::int` }).from(schema.wishlistItems).where(eq(schema.wishlistItems.userId, user.id)),
@@ -31,16 +39,16 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
   ]);
   const openReturns = returns.filter((r) => ["requested", "approved", "received"].includes(r.r.status));
   const notice = one(sp.welcome)
-    ? "Welcome to OOLU. Your account is ready."
+    ? t("acct.welcome")
     : one(sp.reset)
-      ? "Password updated. You're signed in."
+      ? t("acct.pwUpdated")
       : null;
 
   const stats = [
-    { icon: Package, label: "Orders", value: orders.length, href: "#orders" },
-    { icon: RefreshCw, label: "Open returns", value: openReturns.length, href: "#orders" },
-    { icon: Heart, label: "Wishlist", value: wish.n, href: "/wishlist" },
-    { icon: Star, label: "Reviews", value: reviews.n, href: "/shop" },
+    { icon: Package, label: t("acct.orders"), value: orders.length, href: "#orders" },
+    { icon: RefreshCw, label: t("acct.openReturns"), value: openReturns.length, href: "#orders" },
+    { icon: Heart, label: t("acct.wishlist"), value: wish.n, href: "/wishlist" },
+    { icon: Star, label: t("acct.reviews"), value: reviews.n, href: "/shop" },
   ];
 
   return (
@@ -60,23 +68,23 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
 
       {openReturns.length > 0 && (
         <div className="mt-10 bg-white p-6">
-          <h2 className="label mb-4 font-semibold">Returns in progress</h2>
+          <h2 className="label mb-4 font-semibold">{t("acct.returnsInProgress")}</h2>
           <ul className="space-y-2 text-sm">
             {openReturns.map(({ r, number }) => (
               <li key={r.id}>
-                <Link href={`/account/orders/${r.orderId}`} className="underline underline-offset-4">Order #{number}</Link> — <span className="capitalize">{r.status}</span>
-                <span className="text-ash"> · {formatDate(r.createdAt)}</span>
+                <Link href={`/account/orders/${r.orderId}`} className="underline underline-offset-4">{t("acct.orderNo", { number })}</Link> — <span className="capitalize">{t(`ret.${r.status}` as MessageKey)}</span>
+                <span className="text-ash"> · {fmtDate(r.createdAt)}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <h2 id="orders" className="eyebrow mt-14 mb-5 scroll-mt-28">Your orders</h2>
+      <h2 id="orders" className="eyebrow mt-14 mb-5 scroll-mt-28">{t("acct.yourOrders")}</h2>
       {orders.length === 0 ? (
         <div className="bg-white p-12 text-center">
-          <p className="text-[15px] text-ash">No orders yet{!user.emailVerified ? " — confirm your email to pull in orders you placed as a guest" : ""}.</p>
-          <Link href="/shop" className="btn-solid mt-6">Shop now</Link>
+          <p className="text-[15px] text-ash">{user.emailVerified ? t("acct.noOrders") : t("acct.noOrdersVerify")}</p>
+          <Link href="/shop" className="btn-solid mt-6">{t("common.shopNow")}</Link>
         </div>
       ) : (
         <ul className="divide-y divide-black/10 bg-white">
@@ -84,7 +92,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
             <li key={o.id}>
               <Link href={`/account/orders/${o.id}`} className="flex flex-wrap items-center gap-4 p-5 hover:bg-mist sm:gap-8">
                 <span className="w-20 text-[15px] font-semibold">#{o.number}</span>
-                <span className="w-28 text-[13px] text-ash">{formatDate(o.createdAt)}</span>
+                <span className="w-28 text-[13px] text-ash">{fmtDate(o.createdAt)}</span>
                 <OrderStatusBadge status={o.status} />
                 <span className="ml-auto text-[15px] tabular-nums">{formatMoney(o.total, o.currency)}</span>
                 <ArrowRight className="size-4" strokeWidth={1.5} />

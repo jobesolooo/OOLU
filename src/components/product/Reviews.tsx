@@ -2,13 +2,14 @@ import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import type { Review } from "@/lib/db/schema";
 import type { ReviewSummary } from "@/lib/reviews";
-import { formatDate } from "@/lib/format";
+import { getT } from "@/i18n/server";
+import { intlLocale } from "@/i18n/config";
 import { Stars } from "../Price";
 import { ReviewForm } from "./ReviewForm";
 
-const FIT_LABEL = { small: "Runs small", true: "True to size", large: "Runs large" } as const;
+const FIT_KEY = { small: "reviews.small", true: "reviews.true", large: "reviews.large" } as const;
 
-export function Reviews({
+export async function Reviews({
   reviews,
   summary,
   productId,
@@ -27,6 +28,8 @@ export function Reviews({
   signedIn: boolean;
   alreadyReviewed: boolean;
 }) {
+  const { t, locale } = await getT();
+  const fmtDate = (d: Date | string) => new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(d));
   const fits = reviews.filter((r) => r.fit);
   const fitScore = fits.length ? fits.reduce((s, r) => s + (r.fit === "small" ? -1 : r.fit === "large" ? 1 : 0), 0) / fits.length : null;
 
@@ -34,13 +37,13 @@ export function Reviews({
     <section id="reviews" className="section-y scroll-mt-24 border-t border-black/10">
       <div className="container-x grid gap-12 lg:grid-cols-[360px_1fr]">
         <div>
-          <h2 className="eyebrow">Reviews</h2>
+          <h2 className="eyebrow">{t("reviews.title")}</h2>
           {summary.count > 0 ? (
             <>
               <p className="mt-4 font-display font-normal tracking-[-0.02em] text-6xl">{summary.average.toFixed(1)}</p>
               <Stars value={summary.average} size={20} className="mt-2" />
               <p className="mt-2 text-sm text-ash">
-                Based on {summary.count} review{summary.count === 1 ? "" : "s"}
+                {summary.count === 1 ? t("reviews.basedOne") : t("reviews.based", { count: summary.count })}
               </p>
               <ul className="mt-6 space-y-1.5">
                 {[5, 4, 3, 2, 1].map((s) => {
@@ -58,39 +61,39 @@ export function Reviews({
               </ul>
               {fitScore !== null && (
                 <div className="mt-8">
-                  <p className="label mb-2 font-semibold">Fit</p>
+                  <p className="label mb-2 font-semibold">{t("reviews.fit")}</p>
                   <div className="relative h-1.5 bg-black/10">
                     <span className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" style={{ left: `${50 + fitScore * 50}%` }} />
                   </div>
                   <div className="mt-2 flex justify-between text-[11px] text-ash">
-                    <span>Runs small</span>
-                    <span>True to size</span>
-                    <span>Runs large</span>
+                    <span>{t("reviews.small")}</span>
+                    <span>{t("reviews.true")}</span>
+                    <span>{t("reviews.large")}</span>
                   </div>
                 </div>
               )}
             </>
           ) : (
-            <p className="mt-4 text-sm text-ash">No reviews yet. Be the first.</p>
+            <p className="mt-4 text-sm text-ash">{t("reviews.none")}</p>
           )}
         </div>
 
         <div className="space-y-10">
           {canReview ? (
             <details className="group">
-              <summary className="btn-solid">Write a review</summary>
+              <summary className="btn-solid">{t("reviews.write")}</summary>
               <div className="mt-4">
                 <ReviewForm productId={productId} sizes={sizes} />
               </div>
             </details>
           ) : alreadyReviewed ? (
-            <p className="text-sm text-ash">Thanks — you&apos;ve reviewed this product.</p>
+            <p className="text-sm text-ash">{t("reviews.thanks")}</p>
           ) : !signedIn ? (
             <p className="text-sm">
               <Link href={`/account/login?next=/products/${slug}%23reviews`} className="underline underline-offset-4">
-                Sign in
+                {t("reviews.signIn")}
               </Link>{" "}
-              to write a review.
+              {t("reviews.toWrite")}
             </p>
           ) : null}
 
@@ -106,12 +109,12 @@ export function Reviews({
                   <span className="font-medium text-ink">{r.name}</span>
                   {r.verified && (
                     <span className="flex items-center gap-1">
-                      <BadgeCheck className="size-3.5" /> Verified buyer
+                      <BadgeCheck className="size-3.5" /> {t("reviews.verified")}
                     </span>
                   )}
                   {r.size && <span>{r.size}</span>}
-                  {r.fit && <span>{FIT_LABEL[r.fit]}</span>}
-                  <span>{formatDate(r.createdAt)}</span>
+                  {r.fit && <span>{t(FIT_KEY[r.fit])}</span>}
+                  <span>{fmtDate(r.createdAt)}</span>
                 </p>
               </li>
             ))}

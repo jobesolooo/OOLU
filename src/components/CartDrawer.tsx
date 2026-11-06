@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Check, Minus, Plus, X } from "lucide-react";
 import { useCart, cartSubtotal, MAX_QTY, type CartLine } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
+import { useMoney, useT, useTx } from "./Prefs";
 import { variantLabel } from "@/lib/variants";
 import { PaymentIcons } from "./PaymentIcons";
 
@@ -15,6 +16,8 @@ export function useCheckout() {
   const giftCard = useCart((s) => s.giftCard);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useT();
+  const tx = useTx();
 
   async function checkout() {
     setPending(true);
@@ -29,10 +32,10 @@ export function useCheckout() {
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
-      if (!res.ok || !data.url) throw new Error(data.error ?? "Checkout is unavailable right now.");
+      if (!res.ok || !data.url) throw new Error(data.error ?? t("cart.checkoutUnavailable"));
       window.location.href = data.url;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong.");
+      setError(e instanceof Error ? tx(e.message) : t("common.error"));
       setPending(false);
     }
   }
@@ -53,6 +56,8 @@ export function CartLineRow({
 }) {
   const setQuantity = useCart((s) => s.setQuantity);
   const remove = useCart((s) => s.remove);
+  const t = useT();
+  const { money } = useMoney();
   return (
     <li className={`flex gap-4 py-5 ${className ?? ""}`} style={style}>
       <Link href={`/products/${line.slug}`} className="relative aspect-square w-20 shrink-0 bg-stone sm:w-24">
@@ -67,7 +72,7 @@ export function CartLineRow({
             {line.size !== "One Size" && <p className="mt-0.5 text-xs text-ash">{variantLabel(line.size)}</p>}
           </div>
           <button
-            aria-label={`Remove ${line.name}`}
+            aria-label={t("cart.remove", { name: line.name })}
             onClick={() => remove(line.productId, line.size)}
             className="text-ash hover:text-ink"
           >
@@ -77,7 +82,7 @@ export function CartLineRow({
         <div className="mt-auto flex items-center justify-between pt-3">
           <div className="flex items-center border border-black/15">
             <button
-              aria-label="Decrease quantity"
+              aria-label={t("pdp.decrease")}
               className="grid size-8 place-items-center"
               onClick={() => setQuantity(line.productId, line.size, line.quantity - 1)}
             >
@@ -85,7 +90,7 @@ export function CartLineRow({
             </button>
             <span className="w-7 text-center text-xs tabular-nums">{line.quantity}</span>
             <button
-              aria-label="Increase quantity"
+              aria-label={t("pdp.increase")}
               className="grid size-8 place-items-center disabled:opacity-30"
               disabled={line.quantity >= MAX_QTY}
               onClick={() => setQuantity(line.productId, line.size, line.quantity + 1)}
@@ -93,7 +98,7 @@ export function CartLineRow({
               <Plus className="size-3" />
             </button>
           </div>
-          <p className={compact ? "text-xs" : "text-[13px]"}>{formatMoney(line.unitAmount * line.quantity, line.currency)}</p>
+          <p className={compact ? "text-xs" : "text-[13px]"}>{money(line.unitAmount * line.quantity, line.currency)}</p>
         </div>
       </div>
     </li>
@@ -103,6 +108,9 @@ export function CartLineRow({
 export function GiftCardInput({ subtotal }: { subtotal: number }) {
   const giftCard = useCart((s) => s.giftCard);
   const setGiftCard = useCart((s) => s.setGiftCard);
+  const t = useT();
+  const tx = useTx();
+  const { money } = useMoney();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -112,19 +120,19 @@ export function GiftCardInput({ subtotal }: { subtotal: number }) {
     return (
       <div className="flex items-center justify-between py-2 text-[13px]">
         <span>
-          Gift card <span className="font-mono">••{giftCard.code.slice(-4)}</span>
-          <span className="block text-xs text-ash">Balance {formatMoney(giftCard.balance, giftCard.currency)}</span>
+          {t("cart.giftCard")} <span className="font-mono">••{giftCard.code.slice(-4)}</span>
+          <span className="block text-xs text-ash">{t("cart.balance", { amount: money(giftCard.balance, giftCard.currency) })}</span>
         </span>
         <span className="flex items-center gap-3">
-          −{formatMoney(applied, giftCard.currency)}
-          <button className="text-xs text-ash underline" onClick={() => setGiftCard(null)}>Remove</button>
+          −{money(applied, giftCard.currency)}
+          <button className="text-xs text-ash underline" onClick={() => setGiftCard(null)}>{t("cart.removeGift")}</button>
         </span>
       </div>
     );
   }
   return (
     <details className="py-2">
-      <summary className="text-[12px] underline underline-offset-4">Have a gift card?</summary>
+      <summary className="text-[12px] underline underline-offset-4">{t("cart.haveGiftCard")}</summary>
       <form
         className="mt-3 flex gap-2"
         onSubmit={async (e) => {
@@ -134,33 +142,29 @@ export function GiftCardInput({ subtotal }: { subtotal: number }) {
           const res = await fetch(`/api/gift-cards/check?code=${encodeURIComponent(code)}`);
           const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string; balance?: number; currency?: string };
           setBusy(false);
-          if (!res.ok || !data.code) return setError(data.error ?? "Invalid code.");
+          if (!res.ok || !data.code) return setError(data.error ?? t("cart.invalidCode"));
           setGiftCard({ code: data.code, balance: data.balance!, currency: data.currency! });
         }}
       >
-        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="OOLU-XXXX-XXXX-XXXX" className="input py-2.5 font-mono text-sm uppercase" aria-label="Gift card code" />
-        <button className="btn-solid shrink-0 px-4 py-2.5" disabled={busy || !code.trim()}>{busy ? "…" : "Apply"}</button>
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="OOLU-XXXX-XXXX-XXXX" className="input py-2.5 font-mono text-sm uppercase" aria-label={t("cart.giftAria")} />
+        <button className="btn-solid shrink-0 px-4 py-2.5" disabled={busy || !code.trim()}>{busy ? "…" : t("cart.apply")}</button>
       </form>
-      {error && <p className="mt-2 text-xs text-red-700">{error}</p>}
-      <p className="mt-2 text-[11px] text-ash">Discount codes can be added at checkout.</p>
+      {error && <p className="mt-2 text-xs text-red-700">{tx(error)}</p>}
+      <p className="mt-2 text-[11px] text-ash">{t("cart.discountLater")}</p>
     </details>
   );
 }
 
 export function FreeShippingMeter({ subtotal, threshold }: { subtotal: number; threshold: number }) {
+  const t = useT();
+  const { money } = useMoney();
   if (threshold <= 0) return null;
   const left = Math.max(0, threshold - subtotal);
   const pct = Math.min(100, (subtotal / threshold) * 100);
   return (
     <div className="py-4">
       <p className="text-xs">
-        {left > 0 ? (
-          <>
-            You&apos;re <strong>{formatMoney(left)}</strong> away from free shipping
-          </>
-        ) : (
-          <>You&apos;ve unlocked free shipping</>
-        )}
+        {left > 0 ? t("cart.awayFree", { amount: money(left) }) : t("cart.unlocked")}
       </p>
       <div className="mt-2 h-[3px] bg-black/10">
         <div className="h-full bg-ink transition-all" style={{ width: `${pct}%` }} />
@@ -171,11 +175,21 @@ export function FreeShippingMeter({ subtotal, threshold }: { subtotal: number; t
 
 const AUTO_CLOSE_MS = 3500;
 
+/** When showing another currency, make clear the payment itself is in euros. */
+export function ChargedInEuros({ subtotal }: { subtotal: number }) {
+  const t = useT();
+  const { isBase, currency } = useMoney();
+  if (isBase) return null;
+  return <p className="mt-2 bg-stone px-3 py-2 text-[11px] leading-relaxed">{t("cart.chargedInEur", { currency, amount: formatMoney(subtotal, "eur") })}</p>;
+}
+
 export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: number }) {
   const { lines, open, setOpen, justAdded } = useCart();
+  const { money } = useMoney();
   const { checkout, pending, error } = useCheckout();
   const subtotal = cartSubtotal(lines);
   const pathname = usePathname();
+  const t = useT();
   const panelRef = useRef<HTMLElement>(null);
   const [engaged, setEngaged] = useState(false);
 
@@ -211,7 +225,7 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
       <aside
         ref={panelRef}
         role="dialog"
-        aria-label="Shopping bag"
+        aria-label={t("cart.title")}
         onPointerEnter={() => setEngaged(true)}
         onPointerLeave={() => setEngaged(false)}
         onFocusCapture={() => setEngaged(true)}
@@ -225,15 +239,15 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
         }`}
       >
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
-          <h2 className="label text-xs font-semibold">Your bag</h2>
-          <button aria-label="Close bag" onClick={() => setOpen(false)} className="transition-transform duration-300 hover:rotate-90">
+          <h2 className="label text-xs font-semibold">{t("cart.title")}</h2>
+          <button aria-label={t("cart.close")} onClick={() => setOpen(false)} className="transition-transform duration-300 hover:rotate-90">
             <X className="size-5" strokeWidth={1.5} />
           </button>
         </div>
         {justAdded && open && (
           <div key={justAdded.at} className="animate-fade-up relative overflow-hidden bg-ink px-6 py-3 text-[12px] text-white" role="status">
             <p className="flex items-center gap-2">
-              <Check className="size-4 text-accent" strokeWidth={2} /> Added to bag: <span className="truncate">{justAdded.name}</span>
+              <Check className="size-4 text-accent" strokeWidth={2} /> {t("cart.added")} <span className="truncate">{justAdded.name}</span>
             </p>
             {!engaged && (
               <span className="drawer-timer absolute bottom-0 left-0 h-[2px] bg-accent" style={{ animationDuration: `${AUTO_CLOSE_MS}ms` }} aria-hidden />
@@ -243,9 +257,9 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
 
         {lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-            <p className="text-sm text-ash">Your bag is empty.</p>
+            <p className="text-sm text-ash">{t("cart.empty")}</p>
             <Link href="/shop" className="btn-solid" onClick={() => setOpen(false)}>
-              Shop now
+              {t("common.shopNow")}
             </Link>
           </div>
         ) : (
@@ -266,14 +280,15 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
             </ul>
             <div className="border-t border-black/10 px-6 py-5">
               <div className="flex justify-between text-sm">
-                <span className="label">Subtotal</span>
-                <span className="font-medium">{formatMoney(subtotal)}</span>
+                <span className="label">{t("cart.subtotal")}</span>
+                <span className="font-medium">{money(subtotal)}</span>
               </div>
               <GiftCardInput subtotal={subtotal} />
-              <p className="mt-1 text-xs text-ash">Shipping and taxes calculated at checkout.</p>
+              <p className="mt-1 text-xs text-ash">{t("cart.taxes")}</p>
+              <ChargedInEuros subtotal={subtotal} />
               {error && <p className="mt-3 text-xs text-red-700">{error}</p>}
               <button className="btn-solid mt-4 w-full py-4" onClick={checkout} disabled={pending}>
-                {pending ? "Redirecting…" : "Checkout"}
+                {pending ? t("cart.redirecting") : t("cart.checkout")}
               </button>
               <PaymentIcons size="sm" className="mt-4 justify-center" />
               <Link
@@ -281,7 +296,7 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
                 className="mt-3 block text-center text-[11px] tracking-[0.14em] uppercase underline-offset-4 hover:underline"
                 onClick={() => setOpen(false)}
               >
-                View bag
+                {t("cart.viewBag")}
               </Link>
             </div>
           </>

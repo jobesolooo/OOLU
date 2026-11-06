@@ -2,10 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Ruler, X } from "lucide-react";
+import { useT } from "../Prefs";
+import type { MessageKey } from "@/i18n/messages";
 
 export type SizeChart = { note: string; columns: string[]; rows: (string | number)[][] };
 
-export function SizeGuideTable({ chart }: { chart: SizeChart }) {
+export function SizeGuideTable({ chart, category }: { chart: SizeChart; category?: string }) {
+  const t = useT();
+  // Column names and notes are translated when a translation exists.
+  const tr = (key: string, fallback: string) => {
+    const v = t(key as MessageKey);
+    return v === key ? fallback : v;
+  };
   return (
     <div>
       <div className="overflow-x-auto">
@@ -14,7 +22,7 @@ export function SizeGuideTable({ chart }: { chart: SizeChart }) {
             <tr className="border-b border-ink">
               {chart.columns.map((c) => (
                 <th key={c} className="py-3 pr-4 text-[11px] font-semibold tracking-[0.12em] uppercase">
-                  {c}
+                  {tr(`sg.${c}`, c)}
                 </th>
               ))}
             </tr>
@@ -32,12 +40,13 @@ export function SizeGuideTable({ chart }: { chart: SizeChart }) {
           </tbody>
         </table>
       </div>
-      <p className="mt-4 text-sm text-black/70">{chart.note}</p>
+      <p className="mt-4 text-sm text-black/70">{category ? tr(`sg.note.${category}`, chart.note) : chart.note}</p>
     </div>
   );
 }
 
-export function SizeGuide({ chart, productName }: { chart: SizeChart; productName: string }) {
+export function SizeGuide({ chart, productName, category }: { chart: SizeChart; productName: string; category?: string }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -47,7 +56,7 @@ export function SizeGuide({ chart, productName }: { chart: SizeChart; productNam
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className="flex items-center gap-2 text-[12px] underline underline-offset-4">
-        <Ruler className="size-4" strokeWidth={1.5} /> Size guide
+        <Ruler className="size-4" strokeWidth={1.5} /> {t("size.guide")}
       </button>
       <dialog
         ref={ref}
@@ -58,16 +67,16 @@ export function SizeGuide({ chart, productName }: { chart: SizeChart; productNam
         <div className="p-6 sm:p-8">
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
-              <p className="eyebrow text-ash">Size guide</p>
+              <p className="eyebrow text-ash">{t("size.guide")}</p>
               <h2 className="mt-2 text-xl font-semibold">{productName}</h2>
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Close size guide">
+            <button onClick={() => setOpen(false)} aria-label={t("size.close")}>
               <X className="size-5" />
             </button>
           </div>
-          <SizeGuideTable chart={chart} />
+          <SizeGuideTable chart={chart} category={category} />
           <p className="mt-4 text-xs text-ash">
-            Between sizes? Size up for a looser fit, down for a closer fit. Measurements may vary by ±1–2 cm.
+            {t("size.between")}
           </p>
         </div>
       </dialog>
