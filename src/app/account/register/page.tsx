@@ -19,10 +19,11 @@ export default async function RegisterPage({ searchParams }: PageProps<"/account
   const { t } = await getT();
   return (
     <AuthShell
+      image="/images/brand/made-to-move.jpg"
       eyebrow={t("auth.joinEyebrow")}
       title={t("auth.createAccount")}
       aside={
-        <ul className="mb-[clamp(20px,4vh,40px)] space-y-2 text-[15px] text-white/90">
+        <ul className="space-y-2 text-[14px] text-white/90">
           {[t("auth.perk1"), t("auth.perk2"), t("auth.perk3")].map((b) => (
             <li key={b} className="flex items-center gap-3">
               <Check className="size-4 shrink-0" /> {b}

@@ -64,7 +64,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   // Pages that open with a full-bleed dark hero get the transparent header too.
-  const overHero = pathname === "/" || pathname === "/help/contact" || pathname.startsWith("/journal");
+  const overHero = pathname === "/" || pathname === "/shop" || pathname === "/help/contact" || pathname.startsWith("/journal");
   const clear = overHero && !scrolled && !searchOpen;
   const badge = clear ? "bg-white text-black" : "bg-ink text-white";
 

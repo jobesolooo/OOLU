@@ -227,6 +227,10 @@
   "Create account",
   "Account aanmaken"
  ],
+ "auth.memberPerks": [
+  "Member perks",
+  "Voordelen voor leden"
+ ],
  "auth.missingToken": [
   "This link is missing its token.",
   "Deze link mist een token."
@@ -322,6 +326,10 @@
  "auth.showPw": [
   "Show password",
   "Wachtwoord tonen"
+ ],
+ "auth.sideTitle": [
+  "Live in the present.",
+  "Leef in het nu."
  ],
  "auth.signIn": [
   "Sign in",
@@ -2447,9 +2455,25 @@
   "Wear your roots. Tell your story.",
   "Draag je wortels. Vertel je verhaal."
  ],
+ "shop.heroBody": [
+  "Every piece, rooted in Africa and made in Amsterdam. Filter by category or sort by price.",
+  "Elk stuk, geworteld in Afrika en gemaakt in Amsterdam. Filter op categorie of sorteer op prijs."
+ ],
  "shop.newArrivals": [
   "New Arrivals",
   "Nieuw binnen"
+ ],
+ "shop.promoBody": [
+  "Jacket and pants, worn together or apart. 25% off the set right now.",
+  "Jas en broek, samen of los te dragen. Nu 25% korting op de set."
+ ],
+ "shop.promoKicker": [
+  "The tracksuit",
+  "Het trainingspak"
+ ],
+ "shop.promoTitle": [
+  "Made to move.",
+  "Gemaakt om te bewegen."
  ],
  "shop.sale": [
   "Sale",
@@ -2462,6 +2486,10 @@
  "shop.sortAsc": [
   "Price: low to high",
   "Prijs: laag naar hoog"
+ ],
+ "shop.sortBy": [
+  "Sort: {sort}",
+  "Sorteer: {sort}"
  ],
  "shop.sortDesc": [
   "Price: high to low",
