@@ -138,7 +138,7 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
         <main className="flex flex-1 items-center justify-center px-6">
           <div className="cave-rise w-full max-w-[460px]">
             <div className="mb-10 flex flex-col items-center text-center">
-              <StaffMark className="w-36 text-[#f4efe3] drop-shadow-[0_0_28px_rgba(165,146,255,0.45)]" />
+              <StaffMark className="w-[173px] text-[#f4efe3] drop-shadow-[0_0_28px_rgba(165,146,255,0.45)]" />
               <p className="mt-6 font-mono text-[10px] tracking-[0.4em] text-[#a592ff] uppercase">
                 {step === "email" ? "Identify yourself" : "Verification required"}
                 <span className="cave-caret ml-1">_</span>
