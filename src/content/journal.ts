@@ -116,3 +116,14 @@ export const getPost = (slug: string, locale = "en") => {
 };
 export const latestPosts = (n = 3, locale = "en") =>
   [...JOURNAL].sort((a, b) => b.date.localeCompare(a.date)).slice(0, n).map((p) => localizePost(p, locale));
+
+/** Rough reading time in minutes (200 words per minute, images count as ~12 s). */
+export function readingMinutes(p: JournalPost) {
+  let words = p.excerpt.split(/\s+/).length;
+  let images = 0;
+  for (const b of p.blocks) {
+    if (b.type === "p" || b.type === "h2" || b.type === "quote") words += b.text.split(/\s+/).length;
+    if (b.type === "image") images++;
+  }
+  return Math.max(1, Math.round(words / 200 + images / 5));
+}

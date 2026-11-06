@@ -55,7 +55,7 @@ export function Header() {
     };
   }, [menuOpen]);
 
-  // On the homepage the header floats transparently over the hero until you scroll.
+  // Over a full-bleed hero the header floats transparently until you scroll.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -63,7 +63,9 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  const clear = pathname === "/" && !scrolled && !searchOpen;
+  // Pages that open with a full-bleed dark hero get the transparent header too.
+  const overHero = pathname === "/" || pathname === "/help/contact" || pathname.startsWith("/journal");
+  const clear = overHero && !scrolled && !searchOpen;
   const badge = clear ? "bg-white text-black" : "bg-ink text-white";
 
   return (
