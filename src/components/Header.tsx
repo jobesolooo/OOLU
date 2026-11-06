@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { Search, User, ShoppingBag, Menu, X, Heart } from "lucide-react";
 import Image from "next/image";
 import { useWishlist } from "@/store/saved";
@@ -13,10 +13,13 @@ import { useCart, cartCount } from "@/store/cart";
 import { useMounted } from "@/lib/use-mounted";
 import { useT } from "./Prefs";
 import { PreferencesMenu } from "./PreferencesMenu";
+import { SearchModal } from "./SearchModal";
+
+/** Pages that open with a full-bleed dark hero; the header is transparent over them until you scroll. */
+const HERO_PATHS = ["/", "/shop", "/help", "/journal", "/legal", "/wishlist", "/gift-cards", "/search", "/collections", "/drops", "/track", "/about"];
 
 export function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const t = useT();
   const lines = useCart((s) => s.lines);
   const setOpen = useCart((s) => s.setOpen);
@@ -27,11 +30,7 @@ export function Header() {
   const me = useSession((s) => s.user);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (searchOpen) inputRef.current?.focus();
-  }, [searchOpen]);
+  const closeSearch = useCallback(() => setSearchOpen(false), [setSearchOpen]);
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
@@ -64,7 +63,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   // Pages that open with a full-bleed dark hero get the transparent header too.
-  const overHero = pathname === "/" || pathname === "/shop" || pathname === "/help/contact" || pathname.startsWith("/journal");
+  const overHero = HERO_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)));
   const clear = overHero && !scrolled && !searchOpen;
   const badge = clear ? "bg-white text-black" : "bg-ink text-white";
 
@@ -110,7 +109,7 @@ export function Header() {
           <div className="hidden md:block">
             <PreferencesMenu />
           </div>
-          <button aria-label={t("nav.search")} onClick={() => setSearchOpen((v) => !v)} className="hidden sm:block">
+          <button aria-label={t("nav.search")} onClick={() => setSearchOpen(true)} className="grid size-9 place-items-center sm:size-auto">
             <Search className="size-[19px]" strokeWidth={1.5} />
           </button>
           <Link href="/wishlist" aria-label={t("nav.wishlistAria", { count: savedCount })} className="relative hidden sm:block">
@@ -141,28 +140,7 @@ export function Header() {
         </div>
       </div>
 
-      {searchOpen && (
-        <div className="animate-fade-down border-t border-black/10 bg-white text-ink">
-          <form
-            className="container-x flex items-center gap-3 py-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const q = inputRef.current?.value.trim();
-              setSearchOpen(false);
-              if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
-            }}
-          >
-            <Search className="size-4 opacity-60" strokeWidth={1.5} />
-            <input
-              ref={inputRef}
-              name="q"
-              placeholder={t("nav.searchPlaceholder")}
-              className="w-full bg-transparent py-2 text-sm placeholder:text-black/40 focus:outline-none"
-              onKeyDown={(e) => e.key === "Escape" && setSearchOpen(false)}
-            />
-          </form>
-        </div>
-      )}
+      <SearchModal open={searchOpen} onClose={closeSearch} />
 
       {/* Mobile menu: slides in from the left, closes on any tap of a link, the backdrop or Escape */}
       <div className={cx("md:hidden", !menuOpen && "pointer-events-none")} aria-hidden={!menuOpen}>
@@ -208,7 +186,6 @@ export function Header() {
                   ["nav.giftCards", "/gift-cards"],
                   ["nav.track", "/track"],
                   ["nav.help", "/help"],
-                  ["nav.search", "/search"],
                 ] as const
               ).map(([key, href]) => (
                 <Link key={href} href={href} className="py-3 text-[11px] tracking-[0.08em] text-black/60 uppercase hover:text-ink">
@@ -216,6 +193,16 @@ export function Header() {
                 </Link>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                setSearchOpen(true);
+              }}
+              className="mt-2 flex w-full items-center gap-3 border border-black/15 px-4 py-3.5 text-left text-[12px] text-black/60"
+            >
+              <Search className="size-4" strokeWidth={1.5} /> {t("nav.searchPlaceholder")}
+            </button>
             <div className="mt-6 border-t border-black/10 pt-5">
               <PreferencesMenu variant="panel" />
             </div>

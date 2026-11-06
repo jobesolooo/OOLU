@@ -96,7 +96,7 @@ export function NewsletterForm({
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("newsletter.emailAddress")}
             aria-label={t("newsletter.emailAddress")}
-            className="w-full bg-transparent py-3 text-[14px] placeholder:text-black/45 focus:outline-none"
+            className="w-full bg-transparent py-3 text-[16px] placeholder:text-black/45 focus:outline-none"
           />
           <button aria-label={cta} className="grid size-11 shrink-0 place-items-center bg-ink text-white transition-opacity hover:opacity-85" disabled={state === "sending"}>
             {state === "sending" ? "…" : <ArrowRight className="size-4" strokeWidth={1.5} />}
@@ -111,7 +111,7 @@ export function NewsletterForm({
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t("newsletter.placeholder")}
           aria-label={t("newsletter.emailAddress")}
-          className={cx("w-full bg-transparent py-3 text-[15px] focus:outline-none", dark ? "placeholder:text-white/50" : "placeholder:text-black/40")}
+          className={cx("w-full bg-transparent py-3 text-[16px] focus:outline-none", dark ? "placeholder:text-white/50" : "placeholder:text-black/40")}
         />
         <button className="flex shrink-0 items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase" disabled={state === "sending"}>
           {state === "sending" ? "…" : cta} <ArrowRight className="size-4" strokeWidth={1.5} />

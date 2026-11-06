@@ -78,72 +78,105 @@ export default async function HelpPage() {
     },
   ];
 
+  const quick = [
+    { icon: Package, title: t("help.track"), href: "/track", tone: "bg-white text-ink" },
+    { icon: RefreshCw, title: t("help.return"), href: "/track", tone: "bg-white text-ink" },
+    { icon: Ruler, title: t("help.size"), href: "#sizing", tone: "bg-white text-ink" },
+    { icon: Mail, title: t("help.contact"), href: "/help/contact", tone: "bg-accent text-ink" },
+  ];
+
   return (
     <>
-      <PageHeader eyebrow={t("help.eyebrow")} title={t("help.title")} />
-      <div className="container-x section-y">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: Package, title: t("help.track"), href: "/track" },
-            { icon: RefreshCw, title: t("help.return"), href: "/track" },
-            { icon: Ruler, title: t("help.size"), href: "#sizing" },
-            { icon: Mail, title: t("help.contact"), href: "/help/contact" },
-          ].map((c) => (
-            <Link key={c.title} href={c.href} className="group flex items-center justify-between bg-white p-6 hover:bg-ink hover:text-white">
-              <span className="flex items-center gap-4">
-                <c.icon className="size-6" strokeWidth={1.3} />
-                <span className="text-[13px] font-semibold tracking-[0.12em] uppercase">{c.title}</span>
-              </span>
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </Link>
-          ))}
-        </div>
+      <PageHeader eyebrow={t("help.eyebrow")} title={t("help.title")} subtitle={t("help.subtitle")} image="/images/brand/look-friends.jpg" imagePosition="center 35%" word="HELP" />
 
-        <div className="mt-20 grid gap-16 lg:grid-cols-[240px_1fr]">
-          <nav aria-label={t("help.topics")} className="hidden lg:block">
-            <ul className="sticky top-32 space-y-3 text-[14px]">
-              {sections.map((s) => (
-                <li key={s.id}><a href={`#${s.id}`} className="hover:underline underline-offset-4">{s.title}</a></li>
-              ))}
-              <li><a href="#sizing" className="hover:underline underline-offset-4">{t("help.sizing")}</a></li>
-            </ul>
-          </nav>
-          <div className="space-y-16">
-            {sections.map((s) => (
-              <section key={s.id} id={s.id} className="scroll-mt-32">
-                <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">{s.title}</h2>
-                <div className="mt-6 divide-y divide-black/10 border-y border-black/10">
-                  {s.faqs.map(([q, a]) => (
-                    <details key={q} className="group py-5">
-                      <summary className="flex items-center justify-between gap-6 text-[16px] font-medium">
-                        {q}
-                        <Plus className="rotate-open size-5 shrink-0 transition-transform" strokeWidth={1.3} />
-                      </summary>
-                      <div className="pt-3 text-[15px] leading-relaxed text-black/75">{a}</div>
-                    </details>
-                  ))}
-                </div>
-              </section>
-            ))}
-            <section id="sizing" className="scroll-mt-32">
-              <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">{t("help.sizing")}</h2>
-              <div className="mt-6 grid gap-10 xl:grid-cols-2">
-                {Object.entries(SIZE_GUIDES).map(([cat, chart]) => (
-                  <div key={cat}>
-                    <h3 className="label mb-3 font-semibold">{t(`cat.${cat}` as MessageKey)}</h3>
-                    <SizeGuideTable chart={chart} category={cat} />
-                  </div>
+      {/* Quick actions overlapping the hero */}
+      <div className="relative z-10 container-x -mt-[clamp(28px,4vw,56px)] grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+        {quick.map((c, i) => (
+          <Link
+            key={c.title}
+            href={c.href}
+            className={`group flex min-h-[120px] flex-col justify-between p-5 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.35)] transition-transform duration-300 hover:-translate-y-1 sm:min-h-[150px] sm:p-6 ${c.tone}`}
+          >
+            <span className="flex items-center justify-between">
+              <c.icon className="size-6" strokeWidth={1.3} />
+              <span className="font-wordmark text-[22px] leading-none opacity-20">{String(i + 1).padStart(2, "0")}</span>
+            </span>
+            <span className="flex items-end justify-between gap-2">
+              <span className="font-display text-[clamp(18px,1.6vw,24px)] leading-tight tracking-[-0.01em]">{c.title}</span>
+              <ArrowRight className="size-4 shrink-0 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Topic pills (sticky, sideways scroll on phones) */}
+      <div className="sticky top-[var(--nav-h)] z-20 mt-[clamp(32px,4vw,56px)] border-y border-black/10 bg-mist/95 backdrop-blur">
+        <nav aria-label={t("help.topics")} className="container-x no-scrollbar flex gap-2 overflow-x-auto py-3">
+          {[...sections.map((s) => ({ id: s.id, title: s.title })), { id: "sizing", title: t("help.sizing") }].map((s) => (
+            <a key={s.id} href={`#${s.id}`} className="shrink-0 rounded-full border border-black/15 bg-white px-4 py-2 text-[11px] tracking-[0.06em] whitespace-nowrap uppercase transition-colors hover:border-ink hover:bg-ink hover:text-white">
+              {s.title}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <div className="container-x py-[clamp(48px,6vw,96px)]">
+        <div className="space-y-[clamp(56px,7vw,112px)]">
+          {sections.map((s, si) => (
+            <section key={s.id} id={s.id} className="grid scroll-mt-[calc(var(--nav-h)+80px)] grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] lg:gap-16">
+              <div data-reveal>
+                <p className="font-wordmark text-[64px] leading-[0.8] text-accent">{String(si + 1).padStart(2, "0")}</p>
+                <h2 className="mt-3 font-display text-[clamp(30px,3vw,48px)] leading-none tracking-[-0.03em]">{s.title}</h2>
+                <p className="mt-3 text-[11px] tracking-[0.08em] text-ash uppercase">{t("help.questions", { count: s.faqs.length })}</p>
+              </div>
+              <div className="divide-y divide-black/10 border-y border-black/10">
+                {s.faqs.map(([q, a]) => (
+                  <details key={q} className="group py-1">
+                    <summary className="flex items-center justify-between gap-6 py-4 text-[15px] transition-colors hover:text-[#5a44cf] sm:text-[16px]">
+                      <span className="font-display text-[clamp(18px,1.6vw,22px)] leading-snug tracking-[-0.01em]">{q}</span>
+                      <span className="grid size-8 shrink-0 place-items-center rounded-full border border-black/15 transition-colors group-open:border-accent group-open:bg-accent">
+                        <Plus className="rotate-open size-4 transition-transform duration-300" strokeWidth={1.5} />
+                      </span>
+                    </summary>
+                    <div className="pb-5 text-[14px] leading-[1.75] text-black/75">{a}</div>
+                  </details>
                 ))}
               </div>
             </section>
-            <div className="bg-ink p-10 text-white">
-              <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">{t("help.still")}</h2>
-              <p className="mt-3 text-white/75">{t("help.stillBody")}</p>
-              <Link href="/help/contact" className="btn-outline mt-6">{t("help.contact")} <ArrowRight className="size-4" /></Link>
+          ))}
+
+          <section id="sizing" className="grid scroll-mt-[calc(var(--nav-h)+80px)] grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] lg:gap-16">
+            <div data-reveal>
+              <p className="font-wordmark text-[64px] leading-[0.8] text-accent">{String(sections.length + 1).padStart(2, "0")}</p>
+              <h2 className="mt-3 font-display text-[clamp(30px,3vw,48px)] leading-none tracking-[-0.03em]">{t("help.sizing")}</h2>
             </div>
-          </div>
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-2">
+              {Object.entries(SIZE_GUIDES).map(([cat, chart]) => (
+                <div key={cat} className="bg-white p-5 ring-1 ring-black/5 sm:p-6">
+                  <h3 className="mb-3 font-display text-[22px] tracking-[-0.01em]">{t(`cat.${cat}` as MessageKey)}</h3>
+                  <SizeGuideTable chart={chart} category={cat} />
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
+
+      {/* Still need help */}
+      <section className="relative isolate overflow-hidden bg-[#0d0d0d] py-[clamp(64px,8vw,128px)] text-white">
+        <p aria-hidden className="drift pointer-events-none absolute top-1/2 left-0 -z-10 font-wordmark leading-[0.8] whitespace-nowrap text-transparent select-none [-webkit-text-stroke:1.5px_rgba(165,146,255,0.22)]" style={{ fontSize: "clamp(180px, 26vw, 420px)" }}>
+          HELLO HELLO HELLO
+        </p>
+        <div data-reveal className="container-x flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+          <div>
+            <h2 className="font-display text-[clamp(44px,6vw,96px)] leading-[0.92] tracking-[-0.035em]">{t("help.still")}</h2>
+            <p className="mt-4 text-[13px] text-white/70">{t("help.stillBody")}</p>
+          </div>
+          <Link href="/help/contact" className="group inline-flex items-center gap-3 bg-accent px-6 py-4 text-[11px] tracking-[0.08em] text-ink uppercase transition-colors hover:bg-white">
+            {t("help.contact")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
+          </Link>
+        </div>
+      </section>
     </>
   );
 }

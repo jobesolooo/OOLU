@@ -38,7 +38,7 @@ export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/r
             <AdminEmpty
               icon={MessageSquareText}
               title={status === "pending" ? "Nothing to review" : `No ${status} reviews`}
-              body={status === "pending" ? "Reviews from shoppers who haven't bought the item wait here for your approval. Verified buyers publish automatically." : undefined}
+              body={status === "pending" ? "Reviews now publish straight away. Older reviews that were waiting show here and are already visible on the product page; reject one to hide it." : undefined}
             />
           </li>
         )}

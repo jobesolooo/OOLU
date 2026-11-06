@@ -919,6 +919,18 @@
   "Your payment is being confirmed. The gift card will be emailed as soon as it clears.",
   "Je betaling wordt bevestigd. De cadeaukaart wordt gemaild zodra het rond is."
  ],
+ "gift.perk1": [
+  "Instant email delivery",
+  "Direct per e-mail"
+ ],
+ "gift.perk2": [
+  "Never expires",
+  "Verloopt nooit"
+ ],
+ "gift.perk3": [
+  "Use across orders",
+  "Voor meerdere bestellingen"
+ ],
  "gift.sentBody": [
   "We've emailed the {amount} gift card to {email}.",
   "We hebben de cadeaukaart van {amount} gemaild naar {email}."
@@ -926,6 +938,22 @@
  "gift.sentMeta": [
   "Gift card sent",
   "Cadeaukaart verstuurd"
+ ],
+ "gift.step1": [
+  "Choose an amount",
+  "Kies een bedrag"
+ ],
+ "gift.step2": [
+  "Who is it for?",
+  "Voor wie is het?"
+ ],
+ "gift.step3": [
+  "Add a personal note",
+  "Voeg een persoonlijk bericht toe"
+ ],
+ "gift.subtitle": [
+  "Delivered instantly by email, never expires, and works across multiple orders.",
+  "Direct per e-mail, verloopt nooit en werkt voor meerdere bestellingen."
  ],
  "gift.theirEmail": [
   "Their email",
@@ -1159,6 +1187,10 @@
   "Do you ship worldwide?",
   "Verzenden jullie wereldwijd?"
  ],
+ "help.questions": [
+  "{count} questions",
+  "{count} vragen"
+ ],
  "help.return": [
   "Start a return",
   "Retour starten"
@@ -1186,6 +1218,10 @@
  "help.stillBody": [
   "We reply within one business day.",
   "We reageren binnen één werkdag."
+ ],
+ "help.subtitle": [
+  "Answers about orders, shipping, returns, sizing and payments — or talk to us directly.",
+  "Antwoorden over bestellingen, verzending, retouren, maten en betalen — of praat direct met ons."
  ],
  "help.title": [
   "Help centre",
@@ -1331,6 +1367,10 @@
   "Stories",
   "Stories"
  ],
+ "legal.contents": [
+  "On this page",
+  "Op deze pagina"
+ ],
  "legal.englishOnly": [
   "These legal texts are currently available in English. The English version applies.",
   "Deze juridische teksten zijn momenteel in het Engels beschikbaar. De Engelse versie is leidend."
@@ -1346,6 +1386,10 @@
  "legal.pages": [
   "Legal pages",
   "Juridische pagina's"
+ ],
+ "legal.subtitle": [
+  "The small print, written as plainly as we could.",
+  "De kleine lettertjes, zo duidelijk mogelijk."
  ],
  "legal.updated": [
   "Last updated {date}",
@@ -1943,6 +1987,10 @@
   "Show image {n}",
   "Toon afbeelding {n}"
  ],
+ "pdp.similar": [
+  "Similar items",
+  "Vergelijkbare items"
+ ],
  "pdp.size": [
   "Size",
   "Maat"
@@ -1962,6 +2010,10 @@
  "pdp.trackingPage": [
   "order tracking page",
   "pagina voor het volgen van je bestelling"
+ ],
+ "pdp.viewCategory": [
+  "View all",
+  "Bekijk alles"
  ],
  "pdp.youMayLike": [
   "You may also like",
@@ -2167,6 +2219,10 @@
   "How does it fit? (optional)",
   "Hoe valt het? (optioneel)"
  ],
+ "reviews.kicker": [
+  "What people say",
+  "Wat anderen zeggen"
+ ],
  "reviews.large": [
   "Runs large",
   "Valt groot"
@@ -2174,6 +2230,10 @@
  "reviews.none": [
   "No reviews yet. Be the first.",
   "Nog geen reviews. Wees de eerste."
+ ],
+ "reviews.outOf": [
+  "out of 5",
+  "van de 5"
  ],
  "reviews.signIn": [
   "Sign in",
@@ -2227,13 +2287,33 @@
   "Your rating",
   "Jouw beoordeling"
  ],
+ "search.close": [
+  "Close search",
+  "Zoeken sluiten"
+ ],
+ "search.esc": [
+  "Esc to close",
+  "Esc om te sluiten"
+ ],
  "search.go": [
   "Go",
   "Zoek"
  ],
+ "search.modalPlaceholder": [
+  "What are you looking for?",
+  "Waar ben je naar op zoek?"
+ ],
  "search.noResults": [
   "No matches. Try “tee”, “tracksuit” or a colour.",
   "Geen resultaten. Probeer “tee”, “trainingspak” of een kleur."
+ ],
+ "search.none": [
+  "No matches for “{q}”.",
+  "Geen resultaten voor “{q}”."
+ ],
+ "search.popular": [
+  "Popular",
+  "Populair"
  ],
  "search.result": [
   "1 result",
@@ -2243,9 +2323,17 @@
   "{count} results",
   "{count} resultaten"
  ],
+ "search.suggest": [
+  "Try",
+  "Probeer"
+ ],
  "search.title": [
   "Search",
   "Zoeken"
+ ],
+ "search.viewAll": [
+  "View all {count} results",
+  "Bekijk alle {count} resultaten"
  ],
  "set.addPassword": [
   "Add a password",
@@ -2707,6 +2795,10 @@
   "Choose size",
   "Kies maat"
  ],
+ "wishlist.clear": [
+  "Clear all",
+  "Alles wissen"
+ ],
  "wishlist.count": [
   "{count} saved · stored on this device",
   "{count} bewaard · opgeslagen op dit apparaat"
@@ -2714,6 +2806,10 @@
  "wishlist.empty": [
   "Nothing saved yet. Tap the heart on any product to keep it here.",
   "Nog niets bewaard. Tik op het hartje bij een product om het hier te bewaren."
+ ],
+ "wishlist.emptyTitle": [
+  "Nothing saved yet.",
+  "Nog niets bewaard."
  ],
  "wishlist.eyebrow": [
   "Saved for later",
@@ -2734,6 +2830,10 @@
  "wishlist.saved": [
   "Saved",
   "Bewaard"
+ ],
+ "wishlist.subtitle": [
+  "Pieces you've saved. Sizes and stock can change, so don't wait too long.",
+  "Stukken die je hebt bewaard. Maten en voorraad kunnen veranderen, dus wacht niet te lang."
  ],
  "wishlist.title": [
   "Wishlist",

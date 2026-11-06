@@ -9,8 +9,8 @@ export default async function WishlistPage() {
   const { t } = await getT();
   return (
     <>
-      <PageHeader eyebrow={t("wishlist.eyebrow")} title={t("wishlist.title")} />
-      <div className="container-x section-y">
+      <PageHeader eyebrow={t("wishlist.eyebrow")} title={t("wishlist.title")} subtitle={t("wishlist.subtitle")} image="/images/brand/tracksuit-duo-2.jpg" imagePosition="center 30%" word="SAVED" />
+      <div className="container-x py-[clamp(40px,5vw,80px)]">
         <WishlistView />
       </div>
     </>

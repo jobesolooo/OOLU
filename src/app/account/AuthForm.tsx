@@ -16,7 +16,7 @@ export function PasswordInput({ name = "password", autoComplete, placeholder }: 
         type="button"
         onClick={() => setShow((s) => !s)}
         aria-label={show ? t("auth.hidePw") : t("auth.showPw")}
-        className="absolute top-1/2 right-3 -translate-y-1/2 p-1 text-ash hover:text-ink"
+        className="absolute top-1/2 right-1 grid size-11 -translate-y-1/2 place-items-center text-ash hover:text-ink"
       >
         {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
       </button>
@@ -62,8 +62,8 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
         />
       </label>
       {mode === "register" && (
-        <label className="flex items-start gap-3 text-[13px] leading-snug text-black/75">
-          <input type="checkbox" name="newsletter" className="mt-1" />
+        <label className="flex cursor-pointer items-start gap-3 py-1 text-[13px] leading-snug text-black/75">
+          <input type="checkbox" name="newsletter" className="mt-0.5 size-[18px] shrink-0 accent-ink" />
           <span>{t("auth.newsletterOptIn")}</span>
         </label>
       )}

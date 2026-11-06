@@ -232,12 +232,7 @@ export async function queryProducts({ category, collection, sort, q, sale }: Sho
   if (category) list = list.filter((p) => p.category === category);
   if (collection) list = list.filter((p) => p.collection === collection);
   if (sale) list = list.filter(isOnSale);
-  if (q) {
-    const needle = q.toLowerCase();
-    list = list.filter((p) =>
-      `${p.name} ${p.description} ${p.category} ${p.collection} ${p.color ?? ""}`.toLowerCase().includes(needle),
-    );
-  }
+  if (q) list = list.filter(searchMatcher(q));
   switch (sort) {
     case "new":
       list = [...list].sort((a, b) => Number(b.isNew) - Number(a.isNew) || b.createdAt - a.createdAt);
@@ -251,3 +246,31 @@ export async function queryProducts({ category, collection, sort, q, sale }: Sho
   }
   return list;
 }
+
+/**
+ * Search: every word must match somewhere (name, description, colours, category).
+ * Category names in any of the shop's languages count too, so "trainingspak" or "chándal" finds tracksuits.
+ */
+export function searchMatcher(q: string, categoryAliases: Record<string, string[]> = CATEGORY_ALIASES) {
+  const tokens = q
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .split(/[^a-z0-9]+/)
+    .filter((t) => t.length > 1);
+  return (p: Product) => {
+    const aliases = (categoryAliases[p.category] ?? []).join(" ");
+    const hay = `${p.name} ${p.description} ${p.category.replace(/-/g, " ")} ${p.collection} ${p.color ?? ""} ${p.colors.map((c) => c.name).join(" ")} ${aliases}`
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    return tokens.every((t) => hay.includes(t) || (t.endsWith("s") && hay.includes(t.slice(0, -1))));
+  };
+}
+
+const CATEGORY_ALIASES: Record<string, string[]> = {
+  "t-shirts": ["tee", "tees", "shirt", "shirts", "t-shirt", "camiseta", "camisetas", "maglietta", "magliette"],
+  "sleeveless-and-tanks": ["tank", "tanks", "tanktop", "singlet", "mouwloos", "debardeur", "debardeurs", "sans manches", "tirantes", "canotta", "canotte", "smanicato", "caveada", "caveadas", "sem mangas"],
+  tracksuits: ["tracksuit", "trainingspak", "trainingspakken", "survetement", "survetements", "chandal", "chandales", "tuta", "tute", "fato de treino", "jacket", "pants", "jas", "broek"],
+  hoodies: ["hoodie", "hoody", "sweater", "trui", "sweat", "sudadera", "felpa"],
+};

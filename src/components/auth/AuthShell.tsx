@@ -82,7 +82,7 @@ export async function AuthShell({
             {t("auth.staff")}
           </span>
           <span className="grid h-[53px] w-[67px] place-items-center rounded-full border border-black/15 bg-white transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white">
-            <StaffMark className="w-[58px]" />
+            <StaffMark className="w-[34px] transition-transform duration-300 group-hover:scale-110" />
           </span>
         </Link>
 

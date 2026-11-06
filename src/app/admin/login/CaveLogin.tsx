@@ -6,27 +6,48 @@ import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
 import { caveAction, type CaveState } from "./actions";
 import { StaffMark } from "@/components/auth/StaffMark";
 
-/* ── One-time-code boxes ─────────────────────────────────── */
+/* ── Passcode boxes ──────────────────────────────────────── */
+/**
+ * Six single-digit boxes. Typing a digit jumps to the next box; Backspace goes back;
+ * pasting or iOS/Android autofill of all six digits fills every box. When the 6th digit
+ * is in, the form submits on its own.
+ */
 function CodeBoxes({ onComplete, disabled }: { onComplete: () => void; disabled: boolean }) {
   const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   useEffect(() => refs.current[0]?.focus(), []);
 
-  const set = (next: string[]) => {
+  const fill = (from: number, raw: string) => {
+    const incoming = raw.replace(/\D/g, "");
+    const next = [...digits];
+    if (!incoming) {
+      next[from] = "";
+      setDigits(next);
+      return;
+    }
+    let i = from;
+    for (const ch of incoming) {
+      if (i > 5) break;
+      next[i++] = ch;
+    }
     setDigits(next);
-    if (next.every((d) => d !== "")) setTimeout(onComplete, 60);
+    const focusAt = Math.min(i, 5);
+    // focus after React commits the new values
+    requestAnimationFrame(() => {
+      refs.current[focusAt]?.focus();
+      refs.current[focusAt]?.select();
+    });
+    if (next.every((d) => d !== "")) setTimeout(onComplete, 80);
   };
 
   return (
-    <div className="flex justify-between gap-2 sm:gap-3" onPaste={(e) => {
-      const t = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-      if (t.length) {
+    <div
+      className="flex justify-between gap-2 sm:gap-3"
+      onPaste={(e) => {
         e.preventDefault();
-        const next = Array.from({ length: 6 }, (_, i) => t[i] ?? "");
-        set(next);
-        refs.current[Math.min(t.length, 5)]?.focus();
-      }
-    }}>
+        fill(0, e.clipboardData.getData("text"));
+      }}
+    >
       {digits.map((d, i) => (
         <input
           key={i}
@@ -35,23 +56,32 @@ function CodeBoxes({ onComplete, disabled }: { onComplete: () => void; disabled:
           }}
           value={d}
           disabled={disabled}
+          type="text"
           inputMode="numeric"
+          pattern="[0-9]*"
           autoComplete={i === 0 ? "one-time-code" : "off"}
-          aria-label={`Digit ${i + 1}`}
-          maxLength={1}
+          aria-label={`Digit ${i + 1} of 6`}
+          onFocus={(e) => e.target.select()}
           onChange={(e) => {
-            const v = e.target.value.replace(/\D/g, "").slice(-1);
-            const next = [...digits];
-            next[i] = v;
-            set(next);
-            if (v && i < 5) refs.current[i + 1]?.focus();
+            // Replace the box's digit with what was typed (or spread a pasted/autofilled code).
+            const typed = e.target.value.replace(d, "") || e.target.value;
+            fill(i, typed);
           }}
           onKeyDown={(e) => {
-            if (e.key === "Backspace" && !digits[i] && i > 0) refs.current[i - 1]?.focus();
+            if (e.key === "Backspace") {
+              e.preventDefault();
+              const next = [...digits];
+              if (next[i]) next[i] = "";
+              else if (i > 0) {
+                next[i - 1] = "";
+                refs.current[i - 1]?.focus();
+              }
+              setDigits(next);
+            }
             if (e.key === "ArrowLeft" && i > 0) refs.current[i - 1]?.focus();
             if (e.key === "ArrowRight" && i < 5) refs.current[i + 1]?.focus();
           }}
-          className="h-16 w-full min-w-0 border border-[#e9e4d8]/25 bg-black/40 text-center font-mono text-3xl text-[#f4efe3] caret-[#a592ff] transition focus:border-[#a592ff] focus:bg-black/60 focus:shadow-[0_0_24px_rgba(165,146,255,0.25)] focus:outline-none disabled:opacity-50 sm:h-[72px]"
+          className="h-16 w-full min-w-0 border border-[#e9e4d8]/25 bg-black/40 text-center font-mono text-3xl text-[#f4efe3] caret-transparent transition focus:border-[#a592ff] focus:bg-black/60 focus:shadow-[0_0_24px_rgba(165,146,255,0.25)] focus:outline-none disabled:opacity-50 sm:h-[72px]"
         />
       ))}
       <input type="hidden" name="code" value={digits.join("")} />
@@ -92,10 +122,11 @@ function Door({ side }: { side: "l" | "r" }) {
 }
 
 export function CaveLogin({ next, notice }: { next?: string; notice?: string | null }) {
-  const [state, action, pending] = useActionState<CaveState, FormData>(caveAction, { step: "email" });
+  const [state, action, pending] = useActionState<CaveState, FormData>(caveAction, { step: "username" });
   const formRef = useRef<HTMLFormElement>(null);
-  const step = state?.step ?? "email";
-  const [email, setEmail] = useState("");
+  const step = state?.step ?? "username";
+  // Controlled so the username survives a failed attempt.
+  const [username, setUsername] = useState("");
 
   return (
     <div className="fixed inset-0 z-[90] overflow-hidden bg-[#050505] text-[#f4efe3]">
@@ -138,9 +169,9 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
         <main className="flex flex-1 items-center justify-center px-6">
           <div className="cave-rise w-full max-w-[460px]">
             <div className="mb-10 flex flex-col items-center text-center">
-              <StaffMark className="w-[173px] text-[#f4efe3] drop-shadow-[0_0_28px_rgba(165,146,255,0.45)]" />
+              <StaffMark className="w-[110px] drop-shadow-[0_0_32px_rgba(165,146,255,0.55)]" />
               <p className="mt-6 font-mono text-[10px] tracking-[0.4em] text-[#a592ff] uppercase">
-                {step === "email" ? "Identify yourself" : "Verification required"}
+                {step === "username" ? "Identify yourself" : "Enter passcode"}
                 <span className="cave-caret ml-1">_</span>
               </p>
               <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(40px,6vw,64px)] leading-none">The Cave</h1>
@@ -150,21 +181,22 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
 
             <form ref={formRef} action={action} className="space-y-5">
               {next && <input type="hidden" name="next" value={next} />}
-              {step === "email" ? (
+              {step === "username" ? (
                 <>
-                  <input type="hidden" name="intent" value="send" />
+                  <input type="hidden" name="intent" value="username" />
                   <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] tracking-[0.3em] text-[#f4efe3]/50 uppercase">Staff email</span>
+                    <span className="mb-2 block font-mono text-[10px] tracking-[0.3em] text-[#f4efe3]/50 uppercase">Username</span>
                     <input
-                      name="email"
-                      type="email"
+                      name="username"
                       required
                       autoFocus
-                      autoComplete="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@ooluclothing.shop"
-                      className="w-full border border-[#e9e4d8]/25 bg-black/40 px-4 py-4 font-mono text-[15px] text-[#f4efe3] placeholder:text-[#f4efe3]/25 focus:border-[#a592ff] focus:outline-none"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      autoComplete="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full border border-[#e9e4d8]/25 bg-black/40 px-4 py-4 font-mono text-[16px] text-[#f4efe3] placeholder:text-[#f4efe3]/25 focus:border-[#a592ff] focus:outline-none"
                     />
                   </label>
                   {state?.error && <p className="text-[13px] text-[#ff8a7a]" role="alert">{state.error}</p>}
@@ -172,15 +204,15 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
                     disabled={pending}
                     className="flex w-full items-center justify-center gap-3 bg-[#f4efe3] py-4 text-[12px] font-bold tracking-[0.25em] text-black uppercase transition hover:bg-[#a592ff] disabled:opacity-50"
                   >
-                    {pending ? "Signalling…" : "Send access code"} <ArrowRight className="size-4" />
+                    Continue <ArrowRight className="size-4" />
                   </button>
                 </>
               ) : (
                 <>
-                  <input type="hidden" name="email" value={state && "email" in state ? state.email : ""} />
+                  <input type="hidden" name="username" value={state && "username" in state ? state.username : username} />
                   <input type="hidden" name="intent" value="verify" />
                   <p className="text-center text-[13px] text-[#f4efe3]/70">
-                    {state && "info" in state && state.info ? state.info : `Code sent to ${state && "email" in state ? state.email : ""}.`}
+                    Welcome back, <span className="text-[#a592ff]">{state && "username" in state ? state.username : username}</span>. Enter your 6-digit passcode.
                   </p>
                   <CodeBoxes key={state && "nonce" in state ? state.nonce : "fresh"} disabled={pending} onComplete={() => formRef.current?.requestSubmit()} />
                   {state?.error && <p className="text-center text-[13px] text-[#ff8a7a]" role="alert">{state.error}</p>}
@@ -190,15 +222,14 @@ export function CaveLogin({ next, notice }: { next?: string; notice?: string | n
                   >
                     <Lock className="size-4" /> {pending ? "Verifying…" : "Enter"}
                   </button>
-                  <div className="flex justify-between font-mono text-[10px] tracking-[0.2em] text-[#f4efe3]/50 uppercase">
-                    <button type="submit" name="intent" value="back" formNoValidate className="hover:text-[#f4efe3]">← Different email</button>
-                    <button type="submit" name="intent" value="resend" formNoValidate className="hover:text-[#f4efe3]">Resend code</button>
+                  <div className="flex justify-center font-mono text-[10px] tracking-[0.2em] text-[#f4efe3]/50 uppercase">
+                    <button type="submit" name="intent" value="back" formNoValidate className="hover:text-[#f4efe3]">← Different username</button>
                   </div>
                 </>
               )}
             </form>
 
-            <p className="mt-10 text-center font-mono text-[10px] tracking-[0.2em] text-[#f4efe3]/30 uppercase">Codes expire after 10 minutes · 5 tries</p>
+            <p className="mt-10 text-center font-mono text-[10px] tracking-[0.2em] text-[#f4efe3]/30 uppercase">5 attempts per 15 minutes</p>
           </div>
         </main>
       </div>

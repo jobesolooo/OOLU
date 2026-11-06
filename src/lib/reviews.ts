@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getDb, schema } from "./db";
 
 export type ReviewSummary = { count: number; average: number; distribution: number[] /* index 0 = 1 star */ };
@@ -10,7 +10,8 @@ export async function getApprovedReviews(productIds: string[]) {
   return db
     .select()
     .from(schema.reviews)
-    .where(and(inArray(schema.reviews.productId, productIds), eq(schema.reviews.status, "approved")))
+    // Everything except reviews staff have rejected (older "pending" ones included).
+    .where(and(inArray(schema.reviews.productId, productIds), ne(schema.reviews.status, "rejected")))
     .orderBy(desc(schema.reviews.createdAt))
     .limit(100);
 }
@@ -33,7 +34,7 @@ export async function getRatingsMap() {
       average: sql<number>`avg(${schema.reviews.rating})::float`,
     })
     .from(schema.reviews)
-    .where(eq(schema.reviews.status, "approved"))
+    .where(ne(schema.reviews.status, "rejected"))
     .groupBy(schema.reviews.productId);
   return new Map(rows.map((r) => [r.productId, { count: r.count, average: r.average }]));
 }

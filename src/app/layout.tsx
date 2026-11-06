@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = { themeColor: "#060606" };
+export const viewport: Viewport = { themeColor: "#060606", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [settings, locale, currency, rates] = await Promise.all([getSettings(), getLocale(), getCurrency(), getRates()]);

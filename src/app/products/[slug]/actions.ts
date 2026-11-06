@@ -41,9 +41,9 @@ export async function submitReview(_: ReviewState, form: FormData): Promise<Revi
     size: d.size || null,
     fit: d.fit || null,
     verified,
-    // Verified buyers go live straight away; other reviews wait for approval in /admin/reviews.
-    status: verified ? "approved" : "pending",
+    // Reviews go live straight away; staff can hide one from /admin/reviews (Reject).
+    status: "approved",
   });
   revalidatePath(`/products/${product.slug}`);
-  return { ok: verified ? "Thanks! Your review is live." : "Thanks! Your review will appear once it's been checked." };
+  return { ok: "Thanks! Your review is live." };
 }

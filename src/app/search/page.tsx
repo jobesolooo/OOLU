@@ -20,8 +20,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
     <>
       <PageHeader eyebrow={t("search.title")} title={q ? `“${q}”` : t("search.title")}>
         <form action="/search" className="mt-6 flex max-w-md">
-          <input name="q" defaultValue={q} placeholder={t("nav.searchPlaceholder")} className="input" />
-          <button className="btn-solid ml-2 py-3">{t("search.go")}</button>
+          <input name="q" defaultValue={q} placeholder={t("nav.searchPlaceholder")} className="input border-white/25 bg-white/10 text-white placeholder:text-white/50 focus:border-white" />
+          <button className="ml-2 shrink-0 bg-white px-5 py-3 text-[11px] tracking-[0.08em] text-ink uppercase">{t("search.go")}</button>
         </form>
       </PageHeader>
       <div className="container-x py-10">
