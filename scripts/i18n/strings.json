@@ -703,9 +703,17 @@
   "Upcoming drops",
   "Aankomende drops"
  ],
+ "feature.comfort.badge": [
+  "Soft. Relaxed. Everyday.",
+  "Zacht. Relaxed. Elke dag."
+ ],
  "feature.comfort.body": [
   "Soft fabrics and relaxed fits keep you moving naturally from morning commute to late-night hangout",
   "Zachte stoffen en een relaxte pasvorm houden je in beweging, van de ochtendspits tot laat op de avond"
+ ],
+ "feature.comfort.kicker": [
+  "01 — Comfort",
+  "01 — Comfort"
  ],
  "feature.comfort.title": [
   "Easy comfort always",
@@ -715,9 +723,29 @@
   "Each piece is crafted for long-lasting comfort, pared-back style, and quiet confidence on the go",
   "Elk stuk is gemaakt voor langdurig comfort, ingetogen stijl en stil zelfvertrouwen onderweg"
  ],
+ "feature.move.kicker": [
+  "02 — Movement",
+  "02 — Beweging"
+ ],
+ "feature.move.tag1": [
+  "Long-lasting comfort",
+  "Langdurig comfort"
+ ],
+ "feature.move.tag2": [
+  "Pared-back style",
+  "Ingetogen stijl"
+ ],
+ "feature.move.tag3": [
+  "Quiet confidence",
+  "Stil zelfvertrouwen"
+ ],
  "feature.move.title": [
   "Made to move",
   "Gemaakt om te bewegen"
+ ],
+ "feature.move.word": [
+  "Move",
+  "Move"
  ],
  "footer.about": [
   "About OOLU",

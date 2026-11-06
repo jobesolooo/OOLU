@@ -69,26 +69,104 @@ export async function Story() {
   );
 }
 
+/**
+ * Two editorial blocks:
+ * 1. "Easy comfort always" — full-bleed photo, oversized headline, frosted-glass card.
+ * 2. "Made to move" — dark band, giant outlined MOVE lettering behind layered photos.
+ * Images drift slightly as you scroll (CSS scroll-driven animation, see .parallax in globals.css).
+ */
 export async function Features() {
   const { t } = await getT();
+  const [comfort, move] = site.features;
   return (
     <>
-      {site.features.map((f) => (
-        <section key={f.key} className="grid md:min-h-[clamp(440px,38vw,680px)] md:grid-cols-[5fr_7fr]" style={{ background: f.tone }}>
-          <div className="order-2 flex items-center px-[clamp(20px,6vw,128px)] py-14 md:order-1">
-            <div data-reveal className="max-w-[340px]">
-              <h2 className="font-display text-[clamp(24px,1.9vw,32px)] leading-[1.1] tracking-[-0.02em]">{t(`feature.${f.key}.title` as MessageKey)}</h2>
-              <p className="mt-5 text-[13px] leading-[1.6]">{t(`feature.${f.key}.body` as MessageKey)}</p>
-              <Link href={f.href} className="btn-solid mt-7 px-5 py-3.5 text-[11px]">
-                {t("common.shopNow")}
-              </Link>
+      {/* 1 — Easy comfort always */}
+      <section className="relative isolate overflow-hidden bg-ink text-white">
+        <div className="parallax absolute inset-0 -z-20">
+          <Image src={comfort.image} alt="" fill sizes="100vw" className="object-cover object-[center_38%]" />
+        </div>
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.82)_0%,rgba(6,6,6,0.35)_45%,rgba(6,6,6,0)_70%),linear-gradient(0deg,rgba(6,6,6,0.6),transparent_45%)]" />
+        <div className="container-x grid min-h-[min(92svh,860px)] items-end gap-10 py-[clamp(56px,8vw,120px)] lg:grid-cols-[1.4fr_1fr]">
+          <div data-reveal>
+            <p className="text-[11px] tracking-[0.14em] text-accent uppercase">{t("feature.comfort.kicker")}</p>
+            <h2 className="mt-5 max-w-[11ch] font-display text-[clamp(52px,8vw,128px)] leading-[0.92] tracking-[-0.035em]">
+              {t("feature.comfort.title")}
+            </h2>
+          </div>
+          <div data-reveal className="max-w-[420px] border border-white/20 bg-white/10 p-[clamp(24px,2.4vw,36px)] backdrop-blur-xl lg:justify-self-end">
+            <p className="font-display text-[22px] leading-tight tracking-[-0.01em]">{t("feature.comfort.badge")}</p>
+            <p className="mt-4 text-[13px] leading-[1.7] text-white/80">{t("feature.comfort.body")}</p>
+            <Link
+              href={comfort.href}
+              className="group mt-7 inline-flex items-center gap-3 bg-white px-5 py-3.5 text-[11px] tracking-[0.08em] text-ink uppercase transition-transform active:scale-[0.98]"
+            >
+              {t("common.shopNow")}
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.5} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 2 — Made to move */}
+      <section className="relative isolate overflow-hidden bg-[#0d0d0d] py-[clamp(72px,9vw,150px)] text-white">
+        {/* giant outlined word, drifting sideways */}
+        <p
+          aria-hidden
+          className="drift pointer-events-none absolute top-1/2 left-0 -z-10 font-wordmark leading-[0.8] whitespace-nowrap text-transparent select-none [-webkit-text-stroke:1.5px_rgba(165,146,255,0.25)]"
+          style={{ fontSize: "clamp(220px, 34vw, 560px)" }}
+        >
+          {t("feature.move.word")} {t("feature.move.word")} {t("feature.move.word")}
+        </p>
+        <div className="container-x grid items-center gap-[clamp(48px,6vw,96px)] lg:grid-cols-[1fr_1.15fr]">
+          <div data-reveal className="order-2 lg:order-1">
+            <p className="text-[11px] tracking-[0.14em] text-accent uppercase">{t("feature.move.kicker")}</p>
+            <h2 className="mt-5 font-display text-[clamp(44px,5.6vw,92px)] leading-[0.95] tracking-[-0.03em]">{t("feature.move.title")}</h2>
+            <p className="mt-6 max-w-[420px] text-[13px] leading-[1.7] text-white/75">{t("feature.move.body")}</p>
+            <ul className="mt-8 flex flex-wrap gap-2">
+              {(["feature.move.tag1", "feature.move.tag2", "feature.move.tag3"] as const).map((k) => (
+                <li key={k} className="rounded-full border border-white/20 px-4 py-2 text-[11px] tracking-[0.04em] text-white/85">
+                  {t(k)}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={move.href}
+              className="group mt-9 inline-flex items-center gap-3 bg-accent px-5 py-3.5 text-[11px] tracking-[0.08em] text-ink uppercase transition-[transform,background-color] hover:bg-white active:scale-[0.98]"
+            >
+              {t("common.shopNow")}
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.5} />
+            </Link>
+          </div>
+
+          <div data-reveal className="relative order-1 mx-auto w-full max-w-[640px] pb-[18%] lg:order-2">
+            {/* main photo with an offset lavender frame */}
+            <div className="relative">
+              <span aria-hidden className="absolute inset-0 translate-x-4 translate-y-4 border border-accent/70 sm:translate-x-6 sm:translate-y-6" />
+              <div className="group relative aspect-[4/3] overflow-hidden">
+                <Image src={move.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
+              </div>
+            </div>
+            {/* overlapping second photo */}
+            <div className="float absolute right-0 bottom-0 sm:right-[-4%] w-[44%] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] ring-8 ring-[#0d0d0d]">
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <Image src="/images/brand/tracksuit-duo.jpg" alt="" fill sizes="(min-width:1024px) 20vw, 45vw" className="object-cover object-top" />
+              </div>
+            </div>
+            {/* spinning badge */}
+            <div aria-hidden className="absolute bottom-[8%] left-[-2%] grid size-[clamp(84px,9vw,120px)] place-items-center rounded-full bg-white text-ink">
+              <svg viewBox="0 0 100 100" className="spin absolute inset-0 size-full">
+                <defs>
+                  <path id="badge-circle" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
+                </defs>
+                <text className="fill-current font-mono text-[9.5px] tracking-[0.24em] uppercase">
+                  <textPath href="#badge-circle">OOLU · {t("brand.established")} · </textPath>
+                </text>
+              </svg>
+              <Image src="/images/brand/logo-mark.png" alt="" width={44} height={42} className="w-[38%]" />
             </div>
           </div>
-          <div className="relative order-1 aspect-[4/3] overflow-hidden md:order-2 md:aspect-auto">
-            <Image src={f.image} alt="" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out hover:scale-[1.03]" />
-          </div>
-        </section>
-      ))}
+        </div>
+      </section>
     </>
   );
 }

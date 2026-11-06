@@ -290,3 +290,22 @@ a[class*="border-ink"]:active, button[class*="bg-ink"]:active:not(:disabled) { t
 /* Horizontal scrollers without a visible scrollbar (still scrollable by touch, wheel and keys) */
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Editorial feature blocks ─────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 18s linear infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.float { animation: float 6s ease-in-out infinite; }
+.drift { transform: translateY(-50%); }
+
+/* Scroll-linked motion where the browser supports it (Chrome, Edge, Safari 26+); static elsewhere. */
+@supports (animation-timeline: view()) {
+  @keyframes parallax { from { transform: translateY(-6%) scale(1.12); } to { transform: translateY(6%) scale(1.12); } }
+  .parallax { animation: parallax linear both; animation-timeline: view(); }
+  @keyframes drift { from { transform: translate(5%, -50%); } to { transform: translate(-35%, -50%); } }
+  .drift { animation: drift linear both; animation-timeline: view(); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin, .float, .parallax, .drift { animation: none !important; }
+}
