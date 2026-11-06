@@ -39,7 +39,8 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     { label: "Settings", href: "/admin/settings" },
   ];
   return (
-    <div className="bg-mist">
+    // At least one full screen tall, so the footer never jumps up on short or empty pages.
+    <div className="flex min-h-[calc(100svh-var(--chrome-h))] flex-col bg-mist">
       <div className="border-b border-black/10 bg-white">
         <div className="container-x flex flex-wrap items-center gap-x-8 gap-y-3 py-4">
           <span className="font-display text-sm font-[900] tracking-[0.12em] uppercase">Admin</span>
@@ -66,7 +67,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </p>
         </div>
       )}
-      <div className="container-x py-10">{children}</div>
+      <div className="container-x flex-1 py-10">{children}</div>
     </div>
   );
 }

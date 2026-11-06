@@ -1,4 +1,6 @@
 import type Stripe from "stripe";
+import { EmptyRow } from "../Empty";
+import { TicketPercent } from "lucide-react";
 import { isStripeConfigured } from "@/lib/stripe";
 import { listPromotions } from "@/lib/promotions";
 import { formatDate, formatMoney } from "@/lib/format";
@@ -56,7 +58,7 @@ export default async function DiscountsPage() {
           </thead>
           <tbody className="divide-y divide-black/5">
             {promos.length === 0 && (
-              <tr><td colSpan={6} className="p-10 text-center text-ash">No codes yet.</td></tr>
+              <EmptyRow colSpan={6} icon={TicketPercent} title="No discount codes yet" body="Create one with the form — customers enter it in the promo code box at checkout." />
             )}
             {promos.map((p) => (
               <tr key={p.id}>

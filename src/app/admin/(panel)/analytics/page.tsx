@@ -1,4 +1,6 @@
 import { and, desc, gte, inArray, sql } from "drizzle-orm";
+import { AdminEmpty } from "../Empty";
+import { BarChart3 } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import type { OrderStatus } from "@/lib/db/schema";
 import { formatMoney, formatMoneyShort } from "@/lib/format";
@@ -128,7 +130,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/admin/
       <div className="mt-6 bg-white p-6">
         <h2 className="label mb-4 font-semibold">Top products</h2>
         {top.length === 0 ? (
-          <p className="text-sm text-ash">No sales in this period yet.</p>
+          <AdminEmpty compact icon={BarChart3} title="No sales yet" body={`Best sellers for the last ${days} days appear here once orders come in.`} />
         ) : (
           <table className="w-full text-sm">
             <thead className="text-left text-[10px] tracking-[0.14em] text-ash uppercase">

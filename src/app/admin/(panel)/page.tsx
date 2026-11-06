@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EmptyRow } from "./Empty";
+import { PackageOpen } from "lucide-react";
 import { desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/db/schema";
@@ -86,9 +88,17 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
           </thead>
           <tbody className="divide-y divide-black/5">
             {orders.length === 0 && (
-              <tr>
-                <td colSpan={5} className="p-10 text-center text-ash">No orders here.</td>
-              </tr>
+              <EmptyRow
+                colSpan={5}
+                icon={PackageOpen}
+                title={filter.key === "open" ? "All caught up" : "No orders here"}
+                body={
+                  filter.key === "open"
+                    ? "Paid orders that still need packing and shipping show up here. Nothing is waiting right now."
+                    : "Orders matching this filter will show up here."
+                }
+                action={{ label: "View the store", href: "/" }}
+              />
             )}
             {orders.map((o) => (
               <tr key={o.id} className="hover:bg-mist">

@@ -1,4 +1,6 @@
 import { desc, sql } from "drizzle-orm";
+import { EmptyRow } from "../Empty";
+import { Gift } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate, formatMoney } from "@/lib/format";
 import { adminIssueGiftCard, setGiftCardDisabled } from "../actions";
@@ -39,7 +41,15 @@ export default async function GiftCardsAdmin() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5">
-            {cards.length === 0 && <tr><td colSpan={5} className="p-10 text-center text-ash">No gift cards yet.</td></tr>}
+            {cards.length === 0 && (
+              <EmptyRow
+                colSpan={5}
+                icon={Gift}
+                title="No gift cards yet"
+                body="Cards bought at /gift-cards and cards you issue here show up with their remaining balance."
+                action={{ label: "Open gift card page", href: "/gift-cards" }}
+              />
+            )}
             {cards.map((c) => (
               <tr key={c.id} className={c.status === "disabled" ? "text-ash" : ""}>
                 <td className="p-4 font-mono text-xs">{c.code}</td>

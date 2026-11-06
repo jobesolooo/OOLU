@@ -1,4 +1,6 @@
 import { desc, eq } from "drizzle-orm";
+import { AdminEmpty } from "../Empty";
+import { Inbox } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { setMessageStatus } from "../actions";
@@ -21,7 +23,16 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
         </div>
       </div>
       <ul className="space-y-3">
-        {rows.length === 0 && <li className="bg-white p-10 text-center text-sm text-ash">Inbox zero.</li>}
+        {rows.length === 0 && (
+          <li className="bg-white">
+            <AdminEmpty
+              icon={Inbox}
+              title={status === "new" ? "Inbox zero" : "Nothing marked done"}
+              body="Messages from the contact form arrive here (and by email if ORDER_NOTIFICATION_EMAIL is set)."
+              action={{ label: "View contact page", href: "/help/contact" }}
+            />
+          </li>
+        )}
         {rows.map((m) => (
           <li key={m.id} className="bg-white p-6">
             <div className="flex flex-wrap items-start justify-between gap-3">

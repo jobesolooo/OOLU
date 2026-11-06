@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AdminEmpty } from "../Empty";
+import { RotateCcw } from "lucide-react";
 import { inArray } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { listReturns } from "@/lib/returns";
@@ -45,7 +47,15 @@ export default async function ReturnsAdmin({ searchParams }: PageProps<"/admin/r
         </div>
       </div>
       <ul className="space-y-4">
-        {rows.length === 0 && <li className="bg-white p-10 text-center text-sm text-ash">No returns here.</li>}
+        {rows.length === 0 && (
+          <li className="bg-white">
+            <AdminEmpty
+              icon={RotateCcw}
+              title={filter.key === "open" ? "No open returns" : "No closed returns"}
+              body="Customers request returns from their account or the order tracking page. New requests appear here for approval."
+            />
+          </li>
+        )}
         {rows.map(({ r, order }) => (
           <li key={r.id} className="grid gap-6 bg-white p-6 lg:grid-cols-[1fr_360px]">
             <div>

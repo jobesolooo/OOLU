@@ -1,4 +1,6 @@
 import { and, desc, ilike, inArray, or, sql } from "drizzle-orm";
+import { EmptyRow } from "../Empty";
+import { Users } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate, formatMoney } from "@/lib/format";
 
@@ -65,7 +67,14 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5">
-            {users.length === 0 && <tr><td colSpan={6} className="p-10 text-center text-ash">No customers found.</td></tr>}
+            {users.length === 0 && (
+              <EmptyRow
+                colSpan={6}
+                icon={Users}
+                title={q ? "No matches" : "No customers yet"}
+                body={q ? `Nobody matches “${q}”. Try part of a name or email.` : "People who create an account — by email, Google or Apple — appear here."}
+              />
+            )}
             {users.map((u) => {
               const s = byUser.get(u.id);
               return (

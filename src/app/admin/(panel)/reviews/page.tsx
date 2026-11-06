@@ -1,4 +1,6 @@
 import { desc, eq } from "drizzle-orm";
+import { AdminEmpty } from "../Empty";
+import { MessageSquareText } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { getProducts } from "@/lib/catalog";
 import { formatDate } from "@/lib/format";
@@ -31,7 +33,15 @@ export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/r
         </div>
       </div>
       <ul className="space-y-3">
-        {rows.length === 0 && <li className="bg-white p-10 text-center text-sm text-ash">Nothing here.</li>}
+        {rows.length === 0 && (
+          <li className="bg-white">
+            <AdminEmpty
+              icon={MessageSquareText}
+              title={status === "pending" ? "Nothing to review" : `No ${status} reviews`}
+              body={status === "pending" ? "Reviews from shoppers who haven't bought the item wait here for your approval. Verified buyers publish automatically." : undefined}
+            />
+          </li>
+        )}
         {rows.map((r) => (
           <li key={r.id} className="flex flex-col gap-4 bg-white p-5 md:flex-row md:items-start">
             <div className="flex-1">

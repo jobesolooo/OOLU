@@ -1,4 +1,6 @@
 import { desc, isNull } from "drizzle-orm";
+import { EmptyRow } from "../Empty";
+import { Mail } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 
@@ -23,7 +25,15 @@ export default async function SubscribersAdmin() {
             <tr><th className="p-4 font-medium">Email</th><th className="p-4 font-medium">Source</th><th className="p-4 font-medium">Welcome code</th><th className="p-4 font-medium">Joined</th></tr>
           </thead>
           <tbody className="divide-y divide-black/5">
-            {rows.length === 0 && <tr><td colSpan={4} className="p-10 text-center text-ash">No subscribers yet.</td></tr>}
+            {rows.length === 0 && (
+              <EmptyRow
+                colSpan={4}
+                icon={Mail}
+                title="No subscribers yet"
+                body="Sign-ups from the popup, footer, homepage and account settings land here, each with their welcome code."
+                action={{ label: "Popup settings", href: "/admin/settings" }}
+              />
+            )}
             {rows.map((s) => (
               <tr key={s.id}>
                 <td className="p-4">{s.email}</td>
