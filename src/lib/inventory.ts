@@ -10,7 +10,14 @@ export async function getStockMap(productIds?: string[]) {
   const rows = productIds?.length
     ? await db.select().from(schema.inventory).where(inArray(schema.inventory.productId, productIds))
     : await db.select().from(schema.inventory);
-  return new Map(rows.map((r) => [stockKey(r.productId, r.size), r.quantity]));
+  const map = new Map(rows.map((r) => [stockKey(r.productId, r.size), r.quantity]));
+  // Demo catalogue: variants sold out on the live OOLU shop start at 0 until stock is set in admin.
+  const { getProducts } = await import("./catalog");
+  for (const p of await getProducts()) {
+    if (!p.isDemo || (productIds?.length && !productIds.includes(p.id))) continue;
+    for (const key of p.soldOut) if (!map.has(stockKey(p.id, key))) map.set(stockKey(p.id, key), 0);
+  }
+  return map;
 }
 
 export async function setStock(productId: string, size: string, quantity: number) {

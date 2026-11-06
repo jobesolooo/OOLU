@@ -80,7 +80,7 @@ export async function resolveOAuthUser(profile: OAuthProfile, linkUserId?: strin
 
   if (linkUserId) {
     if (existing && existing.user.id !== linkUserId) {
-      return { ok: false, error: `That ${label(profile.provider)} account is already connected to a different Wstablished account.` };
+      return { ok: false, error: `That ${label(profile.provider)} account is already connected to a different OOLU account.` };
     }
     if (!existing) {
       await db.insert(schema.oauthAccounts).values({ provider: profile.provider, providerUserId: profile.sub, userId: linkUserId, email });

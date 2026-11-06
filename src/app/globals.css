@@ -1,43 +1,46 @@
 /* Scan all of src/ for class names explicitly, so new folders are always picked up. */
 @import "tailwindcss" source("../");
-@import "@fontsource-variable/inter";
-@import "@fontsource/archivo/700.css";
-@import "@fontsource/archivo/800.css";
-@import "@fontsource/archivo/900.css";
-@import "@fontsource/playfair-display/700.css";
-@import "@fontsource/playfair-display/900.css";
-@import "@fontsource/mrs-saint-delafield/400.css";
+@import "@fontsource/newsreader/400.css";
+@import "@fontsource/newsreader/400-italic.css";
+@import "@fontsource/newsreader/500.css";
+@import "@fontsource/roboto-mono/400.css";
+@import "@fontsource/roboto-mono/500.css";
+@import "@fontsource/roboto-mono/700.css";
+@import "@fontsource/bebas-neue/400.css";
 
+/* OOLU brand system (from ooluclothing.shop): Newsreader serif headings,
+   Roboto Mono UI text, Bebas Neue for the giant wordmark, lavender accent. */
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Archivo", "Inter Variable", ui-sans-serif, sans-serif;
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-script: "Mrs Saint Delafield", cursive;
+  --font-sans: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: "Roboto Mono", ui-monospace, monospace;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-script: "Newsreader", Georgia, serif;
+  --font-wordmark: "Bebas Neue", Impact, sans-serif;
 
-  --color-ink: #0b0b0b;
-  --color-night: #111111;
-  --color-bone: #efeeea;
-  --color-stone: #e7e6e2;
-  --color-mist: #f3f2ef;
-  --color-ash: #8a8985;
+  --color-ink: #060606;
+  --color-night: #0d0d0d;
+  --color-bone: #eeedeb;
+  --color-stone: #f3f2ef;
+  --color-mist: #fdfdfd;
+  --color-ash: #77746f;
+  --color-accent: #a592ff;
   --color-brand-brown: #4a2f22;
 
-  --tracking-label: 0.18em;
-  --tracking-wide2: 0.32em;
-  --tracking-mark: 0.42em;
+  --tracking-label: 0.12em;
+  --tracking-wide2: 0.24em;
+  --tracking-mark: 0.32em;
 }
 
-/* Height of the announcement bar + sticky header, so sections can size to "exactly one screen". */
+/* Height of the sticky header, so sections can size to "exactly one screen".
+   (--bar-h stays for older layouts; OOLU has no top announcement bar.) */
 :root {
-  --bar-h: 34px;
+  --bar-h: 0px;
   --nav-h: 60px;
   --chrome-h: calc(var(--bar-h) + var(--nav-h));
 }
-@media (min-width: 40rem) {
-  :root { --bar-h: 38px; }
-}
 @media (min-width: 48rem) {
-  :root { --nav-h: clamp(68px, 6vw, 96px); }
+  :root { --nav-h: clamp(64px, 5.2vw, 84px); }
 }
 
 @layer base {
@@ -50,9 +53,14 @@
     overflow-x: clip;
   }
   body {
+    font-size: 14px;
     background: var(--color-mist);
     color: var(--color-ink);
     font-family: var(--font-sans);
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
   }
   :focus-visible {
     outline: 2px solid currentColor;
@@ -79,17 +87,17 @@
 }
 
 @utility eyebrow {
-  font-size: clamp(11px, 0.9vw, 14px);
+  font-size: clamp(11px, 0.8vw, 13px);
   font-weight: 500;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 @utility h-display {
   font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  line-height: 0.92;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
   font-size: clamp(38px, 4.4vw, 80px);
 }
 
@@ -113,15 +121,15 @@
   gap: 14px;
   border: 1px solid currentColor;
   padding: 16px 28px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: background 0.2s, color 0.2s;
 }
 .btn-outline:hover {
   background: #fff;
-  color: #0b0b0b;
+  color: #060606;
 }
 .btn-solid {
   display: inline-flex;
@@ -132,8 +140,8 @@
   color: #fff;
   padding: 15px 28px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: opacity 0.2s;
 }
@@ -147,7 +155,7 @@
 
 .input {
   width: 100%;
-  border: 1px solid #cfcdc8;
+  border: 1px solid #d9d7d2;
   background: #fff;
   padding: 16px 18px;
   font-size: 16px;
@@ -216,3 +224,9 @@ details[open] .rotate-open { transform: rotate(45deg); }
   .cave-door-l, .cave-door-r { animation: none; display: none; }
   .cave-lights, .cave-rise { animation: none; opacity: 1; }
 }
+
+/* ── OOLU marquee ───────────────────────────────────────── */
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee { animation: marquee 60s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }

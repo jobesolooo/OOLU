@@ -21,7 +21,7 @@ export default async function ReviewsAdmin({ searchParams }: PageProps<"/admin/r
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-[900] uppercase">Reviews</h1>
+          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Reviews</h1>
           <p className="mt-1 text-xs text-ash">Reviews from verified buyers publish automatically. Others wait here for approval.</p>
         </div>
         <div className="flex gap-2">

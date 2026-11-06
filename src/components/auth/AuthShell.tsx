@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { WingedW } from "./WingedW";
+import { StaffMark } from "./StaffMark";
 
 /**
  * Split layout used by sign in / sign up / reset pages.
@@ -12,7 +12,7 @@ export function AuthShell({
   title,
   children,
   aside,
-  image = "/images/drops-photo.jpg",
+  image = "/images/brand/tracksuit-duo.jpg",
 }: {
   eyebrow?: string;
   title: string;
@@ -23,12 +23,12 @@ export function AuthShell({
   return (
     <div className="grid lg:h-[calc(100svh-var(--chrome-h))] lg:min-h-[600px] lg:grid-cols-[1.05fr_1fr]">
       <div className="relative hidden overflow-hidden bg-ink lg:block">
-        <Image src={image} alt="" fill priority sizes="55vw" className="object-cover object-[30%_center]" />
+        <Image src={image} alt="" fill priority sizes="55vw" className="object-cover object-[center_30%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
         <div className="absolute right-[clamp(32px,4vw,64px)] bottom-[clamp(32px,6vh,72px)] left-[clamp(32px,4vw,64px)] text-white">
           {aside}
-          <p className="font-script text-[clamp(52px,min(5vw,9vh),96px)] leading-none">Wstablished</p>
-          <p className="mt-3 text-[12px] tracking-[0.3em] text-white/80 uppercase">Built for the real ones.</p>
+          <p className="font-display text-[clamp(44px,min(4.4vw,8vh),84px)] leading-none tracking-[-0.025em]">Live in the present.</p>
+          <p className="mt-4 text-[12px] tracking-[0.08em] text-white/80 uppercase">OOLU · Built on trust</p>
         </div>
       </div>
 
@@ -43,13 +43,13 @@ export function AuthShell({
             Staff
           </span>
           <span className="grid h-11 w-14 place-items-center rounded-full border border-black/15 bg-white transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white">
-            <WingedW className="w-9" />
+            <StaffMark className="w-9" />
           </span>
         </Link>
 
         <div className="w-full max-w-[540px]">
           {eyebrow && <p className="eyebrow text-ash">{eyebrow}</p>}
-          <h1 className="mt-3 mb-[clamp(16px,3.4vh,44px)] font-display text-[clamp(34px,min(3.8vw,7vh),76px)] leading-[0.92] text-balance font-[900] uppercase">{title}</h1>
+          <h1 className="mt-3 mb-[clamp(16px,3.4vh,44px)] font-display font-normal tracking-[-0.02em] text-[clamp(34px,min(3.8vw,7vh),76px)] leading-[0.92] text-balance">{title}</h1>
           {children}
         </div>
       </div>

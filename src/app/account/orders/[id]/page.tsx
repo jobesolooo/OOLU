@@ -28,7 +28,7 @@ export default async function AccountOrderPage({ params }: PageProps<"/account/o
     <div className="space-y-10">
       <div>
         <Link href="/account" className="text-[11px] tracking-[0.2em] text-ash uppercase hover:text-ink">← All orders</Link>
-        <h2 className="mt-3 font-display text-4xl font-[900] uppercase md:text-5xl">Order #{order.number}</h2>
+        <h2 className="mt-3 font-display font-normal tracking-[-0.02em] text-4xl md:text-5xl">Order #{order.number}</h2>
       </div>
       <OrderTimeline order={order} />
       <OrderDetail order={order} items={items} />

@@ -5,6 +5,7 @@ import { isStripeConfigured, stripeDashboardUrl } from "@/lib/stripe";
 import { formatMoney } from "@/lib/format";
 import { refreshCatalog } from "../actions";
 import { StockForm } from "./StockForm";
+import { allVariantKeys } from "@/lib/variants";
 
 export default async function InventoryPage() {
   const products = await getProducts();
@@ -15,7 +16,7 @@ export default async function InventoryPage() {
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-[900] uppercase">Products & stock</h1>
+          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Products & stock</h1>
           <p className="mt-2 max-w-2xl text-sm text-ash">
             Names, prices, photos and descriptions are managed in Stripe. Set stock per size here — leave a box empty (∞) to not
             track that size. Stock drops automatically when an order is paid.
@@ -38,7 +39,8 @@ export default async function InventoryPage() {
       <ul className="divide-y divide-black/5 bg-white">
         {products.map((p) => {
           const s: Record<string, number> = {};
-          for (const size of p.sizes) {
+          const keys = allVariantKeys(p);
+          for (const size of keys) {
             const v = stock.get(stockKey(p.id, size));
             if (v !== undefined) s[size] = v;
           }
@@ -60,7 +62,7 @@ export default async function InventoryPage() {
                   </p>
                 </div>
               </div>
-              <StockForm productId={p.id} sizes={p.sizes} stock={s} />
+              <StockForm productId={p.id} sizes={keys} stock={s} />
             </li>
           );
         })}

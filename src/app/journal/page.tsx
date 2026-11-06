@@ -5,7 +5,7 @@ import { JOURNAL } from "@/content/journal";
 import { cx, formatDate } from "@/lib/format";
 import { PageHeader } from "@/components/PageHeader";
 
-export const metadata: Metadata = { title: "Journal", description: "Lookbooks, stories and process from Wstablished." };
+export const metadata: Metadata = { title: "Journal", description: "Lookbooks, stories and process from OOLU — rooted in Africa, created in Amsterdam." };
 
 const CATS = ["Lookbook", "Story", "Process"] as const;
 
@@ -19,7 +19,7 @@ export default async function JournalPage({ searchParams }: PageProps<"/journal"
 
   return (
     <>
-      <PageHeader eyebrow="Stories from the West Side" title="Journal" />
+      <PageHeader eyebrow="Wear your roots. Tell your story." title="Journal" />
       <div className="container-x section-y">
         <nav className="mb-12 flex flex-wrap gap-2" aria-label="Categories">
           {[undefined, ...CATS].map((c) => (

@@ -25,7 +25,7 @@ function useSubscribe(source: string) {
       return;
     }
     try {
-      localStorage.setItem("wst-subscribed", "1");
+      localStorage.setItem("oolu-subscribed", "1");
     } catch {}
     setCode(data.code ?? null);
     setMessage(data.already ? "You're already on the list." : data.code ? "You're in. Here's your code:" : "You're in. Check your inbox.");
@@ -52,7 +52,18 @@ function CodeBox({ code }: { code: string }) {
   );
 }
 
-export function NewsletterForm({ source = "footer", dark = false, cta = "Subscribe" }: { source?: string; dark?: boolean; cta?: string }) {
+export function NewsletterForm({
+  source = "footer",
+  dark = false,
+  cta = "Subscribe",
+  variant = "line",
+}: {
+  source?: string;
+  dark?: boolean;
+  cta?: string;
+  /** "box" = the large OOLU field with a black arrow button */
+  variant?: "line" | "box";
+}) {
   const { state, message, code, subscribe } = useSubscribe(source);
   const [email, setEmail] = useState("");
   if (state === "done") {
@@ -71,6 +82,22 @@ export function NewsletterForm({ source = "footer", dark = false, cta = "Subscri
       }}
       className="w-full"
     >
+      {variant === "box" ? (
+        <div className="flex items-center bg-white p-2 pl-5 ring-1 ring-black/5 focus-within:ring-ink">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email address"
+            aria-label="Email address"
+            className="w-full bg-transparent py-3 text-[14px] placeholder:text-black/45 focus:outline-none"
+          />
+          <button aria-label={cta} className="grid size-11 shrink-0 place-items-center bg-ink text-white transition-opacity hover:opacity-85" disabled={state === "sending"}>
+            {state === "sending" ? "…" : <ArrowRight className="size-4" strokeWidth={1.5} />}
+          </button>
+        </div>
+      ) : (
       <div className={cx("flex border-b", dark ? "border-white/50" : "border-ink")}>
         <input
           type="email"
@@ -85,6 +112,7 @@ export function NewsletterForm({ source = "footer", dark = false, cta = "Subscri
           {state === "sending" ? "…" : cta} <ArrowRight className="size-4" strokeWidth={1.5} />
         </button>
       </div>
+      )}
       {state === "error" && <p className="mt-2 text-xs text-red-500">{message}</p>}
       <p className={cx("mt-3 text-[11px]", dark ? "text-white/50" : "text-ash")}>
         By subscribing you agree to receive marketing emails. Unsubscribe anytime. See our{" "}
@@ -104,8 +132,8 @@ export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: numb
     if (HIDE_ON.some((p) => pathname.startsWith(p))) return;
     let skip = false;
     try {
-      const dismissed = Number(localStorage.getItem("wst-popup-dismissed") ?? 0);
-      skip = localStorage.getItem("wst-subscribed") === "1" || Date.now() - dismissed < 14 * 86_400_000;
+      const dismissed = Number(localStorage.getItem("oolu-popup-dismissed") ?? 0);
+      skip = localStorage.getItem("oolu-subscribed") === "1" || Date.now() - dismissed < 14 * 86_400_000;
     } catch {}
     if (skip) return;
     const t = setTimeout(() => setOpen(true), delaySeconds * 1000);
@@ -115,7 +143,7 @@ export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: numb
   const close = () => {
     setOpen(false);
     try {
-      localStorage.setItem("wst-popup-dismissed", String(Date.now()));
+      localStorage.setItem("oolu-popup-dismissed", String(Date.now()));
     } catch {}
   };
 
@@ -131,20 +159,20 @@ export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: numb
       >
         <div
           className="hidden bg-cover bg-center sm:block"
-          style={{ backgroundImage: "url(/images/drops-photo.jpg)", backgroundPosition: "28% center" }}
+          style={{ backgroundImage: "url(/images/brand/tracksuit-duo.jpg)", backgroundPosition: "center" }}
           aria-hidden
         />
         <div className="p-8 sm:p-10">
           <button onClick={close} aria-label="Close" className="absolute top-4 right-4">
             <X className="size-5" strokeWidth={1.5} />
           </button>
-          <p className="eyebrow text-white/70">Join the movement</p>
-          <h2 id="popup-title" className="mt-3 font-display text-[44px] leading-[0.92] font-[900] uppercase">
+          <p className="eyebrow text-accent">OOLU · Built on trust</p>
+          <h2 id="popup-title" className="mt-3 font-display font-normal tracking-[-0.02em] text-[44px] leading-[1]">
             {percentOff}% off
             <br />
             your first order
           </h2>
-          <p className="mt-4 text-sm text-white/75">First access to drops and restocks, plus a one-time code for your first order.</p>
+          <p className="mt-4 text-sm text-white/75">Early drops, restocks and stories from Amsterdam — plus a one-time code for your first order.</p>
           <div className="mt-6">
             <NewsletterForm source="popup" dark cta="Get code" />
           </div>

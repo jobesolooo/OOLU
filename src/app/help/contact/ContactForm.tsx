@@ -12,7 +12,7 @@ export function ContactForm() {
   if (state?.ok) {
     return (
       <div className="bg-white p-8">
-        <p className="font-display text-2xl font-[800] uppercase">Message sent.</p>
+        <p className="font-display font-normal tracking-[-0.02em] text-2xl">Message sent.</p>
         <p className="mt-2 text-[15px] text-black/75">Thanks — we&apos;ll get back to you within one business day.</p>
       </div>
     );

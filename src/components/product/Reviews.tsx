@@ -37,7 +37,7 @@ export function Reviews({
           <h2 className="eyebrow">Reviews</h2>
           {summary.count > 0 ? (
             <>
-              <p className="mt-4 font-display text-6xl font-[800]">{summary.average.toFixed(1)}</p>
+              <p className="mt-4 font-display font-normal tracking-[-0.02em] text-6xl">{summary.average.toFixed(1)}</p>
               <Stars value={summary.average} size={20} className="mt-2" />
               <p className="mt-2 text-sm text-ash">
                 Based on {summary.count} review{summary.count === 1 ? "" : "s"}
@@ -109,7 +109,7 @@ export function Reviews({
                       <BadgeCheck className="size-3.5" /> Verified buyer
                     </span>
                   )}
-                  {r.size && <span>Size {r.size}</span>}
+                  {r.size && <span>{r.size}</span>}
                   {r.fit && <span>{FIT_LABEL[r.fit]}</span>}
                   <span>{formatDate(r.createdAt)}</span>
                 </p>

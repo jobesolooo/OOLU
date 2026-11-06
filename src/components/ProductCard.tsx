@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { isOnSale, isUpcoming, type Product } from "@/lib/catalog";
 import { Price, Stars } from "./Price";
 import { WishlistButton } from "./WishlistButton";
+import { allVariantKeys } from "@/lib/variants";
 
 export const toSaved = (p: Product) => ({
   id: p.id,
@@ -27,10 +27,11 @@ export function ProductCard({
   const upcoming = isUpcoming(product);
   const sale = isOnSale(product);
   const [front, back] = product.images;
+  const soldOut = !upcoming && product.soldOut.length > 0 && allVariantKeys(product).every((k) => product.soldOut.includes(k));
   return (
     <div className="group relative">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[1/0.9] overflow-hidden bg-stone">
+        <div className="relative aspect-[4/5] overflow-hidden bg-stone">
           {front && (
             <Image
               src={front}
@@ -38,7 +39,7 @@ export function ProductCard({
               fill
               priority={priority}
               sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 50vw"
-              className={`object-contain transition duration-500 group-hover:scale-[1.03] ${back ? "group-hover:opacity-0" : ""}`}
+              className={`object-cover transition duration-500 group-hover:scale-[1.03] ${back ? "group-hover:opacity-0" : ""}`}
             />
           )}
           {back && (
@@ -47,26 +48,25 @@ export function ProductCard({
               alt=""
               fill
               sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 50vw"
-              className="object-contain opacity-0 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
+              className="object-cover opacity-0 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
             />
           )}
           <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
             {upcoming && <Badge>Coming soon</Badge>}
-            {!upcoming && sale && <Badge tone="sale">Sale</Badge>}
-            {!upcoming && !sale && product.isNew && <Badge>New</Badge>}
+            {soldOut && <Badge>Sold out</Badge>}
+            {!upcoming && !soldOut && sale && <Badge tone="sale">Sale</Badge>}
           </div>
         </div>
-        <div className="flex items-start justify-between gap-3 px-1 pt-4 pb-2">
+        <div className="pt-3 pb-1">
           <div className="min-w-0">
-            <h3 className="truncate text-[13px] leading-snug font-medium sm:text-[14px]">{product.name}</h3>
-            <Price amount={product.unitAmount} compareAt={product.compareAtAmount} currency={product.currency} className="mt-1 text-[13px] sm:text-[14px]" />
+            <h3 className="text-[11px] leading-[1.45] tracking-[0.04em] uppercase sm:text-[12px]">{product.name}</h3>
+            <Price amount={product.unitAmount} compareAt={product.compareAtAmount} currency={product.currency} className="mt-1 text-[11px] sm:text-[12px]" />
             {rating && rating.count > 0 && (
               <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-ash">
                 <Stars value={rating.average} size={12} className="text-ink" /> ({rating.count})
               </p>
             )}
           </div>
-          <ArrowRight className="mt-1 size-4 shrink-0 transition-transform group-hover:translate-x-0.5" strokeWidth={1.5} />
         </div>
       </Link>
       <WishlistButton
@@ -80,9 +80,7 @@ export function ProductCard({
 function Badge({ children, tone }: { children: React.ReactNode; tone?: "sale" }) {
   return (
     <span
-      className={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.16em] uppercase ${
-        tone === "sale" ? "bg-[#a3271b] text-white" : "bg-ink text-white"
-      }`}
+      className={`px-2 py-1 text-[10px] tracking-[0.06em] uppercase ${tone === "sale" ? "bg-accent text-white" : "bg-white text-ink"}`}
     >
       {children}
     </span>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Leaf, RefreshCw, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { site } from "@/lib/site";
 import type { Product } from "@/lib/catalog";
 import type { JournalPost } from "@/content/journal";
@@ -9,102 +9,80 @@ import { ProductCard } from "@/components/ProductCard";
 import { Countdown } from "@/components/Countdown";
 import { NewsletterForm } from "@/components/Newsletter";
 
-export function CategoryTiles() {
+export function CategoryTiles({ counts }: { counts: Record<string, number> }) {
   return (
-    <section className="bg-bone pt-[clamp(18px,2vw,32px)] pb-[clamp(24px,2.6vw,44px)]">
-      <div className="container-x grid grid-cols-2 gap-[clamp(10px,1.3vw,22px)] lg:grid-cols-4">
-        {site.categories.map((c) => (
-          <Link key={c.label} href={c.href} className="group relative block aspect-[226/180] overflow-hidden bg-ink text-white">
-            <Image
-              src={c.image}
-              alt=""
-              fill
-              sizes="(min-width:1024px) 25vw, 50vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-            <div className="absolute bottom-[9%] left-[7%]">
-              <h3 className="text-[13px] font-semibold tracking-[0.16em] uppercase sm:text-[clamp(13px,1.3vw,20px)]">{c.label}</h3>
-              <p className="mt-1.5 flex items-center gap-2 text-[11px] sm:text-[clamp(11px,0.95vw,14px)]">
-                Shop Now <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.5} />
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export function FreshDrops() {
-  const { drops } = site;
-  return (
-    <section className="relative isolate overflow-hidden bg-[#ebeae6]">
-      <div className="absolute inset-y-0 right-0 -z-10 w-full md:w-[69%]">
-        <Image src={drops.image} alt="" fill sizes="70vw" className="object-cover object-[30%_center] md:object-left" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#ebeae6] via-[#ebeae6]/40 to-transparent md:hidden" />
-      </div>
-
-      <div className="container-x grid min-h-[460px] grid-cols-1 items-center gap-10 py-14 md:min-h-[clamp(340px,29vw,600px)] md:grid-cols-[1fr_1fr] md:py-0">
-        <div>
-          <p className="eyebrow">{drops.eyebrow}</p>
-          <h2 className="h-display mt-4">
-            {drops.title.map((l) => (
-              <span key={l} className="block">
-                {l}
-              </span>
-            ))}
-          </h2>
-          <p className="mt-6 text-[15px] leading-[1.5] md:text-[clamp(14px,1.2vw,19px)]">
-            {drops.body.map((l) => (
-              <span key={l} className="block">
-                {l}
-              </span>
-            ))}
-          </p>
-          <Link href={drops.cta.href} className="btn-solid mt-8">
-            {drops.cta.label}
-            <ArrowRight className="size-4" strokeWidth={1.5} />
-          </Link>
-        </div>
-        <div className="hidden justify-self-end md:mr-[1%] md:block">
-          <p className="text-[clamp(13px,1.27vw,20px)] leading-[1.6] font-medium tracking-[0.3em] uppercase">
-            {drops.aside.map((l) => (
-              <span key={l} className="block">
-                {l}
-              </span>
-            ))}
-          </p>
-          <span className="mt-[clamp(14px,1.8vw,28px)] block h-px w-14 bg-ink" />
-          <p className="mt-2 -rotate-[14deg] font-script text-[clamp(44px,4.8vw,84px)] leading-none" aria-label={site.name}>
-            {site.name}
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const PERK_ICONS = { truck: Truck, shield: ShieldCheck, returns: RefreshCw, leaf: Leaf } as const;
-
-export function Perks() {
-  return (
-    <section className="border-b border-black/5 bg-mist">
-      <div className="container-x grid grid-cols-2 gap-x-4 gap-y-8 py-10 md:grid-cols-4 md:py-[clamp(32px,3.4vw,56px)]">
-        {site.perks.map((p) => {
-          const Icon = PERK_ICONS[p.icon];
-          return (
-            <div key={p.title} className="flex items-center gap-4 md:justify-center md:gap-[clamp(16px,1.8vw,28px)] md:first:justify-start md:last:justify-end">
-              <Icon className="size-8 shrink-0 md:size-[clamp(30px,2.8vw,44px)]" strokeWidth={1.1} />
-              <div>
-                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase md:text-[clamp(11px,0.9vw,14px)]">{p.title}</p>
-                <p className="mt-1 text-[12px] md:text-[clamp(11px,0.9vw,14px)]">{p.body}</p>
+    <section className="bg-mist pt-[clamp(24px,3vw,56px)] pb-[clamp(56px,7vw,128px)]">
+      <div className="container-x">
+        <p className="eyebrow text-ash">Shop by category</p>
+        <h2 className="mt-2 font-display text-[clamp(30px,2.6vw,44px)] leading-none tracking-[-0.02em]">Find your fit</h2>
+        <div className="mt-[clamp(24px,2.6vw,40px)] grid gap-[clamp(10px,1.1vw,18px)] sm:grid-cols-3">
+          {site.categories.map((c) => (
+            <Link key={c.slug} href={`/shop?category=${c.slug}`} className="group block">
+              <div className="relative aspect-[4/3] max-h-[calc(100svh-var(--nav-h)-180px)] w-full overflow-hidden bg-stone sm:aspect-[4/5]">
+                <Image
+                  src={c.image}
+                  alt=""
+                  fill
+                  sizes="(min-width:640px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
               </div>
-            </div>
-          );
-        })}
+              <h3 className="mt-3 text-[12px] tracking-[0.06em] uppercase group-hover:underline underline-offset-4">{c.label}</h3>
+              <p className="mt-1 text-[11px] text-ash">{counts[c.slug] ?? 0} pieces</p>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+export function Story() {
+  const { story } = site;
+  return (
+    <section className="grid bg-bone md:min-h-[min(calc(100svh-var(--nav-h)),900px)] md:grid-cols-[7fr_5fr]">
+      <div className="relative aspect-[4/3] md:aspect-auto">
+        <Image src={story.image} alt="Three friends in OOLU “Your Roots.” t-shirts walking down a street" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover" />
+      </div>
+      <div className="flex items-center px-[clamp(20px,5vw,96px)] py-14">
+        <div className="max-w-[440px]">
+          <p className="eyebrow">{story.eyebrow}</p>
+          <h2 className="mt-3 font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{story.title}</h2>
+          <div className="mt-6 space-y-4 text-[13px] leading-[1.6]">
+            {story.body.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+            <p className="pt-2 uppercase">{story.signoff}</p>
+          </div>
+          <Link href={story.cta.href} className="mt-7 inline-flex border border-ink px-5 py-3.5 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-ink hover:text-white">
+            {story.cta.label}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Features() {
+  return (
+    <>
+      {site.features.map((f) => (
+        <section key={f.title} className="grid md:min-h-[clamp(440px,38vw,680px)] md:grid-cols-[5fr_7fr]" style={{ background: f.tone }}>
+          <div className="order-2 flex items-center px-[clamp(20px,6vw,128px)] py-14 md:order-1">
+            <div className="max-w-[340px]">
+              <h2 className="font-display text-[clamp(24px,1.9vw,32px)] leading-[1.1] tracking-[-0.02em]">{f.title}</h2>
+              <p className="mt-5 text-[13px] leading-[1.6]">{f.body}</p>
+              <Link href={f.cta.href} className="btn-solid mt-7 px-5 py-3.5 text-[11px]">
+                {f.cta.label}
+              </Link>
+            </div>
+          </div>
+          <div className="relative order-1 aspect-[4/3] md:order-2 md:aspect-auto">
+            <Image src={f.image} alt="" fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover" />
+          </div>
+        </section>
+      ))}
+    </>
   );
 }
 
@@ -123,13 +101,13 @@ export function ProductRow({
   return (
     <section className="section-y bg-mist">
       <div className="container-x">
-        <div className="mb-8 flex items-end justify-between">
-          <h2 className="eyebrow">{title}</h2>
-          <Link href={href} className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase hover:underline underline-offset-4">
-            View all <ArrowRight className="size-3.5" strokeWidth={1.5} />
+        <div className="mb-[clamp(20px,2.2vw,36px)] flex items-end justify-between gap-6">
+          <h2 className="font-display text-[clamp(26px,2.2vw,38px)] leading-none tracking-[-0.02em]">{title}</h2>
+          <Link href={href} className="shrink-0 border border-ink px-4 py-3 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-ink hover:text-white">
+            View all
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-[clamp(12px,1.4vw,24px)] gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-[clamp(8px,0.9vw,16px)] gap-y-[clamp(28px,2.6vw,44px)] lg:grid-cols-4">
           {products.map((p, i) => (
             <ProductCard key={p.id} product={p} priority={i < 2} rating={ratings?.get(p.id)} />
           ))}
@@ -182,7 +160,7 @@ export function JournalTeaser({ posts }: { posts: JournalPost[] }) {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="eyebrow">Journal</p>
-            <h2 className="mt-3 font-display text-[clamp(28px,2.8vw,48px)] leading-none font-[900] uppercase">Stories &amp; lookbooks</h2>
+            <h2 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(28px,2.8vw,48px)] leading-none">Stories &amp; lookbooks</h2>
           </div>
           <Link href="/journal" className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase hover:underline underline-offset-4">
             Read the journal <ArrowRight className="size-3.5" strokeWidth={1.5} />
@@ -197,7 +175,7 @@ export function JournalTeaser({ posts }: { posts: JournalPost[] }) {
               <p className="mt-4 text-[11px] tracking-[0.18em] text-ash uppercase">
                 {p.category} · {formatDate(p.date)}
               </p>
-              <h3 className="mt-2 text-xl font-semibold group-hover:underline underline-offset-4">{p.title}</h3>
+              <h3 className="mt-2 font-display text-[22px] leading-tight tracking-[-0.01em] group-hover:underline underline-offset-4">{p.title}</h3>
               <p className="mt-2 line-clamp-2 text-[14px] text-black/70">{p.excerpt}</p>
             </Link>
           ))}
@@ -209,22 +187,15 @@ export function JournalTeaser({ posts }: { posts: JournalPost[] }) {
 
 export function NewsletterBand({ percentOff }: { percentOff: number }) {
   return (
-    <section className="section-y bg-mist">
-      <div className="container-x grid items-center gap-10 md:grid-cols-2">
-        <div>
-          <p className="eyebrow">Join the movement</p>
-          <h2 className="h-display mt-4">
-            {percentOff}% off your
-            <br />
-            first order
-          </h2>
+    <section className="bg-mist py-[clamp(40px,4vw,72px)]">
+      <div className="container-x">
+        <h2 className="font-display text-[clamp(20px,1.7vw,28px)] leading-[1.2] tracking-[-0.015em]">
+          Don&apos;t want to miss anything? For early drops, discounts and more, leave your email address below
+        </h2>
+        <div className="mt-5">
+          <NewsletterForm source="home" variant="box" cta="Subscribe" />
         </div>
-        <div className="max-w-lg md:justify-self-end">
-          <p className="mb-6 text-[15px] leading-relaxed text-black/75">
-            Early access to every drop, restock alerts and stories from the West Side. Sign up and we&apos;ll send a one-time code.
-          </p>
-          <NewsletterForm source="home" cta="Get my code" />
-        </div>
+        {percentOff > 0 && <p className="mt-3 text-[11px] text-ash">New here? You&apos;ll get a one-time {percentOff}% code for your first order.</p>}
       </div>
     </section>
   );

@@ -31,7 +31,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
   ]);
   const openReturns = returns.filter((r) => ["requested", "approved", "received"].includes(r.r.status));
   const notice = one(sp.welcome)
-    ? "Welcome to Wstablished. Your account is ready."
+    ? "Welcome to OOLU. Your account is ready."
     : one(sp.reset)
       ? "Password updated. You're signed in."
       : null;

@@ -21,8 +21,8 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   dropBanner: {
     enabled: true,
     eyebrow: "Next drop",
-    title: "Essentials Vol. 1",
-    body: "Limited run. Sign up to get the link before everyone else.",
+    title: "The next OOLU drop",
+    body: "Limited run, made in Amsterdam. Get notified before everyone else.",
     launchAt: null,
     href: "/drops",
   },
@@ -34,6 +34,9 @@ export async function getSettings(): Promise<StoreSettings> {
     const db = await getDb();
     const [row] = await db.select().from(schema.settings).where(eq(schema.settings.key, "store")).limit(1);
     const saved = (row?.value ?? {}) as Partial<StoreSettings>;
+    // Settings saved before the OOLU rebrand still carry the old Wstablished copy.
+    if (saved.announcement && /\$\d|wstablished/i.test(saved.announcement)) delete saved.announcement;
+    if (saved.dropBanner?.title === "Essentials Vol. 1") saved.dropBanner = { ...saved.dropBanner, title: DEFAULT_SETTINGS.dropBanner.title };
     return {
       ...DEFAULT_SETTINGS,
       ...saved,

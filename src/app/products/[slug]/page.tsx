@@ -17,6 +17,7 @@ import { Countdown } from "@/components/Countdown";
 import { Gallery } from "@/components/product/Gallery";
 import { Reviews } from "@/components/product/Reviews";
 import { RecentlyViewed, RecordView } from "@/components/RecentlyViewed";
+import { allVariantKeys } from "@/lib/variants";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
     getProducts(),
   ]);
   const stock: Record<string, number> = {};
-  for (const s of product.sizes) {
+  const keys = allVariantKeys(product);
+  for (const s of keys) {
     const v = stockMap.get(stockKey(product.id, s));
     if (v !== undefined) stock[s] = v;
   }
@@ -62,7 +64,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const collection = product.collection ? COLLECTIONS[product.collection] : null;
   const sizeChart = SIZE_GUIDES[product.category] ?? null;
   const saved = toSaved(product);
-  const allSoldOut = product.sizes.every((s) => stock[s] !== undefined && stock[s] <= 0);
+  const allSoldOut = keys.every((s) => stock[s] !== undefined && stock[s] <= 0);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -71,7 +73,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
     description: product.description,
     image: product.images.map((i) => (i.startsWith("http") ? i : `${SITE_URL}${i}`)),
     sku: product.id,
-    brand: { "@type": "Brand", name: "Wstablished" },
+    brand: { "@type": "Brand", name: "OOLU" },
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/products/${product.slug}`,
@@ -108,7 +110,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
               {collection.title}
             </Link>
           )}
-          <h1 className="mt-3 font-display text-[clamp(32px,3vw,52px)] leading-[0.98] font-[800] uppercase">{product.name}</h1>
+          <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-[clamp(32px,3vw,52px)] leading-[0.98]">{product.name}</h1>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
             <Price amount={product.unitAmount} compareAt={product.compareAtAmount} currency={product.currency} className="text-xl" />
             {summary.count > 0 && (
@@ -147,7 +149,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           )}
 
           <div className="mt-8">
-            <AddToCart product={{ ...saved, sizes: product.sizes, upcoming }} stock={stock} sizeChart={sizeChart} />
+            <AddToCart product={{ ...saved, sizes: product.sizes, colors: product.colors, variants: keys, upcoming }} stock={stock} sizeChart={sizeChart} />
           </div>
 
           <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-black/10 pt-6 text-[13px]">

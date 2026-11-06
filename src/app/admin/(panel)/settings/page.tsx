@@ -8,10 +8,10 @@ export default async function SettingsAdmin() {
   const s = await getSettings();
   return (
     <>
-      <h1 className="mb-6 font-display text-3xl font-[900] uppercase">Store settings</h1>
+      <h1 className="mb-6 font-display font-normal tracking-[-0.02em] text-3xl">Store settings</h1>
       <AdminForm action={saveStoreSettings} submitLabel="Save settings" className="max-w-3xl space-y-6">
         <fieldset className="space-y-3 bg-white p-6">
-          <legend className="label float-left mb-3 w-full font-semibold">Announcement bar</legend>
+          <legend className="label float-left mb-3 w-full font-semibold">Promo strip (under the homepage hero)</legend>
           <input name="announcement" defaultValue={s.announcement} maxLength={140} className="input" />
         </fieldset>
 

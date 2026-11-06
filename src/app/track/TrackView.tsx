@@ -7,6 +7,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 import { OrderTimeline } from "@/components/orders/OrderTimeline";
 import { ReturnForm } from "@/components/orders/ReturnForm";
 import { ReturnList } from "@/components/orders/ReturnList";
+import { variantLabel } from "@/lib/variants";
 
 export function TrackView() {
   const [state, action, pending] = useActionState<TrackResult, FormData>(trackOrder, undefined);
@@ -42,7 +43,7 @@ export function TrackView() {
                 <p className="flex-1 text-sm">
                   {i.name}
                   <span className="block text-xs text-ash">
-                    {i.size && i.size !== "One Size" ? `Size ${i.size} · ` : ""}Qty {i.quantity}
+                    {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}Qty {i.quantity}
                   </span>
                 </p>
                 <p className="text-sm">{formatMoney(i.unitAmount * i.quantity, found.order.currency)}</p>

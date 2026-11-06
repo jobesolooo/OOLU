@@ -64,7 +64,7 @@ export const useCart = create<CartState>()(
       setOpen: (open) => set({ open }),
     }),
     {
-      name: "wst-cart",
+      name: "oolu-cart",
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ lines: s.lines, giftCard: s.giftCard }),
     },

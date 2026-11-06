@@ -43,7 +43,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className="flex min-h-[calc(100svh-var(--chrome-h))] flex-col bg-mist">
       <div className="border-b border-black/10 bg-white">
         <div className="container-x flex flex-wrap items-center gap-x-8 gap-y-3 py-4">
-          <span className="font-display text-sm font-[900] tracking-[0.12em] uppercase">Admin</span>
+          <span className="font-display font-normal tracking-[-0.02em] text-sm">Admin</span>
           <nav className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium tracking-[0.12em] uppercase">
             {nav.map((n) => (
               <Link key={n.href} href={n.href} className="flex items-center gap-1.5 hover:underline">

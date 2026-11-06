@@ -20,9 +20,13 @@ async function main() {
       console.log(`• ${p.name} already exists (${existing.data[0].id})`);
       continue;
     }
+    const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+    // Stripe needs public https image URLs; local paths are used once the site is deployed.
+    const images = site.startsWith("https://") ? p.images.slice(0, 8).map((i) => `${site}${i}`) : [];
     const product = await stripe.products.create({
       name: p.name,
       description: p.description,
+      images,
       metadata: {
         slug: p.slug,
         category: p.category,
@@ -31,15 +35,15 @@ async function main() {
         featured: String(Boolean(p.featured)),
         new: String(Boolean(p.isNew)),
         sort: String(p.sort),
-        ...(p.group ? { group: p.group, color: p.color ?? "", color_hex: p.colorHex ?? "" } : {}),
+        ...(p.colors.length ? { colors: p.colors.map((c) => `${c.name}:${c.hex}`).join("|") } : {}),
+        ...(p.variants?.length ? { variants: p.variants.join("|") } : {}),
         ...(p.compareAt ? { compare_at: (p.compareAt / 100).toFixed(2) } : {}),
-        ...(p.releaseInDays ? { release_at: new Date(Date.now() + p.releaseInDays * 86_400_000).toISOString() } : {}),
       },
-      default_price_data: { currency: "usd", unit_amount: p.unitAmount, tax_behavior: "exclusive" },
+      default_price_data: { currency: (process.env.STORE_CURRENCY ?? "eur").toLowerCase(), unit_amount: p.unitAmount, tax_behavior: "inclusive" },
     });
     console.log(`✓ Created ${p.name} (${product.id})`);
   }
-  console.log("\nDone. Upload product photos in the Stripe dashboard (Product catalog → product → Images).");
+  console.log("\nDone. Sold-out sizes from the old shop are not copied: set stock in Admin → Products & stock.");
 }
 
 main().catch((e) => {

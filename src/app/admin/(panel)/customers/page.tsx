@@ -44,7 +44,7 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-[900] uppercase">Customers</h1>
+          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Customers</h1>
           <p className="mt-1 text-xs text-ash">
             {total.n} accounts · {verified.n} confirmed · {social.n} use Google/Apple
           </p>

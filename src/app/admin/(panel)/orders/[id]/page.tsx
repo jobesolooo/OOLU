@@ -15,7 +15,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
     <>
       <Link href="/admin" className="text-[10px] tracking-[0.2em] text-ash uppercase hover:text-ink">← Orders</Link>
       <div className="mt-3 mb-8 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-4xl font-[900] uppercase">Order #{order.number}</h1>
+        <h1 className="font-display font-normal tracking-[-0.02em] text-4xl">Order #{order.number}</h1>
         {order.stripePaymentIntentId && (
           <a href={stripeDashboardUrl(`/payments/${order.stripePaymentIntentId}`)} target="_blank" rel="noreferrer" className="text-xs underline">
             View payment in Stripe ↗

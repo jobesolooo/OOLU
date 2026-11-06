@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useActionState } from "react";
 import { requestReturn, type ReturnState } from "@/app/returns/actions";
 import { formatMoney } from "@/lib/format";
+import { variantLabel } from "@/lib/variants";
 
 export type ReturnableItem = {
   id: string;
@@ -51,7 +52,7 @@ export function ReturnForm({
             <div className="flex-1 text-sm">
               <p className="font-medium">{i.name}</p>
               <p className="text-xs text-ash">
-                {i.size && i.size !== "One Size" ? `Size ${i.size} · ` : ""}
+                {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}
                 {formatMoney(i.unitAmount, currency)}
               </p>
             </div>

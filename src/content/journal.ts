@@ -1,6 +1,6 @@
 /**
- * Journal & lookbook posts. Placeholder stories written in the brand's voice —
- * replace the copy and images with the real campaigns.
+ * Journal & lookbook posts, written in OOLU's voice from the brand copy on ooluclothing.shop.
+ * Swap in real campaign stories and photography as they come.
  *
  * Block types: p (paragraph), h2 (heading), quote, image, products (shop-the-look, by product slug).
  */
@@ -24,52 +24,50 @@ export type JournalPost = {
 
 export const JOURNAL: JournalPost[] = [
   {
-    slug: "sunday-service-chapter-one",
-    title: "Sunday Service — Chapter One",
-    excerpt: "Concrete, palms and the piece that started it all. The first Wstablished lookbook, shot on the West Side.",
-    category: "Lookbook",
-    date: "2026-10-18",
-    cover: "/images/hero-photo.jpg",
-    coverPosition: "45% center",
-    blocks: [
-      { type: "p", text: "Sunday Service was never about church clothes. It's about the one day you get to slow down, show up as yourself and still look like you meant it." },
-      { type: "image", src: "/images/hero-photo.jpg", alt: "Model in the brown Sunday Service tee and cap", caption: "Sunday Service tee in brown, WST cap.", position: "45% center" },
-      { type: "p", text: "We shot Chapter One against raw concrete, the same walls we grew up leaning on. Heavyweight cotton, washed brown, the palm hit on the chest. Nothing extra." },
-      { type: "products", title: "Shop the look", slugs: ["sunday-service-tee-brown", "wst-sunday-service-cap"] },
-      { type: "image", src: "/images/drops-photo.jpg", alt: "Model sitting on concrete steps", caption: "Same mindset. Different energy.", position: "30% center" },
-      { type: "quote", text: "Built for the real ones. That's the whole brief.", by: "Wstablished" },
-    ],
-  },
-  {
-    slug: "rooted-in-culture",
-    title: "Rooted in culture, built for tomorrow",
-    excerpt: "Why we started Wstablished, and what the W stands for when nobody's watching.",
+    slug: "oolu-means-trust",
+    title: "OOLU means trust",
+    excerpt: "Born from West African roots and built with a global vision. What the name stands for, and why we wear it.",
     category: "Story",
-    date: "2026-09-02",
-    cover: "/images/tile-new.jpg",
+    date: "2026-10-18",
+    cover: "/images/brand/story-roots.jpg",
     blocks: [
-      { type: "p", text: "Wstablished started with a simple idea: clothes for people who are building something, even when it's not finished yet." },
-      { type: "h2", text: "The dreamers, the doers" },
-      { type: "p", text: "Every piece is designed in small runs. When a drop is gone, it's gone. That's not a marketing trick — it's how we keep quality high and waste low." },
-      { type: "quote", text: "More than clothing — it's a mindset." },
-      { type: "h2", text: "What's next" },
-      { type: "p", text: "Essentials, more colourways, and a few collaborations we can't talk about yet. Join the list to hear first." },
-      { type: "products", title: "The essentials", slugs: ["w-monogram-hoodie-black", "brushstroke-tee-black"] },
+      { type: "p", text: "OOLU represents trust in yourself, trust in your journey and trust in where you come from. It started as a word and became a way of carrying ourselves." },
+      { type: "image", src: "/images/brand/story-roots.jpg", alt: "Three friends in OOLU “Your Roots.” t-shirts walking down a street", caption: "Wear your roots. Tell your story." },
+      { type: "h2", text: "Rooted in Africa. Created in Amsterdam." },
+      { type: "p", text: "We create clothing for people who move with confidence, stay true to themselves and carry their identity with pride. Every OOLU piece is more than something you wear." },
+      { type: "quote", text: "It represents loyalty, connection, ambition and the courage to believe in your own path.", by: "OOLU" },
+      { type: "products", title: "Start with the essentials", slugs: ["oolu-t-shirt", "oolu-everyday-t-shirt", "oolu-washed-t-shirt-purple-green-gray"] },
     ],
   },
   {
-    slug: "making-the-brushstroke-tee",
-    title: "Making the Brushstroke tee",
-    excerpt: "From a hand-painted sketch to 240gsm cotton: how our signature graphic comes to life.",
+    slug: "the-tracksuit-lookbook",
+    title: "The tracksuit — a lookbook",
+    excerpt: "Tunnels, parks and late nights in the city: the OOLU tracksuit set, shot around Amsterdam.",
+    category: "Lookbook",
+    date: "2026-09-12",
+    cover: "/images/brand/hero.jpg",
+    coverPosition: "center 30%",
+    blocks: [
+      { type: "p", text: "The tracksuit is where OOLU feels most like itself: easy to throw on, sharp enough to be seen in. Jacket and pants, made to be worn together or apart." },
+      { type: "image", src: "/images/brand/hero.jpg", alt: "Model in the black OOLU tracksuit walking through a tunnel", caption: "OOLU tracksuit set, black.", position: "center 30%" },
+      { type: "image", src: "/images/brand/tracksuit-duo.jpg", alt: "Two models in matching OOLU tracksuits", caption: "Live in the present." },
+      { type: "products", title: "Shop the look", slugs: ["oolu-tracksuit", "oolu-tracksuit-jacket", "oolu-tracksuit-pants"] },
+      { type: "image", src: "/images/brand/made-to-move.jpg", alt: "Couple in OOLU tracksuits in a sunlit park", caption: "Made to move." },
+    ],
+  },
+  {
+    slug: "easy-comfort-always",
+    title: "Easy comfort, always",
+    excerpt: "Soft fabrics and relaxed fits, from morning commute to late-night hangout. A closer look at the OOLU tee.",
     category: "Process",
     date: "2026-07-21",
-    cover: "/images/tile-tshirts.jpg",
+    cover: "/images/brand/look-friends.jpg",
     blocks: [
-      { type: "p", text: "The WST brushstroke began as a single hand-painted stroke on paper. We scanned it, kept every rough edge and printed it the way it was made: fast and honest." },
-      { type: "image", src: "/images/tile-tshirts.jpg", alt: "Back of the black Brushstroke tee", caption: "Brushstroke tee, black." },
-      { type: "h2", text: "Heavyweight, on purpose" },
-      { type: "p", text: "240gsm cotton, boxy fit, dropped shoulders. It holds its shape and gets better with every wash." },
-      { type: "products", title: "Shop the brushstroke", slugs: ["brushstroke-tee-black", "brushstroke-tee-red"] },
+      { type: "p", text: "Every OOLU t-shirt starts with the same brief: it has to feel good on day one and better on day one hundred. Relaxed through the body, clean at the neck, logo kept small." },
+      { type: "image", src: "/images/brand/look-friends.jpg", alt: "Three friends laughing on concrete steps in OOLU t-shirts", caption: "Washed and everyday tees." },
+      { type: "h2", text: "Pared-back, on purpose" },
+      { type: "p", text: "Long-lasting comfort, pared-back style and quiet confidence on the go. No noise — just pieces you reach for again and again." },
+      { type: "products", title: "Shop the tees", slugs: ["oolu-t-shirt-coral-red", "oolu-t-shirt-hot-pink", "oolu-version-2-t-shirt"] },
     ],
   },
 ];

@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "./stripe";
 
-const WELCOME_COUPON_PREFIX = "wst-welcome-";
+const WELCOME_COUPON_PREFIX = "oolu-welcome-";
 
 export function randomCode(prefix: string, length = 6) {
   // Unambiguous characters only (no 0/O, 1/I)

@@ -31,7 +31,7 @@ export async function createPendingGiftCard(input: {
   const [card] = await db
     .insert(schema.giftCards)
     .values({
-      code: randomCode("WST-", 4) + "-" + randomCode("", 4) + "-" + randomCode("", 4),
+      code: randomCode("OOLU-", 4) + "-" + randomCode("", 4) + "-" + randomCode("", 4),
       initialAmount: input.amount,
       balance: 0,
       currency: input.currency,

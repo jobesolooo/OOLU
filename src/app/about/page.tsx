@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
@@ -11,15 +12,20 @@ export default function AboutPage() {
   const { freeShippingThreshold, flatRate } = shippingConfig();
   return (
     <>
-      <PageHeader eyebrow={site.established} title="About" />
+      <PageHeader eyebrow={`${site.name} · ${site.established}`} title="About" />
+      <div className="relative aspect-[16/7] max-h-[560px] w-full overflow-hidden bg-stone">
+        <Image src={site.story.image} alt="Three friends in OOLU “Your Roots.” t-shirts" fill priority sizes="100vw" className="object-cover object-[center_40%]" />
+      </div>
       <div className="container-x grid gap-12 py-14 md:grid-cols-[1.2fr_1fr]">
         <div className="max-w-xl">
-          <p className="font-display text-3xl leading-tight font-[800] uppercase">More than clothing — it&apos;s a mindset.</p>
-          <p className="mt-6 text-[15px] leading-relaxed text-black/80">{site.description}</p>
-          <p className="mt-4 text-[15px] leading-relaxed text-black/80">
-            Every piece is designed on the West Side and produced in small runs, so when a drop is gone, it&apos;s gone.
-          </p>
-          <p className="mt-10 -rotate-6 font-script text-6xl">{site.name}</p>
+          <p className="font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{site.story.title}</p>
+          <div className="mt-6 space-y-4 text-[14px] leading-relaxed text-black/80">
+            {site.story.body.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </div>
+          <p className="mt-8 text-[13px] uppercase">{site.story.signoff}</p>
+          <Image src="/images/brand/logo.png" alt={site.name} width={120} height={138} className="mt-10 h-auto w-[110px]" />
         </div>
         <div id="shipping" className="scroll-mt-24 space-y-8 border-t border-black/10 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-12">
           <div>

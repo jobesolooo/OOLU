@@ -12,7 +12,7 @@ export default async function SubscribersAdmin() {
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-[900] uppercase">Subscribers</h1>
+          <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Subscribers</h1>
           <p className="mt-1 text-xs text-ash">
             {rows.length} subscribed · {alerts.length} people waiting on restock / drop alerts
           </p>

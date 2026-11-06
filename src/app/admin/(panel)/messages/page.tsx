@@ -13,7 +13,7 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
   return (
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-3xl font-[900] uppercase">Inbox</h1>
+        <h1 className="font-display font-normal tracking-[-0.02em] text-3xl">Inbox</h1>
         <div className="flex gap-2">
           {(["new", "done"] as const).map((s) => (
             <a key={s} href={`/admin/messages?status=${s}`} className={`border px-4 py-2 text-[11px] tracking-[0.12em] uppercase ${s === status ? "border-ink bg-ink text-white" : "border-black/15 bg-white"}`}>

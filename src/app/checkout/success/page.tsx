@@ -6,6 +6,7 @@ import { getOrderBySession, markOrderPaid } from "@/lib/orders";
 import { formatMoney } from "@/lib/format";
 import { site } from "@/lib/site";
 import { ClearCart } from "./ClearCart";
+import { variantLabel } from "@/lib/variants";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Order confirmed", robots: { index: false } };
@@ -30,7 +31,7 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
   if (!data) {
     return (
       <div className="container-x py-24 text-center">
-        <h1 className="font-display text-4xl font-[900] uppercase">Thanks!</h1>
+        <h1 className="font-display font-normal tracking-[-0.02em] text-4xl">Thanks!</h1>
         <p className="mt-4 text-sm text-ash">We couldn&apos;t find that order, but if you paid you&apos;ll get a confirmation email shortly.</p>
         <Link href="/shop" className="btn-solid mt-8">Keep shopping</Link>
       </div>
@@ -44,7 +45,7 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
     <div className="container-x max-w-3xl py-16">
       {paid && <ClearCart />}
       <p className="text-[10px] tracking-[0.3em] text-ash uppercase">Order #{order.number}</p>
-      <h1 className="mt-3 font-display text-4xl font-[900] uppercase md:text-5xl">
+      <h1 className="mt-3 font-display font-normal tracking-[-0.02em] text-4xl md:text-5xl">
         {paid ? "You're all set." : "Processing payment…"}
       </h1>
       <p className="mt-4 text-sm leading-relaxed text-black/75">
@@ -62,7 +63,7 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
             <div className="flex-1 text-sm">
               <p className="font-medium">{i.name}</p>
               <p className="text-xs text-ash">
-                {i.size && i.size !== "One Size" ? `Size ${i.size} · ` : ""}Qty {i.quantity}
+                {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}Qty {i.quantity}
               </p>
             </div>
             <p className="text-sm">{formatMoney(i.unitAmount * i.quantity, order.currency)}</p>

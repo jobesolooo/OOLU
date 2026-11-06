@@ -98,7 +98,7 @@ export default function HelpPage() {
           <div className="space-y-16">
             {sections.map((s) => (
               <section key={s.id} id={s.id} className="scroll-mt-32">
-                <h2 className="font-display text-3xl font-[900] uppercase">{s.title}</h2>
+                <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">{s.title}</h2>
                 <div className="mt-6 divide-y divide-black/10 border-y border-black/10">
                   {s.faqs.map(([q, a]) => (
                     <details key={q} className="group py-5">
@@ -113,7 +113,7 @@ export default function HelpPage() {
               </section>
             ))}
             <section id="sizing" className="scroll-mt-32">
-              <h2 className="font-display text-3xl font-[900] uppercase">Sizing</h2>
+              <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">Sizing</h2>
               <div className="mt-6 grid gap-10 xl:grid-cols-2">
                 {Object.entries(SIZE_GUIDES).map(([cat, chart]) => (
                   <div key={cat}>
@@ -124,7 +124,7 @@ export default function HelpPage() {
               </div>
             </section>
             <div className="bg-ink p-10 text-white">
-              <h2 className="font-display text-3xl font-[900] uppercase">Still need help?</h2>
+              <h2 className="font-display font-normal tracking-[-0.02em] text-3xl">Still need help?</h2>
               <p className="mt-3 text-white/75">We reply within one business day.</p>
               <Link href="/help/contact" className="btn-outline mt-6">Contact us <ArrowRight className="size-4" /></Link>
             </div>

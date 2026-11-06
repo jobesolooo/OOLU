@@ -49,11 +49,11 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
               case "p":
                 return <p key={i} className="text-[17px] leading-[1.75] text-black/80">{b.text}</p>;
               case "h2":
-                return <h2 key={i} className="pt-6 font-display text-3xl font-[900] uppercase">{b.text}</h2>;
+                return <h2 key={i} className="pt-6 font-display font-normal tracking-[-0.02em] text-3xl">{b.text}</h2>;
               case "quote":
                 return (
                   <blockquote key={i} className="border-l-4 border-ink py-2 pl-6">
-                    <p className="font-display text-[clamp(24px,2.4vw,36px)] leading-tight font-[800] uppercase">“{b.text}”</p>
+                    <p className="font-display font-normal tracking-[-0.02em] text-[clamp(24px,2.4vw,36px)] leading-tight">“{b.text}”</p>
                     {b.by && <footer className="mt-3 text-sm text-ash">— {b.by}</footer>}
                   </blockquote>
                 );

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { Order, OrderItem } from "@/lib/db/schema";
 import { formatDate, formatMoney } from "@/lib/format";
 import { OrderStatusBadge } from "./OrderStatusBadge";
+import { variantLabel } from "@/lib/variants";
 
 export function OrderDetail({ order, items }: { order: Order; items: OrderItem[] }) {
   const a = order.shippingAddress;
@@ -21,7 +22,7 @@ export function OrderDetail({ order, items }: { order: Order; items: OrderItem[]
               <div className="flex-1 text-sm">
                 <p className="font-medium">{i.name}</p>
                 <p className="text-xs text-ash">
-                  {i.size && i.size !== "One Size" ? `Size ${i.size} · ` : ""}Qty {i.quantity} × {formatMoney(i.unitAmount, order.currency)}
+                  {i.size && i.size !== "One Size" ? `${variantLabel(i.size)} · ` : ""}Qty {i.quantity} × {formatMoney(i.unitAmount, order.currency)}
                 </p>
               </div>
               <p className="text-sm">{formatMoney(i.unitAmount * i.quantity, order.currency)}</p>

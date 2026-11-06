@@ -48,7 +48,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 
   return (
     <>
-      <PageHeader eyebrow={collection ? "Collection" : "Streetwear / Culture / You"} title={title} />
+      <PageHeader eyebrow={collection ? "Collection" : "Wear your roots. Tell your story."} title={title} />
       <div className="container-x py-10 md:py-14">
         <div className="flex flex-col gap-4 border-b border-black/10 pb-5 md:flex-row md:items-center md:justify-between">
           <nav className="flex flex-wrap gap-2" aria-label="Categories">

@@ -20,10 +20,10 @@ export default async function GiftCardsAdmin() {
           <p className="mt-1 text-xs text-ash">Value still redeemable across active cards.</p>
         </div>
         <div className="bg-white p-6">
-          <h1 className="font-display text-2xl font-[900] uppercase">Issue a gift card</h1>
+          <h1 className="font-display font-normal tracking-[-0.02em] text-2xl">Issue a gift card</h1>
           <p className="mt-2 text-xs text-ash">For store credit, apologies or giveaways. No payment is taken.</p>
           <AdminForm action={adminIssueGiftCard} submitLabel="Issue card" className="mt-6 space-y-3">
-            <input name="amount" required inputMode="decimal" placeholder="Amount in USD, e.g. 25" className="input" />
+            <input name="amount" required inputMode="decimal" placeholder="Amount in EUR, e.g. 25" className="input" />
             <input name="email" type="email" placeholder="Email it to (optional)" className="input" />
             <input name="note" placeholder="Internal note (optional)" className="input" />
           </AdminForm>

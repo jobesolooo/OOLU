@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { attachGiftCardSession, createPendingGiftCard, GIFT_CARD_AMOUNTS } from "@/lib/giftcards";
 import { site } from "@/lib/site";
-import { formatMoneyShort } from "@/lib/format";
+import { DEFAULT_CURRENCY, formatMoneyShort } from "@/lib/format";
 
 const Body = z.object({
   amount: z.number().int().refine((a) => GIFT_CARD_AMOUNTS.includes(a), "Pick an amount"),
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
   const card = await createPendingGiftCard({
     amount: d.amount,
-    currency: "usd",
+    currency: DEFAULT_CURRENCY,
     recipientEmail: d.recipientEmail || null,
     recipientName: d.recipientName || null,
     senderName: d.senderName || null,
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
         {
           quantity: 1,
           price_data: {
-            currency: "usd",
+            currency: DEFAULT_CURRENCY,
             unit_amount: d.amount,
             product_data: {
               name: `${site.name} digital gift card — ${formatMoneyShort(d.amount)}`,

@@ -11,7 +11,7 @@ import { NewsletterForm } from "@/components/Newsletter";
 import { Price } from "@/components/Price";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Upcoming drops", description: "What's dropping next at Wstablished. Get notified the moment it's live." };
+export const metadata: Metadata = { title: "Upcoming drops", description: "What's dropping next at OOLU. Get notified the moment it's live." };
 
 export default async function DropsPage() {
   const drops = await getUpcomingDrops();

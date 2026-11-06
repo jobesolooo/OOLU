@@ -23,7 +23,7 @@ export function AdminEmpty({
       <span className="grid size-16 place-items-center rounded-full border border-black/10 bg-mist">
         <Icon className="size-7 text-ash" strokeWidth={1.3} />
       </span>
-      <p className="mt-6 font-display text-[clamp(20px,1.6vw,26px)] font-[800] uppercase">{title}</p>
+      <p className="mt-6 font-display font-normal tracking-[-0.02em] text-[clamp(20px,1.6vw,26px)]">{title}</p>
       {body && <p className="mt-2 max-w-md text-[14px] leading-relaxed text-ash">{body}</p>}
       {action &&
         (action.external ? (

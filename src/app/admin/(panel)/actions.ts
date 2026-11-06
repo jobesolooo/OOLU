@@ -1,5 +1,6 @@
 "use server";
 
+import { DEFAULT_CURRENCY } from "@/lib/format";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -222,7 +223,7 @@ export async function createDiscount(_: ActionResult, form: FormData): Promise<A
       expiresAt: d.expiresAt ? new Date(`${d.expiresAt}T23:59:59`) : undefined,
       minimumAmount: d.minimumAmount,
       firstOrderOnly: d.firstOrderOnly === "on",
-      currency: "usd",
+      currency: DEFAULT_CURRENCY,
     });
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Could not create code" };
@@ -245,7 +246,7 @@ export async function adminIssueGiftCard(_: ActionResult, form: FormData): Promi
   if (!Number.isFinite(amount) || amount <= 0 || amount > 100000) return { error: "Enter an amount between 0.01 and 1000." };
   const email = String(form.get("email") ?? "").trim();
   if (email && !z.string().email().safeParse(email).success) return { error: "Enter a valid email or leave it blank." };
-  const card = await issueGiftCard(amount, "usd", email || null, String(form.get("note") ?? ""));
+  const card = await issueGiftCard(amount, DEFAULT_CURRENCY, email || null, String(form.get("note") ?? ""));
   revalidatePath("/admin/gift-cards");
   return { ok: `Issued ${card.code}${email ? ` and emailed ${email}` : ""}` };
 }

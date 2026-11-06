@@ -5,8 +5,8 @@
  */
 export const COMPANY = {
   name: "[Legal company name]",
-  tradeName: "Wstablished",
-  address: "[Street + number], [Postcode] [City], Netherlands",
+  tradeName: "OOLU",
+  address: "[Street + number], [Postcode] Amsterdam, Netherlands",
   kvk: "[KvK number]",
   vat: "[VAT / BTW number]",
   email: "[support@yourdomain.com]",

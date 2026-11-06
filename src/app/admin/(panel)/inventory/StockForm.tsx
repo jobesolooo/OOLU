@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { saveInventory } from "../actions";
+import { variantLabel } from "@/lib/variants";
 
 export function StockForm({ productId, sizes, stock }: { productId: string; sizes: string[]; stock: Record<string, number> }) {
   const [state, action, pending] = useActionState(saveInventory, undefined);
@@ -9,8 +10,8 @@ export function StockForm({ productId, sizes, stock }: { productId: string; size
     <form action={action} className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="productId" value={productId} />
       {sizes.map((s) => (
-        <label key={s} className="w-16">
-          <span className="mb-1 block text-[10px] text-ash">{s === "One Size" ? "Qty" : s}</span>
+        <label key={s} className={s.includes(" / ") ? "w-24" : "w-16"}>
+          <span className="mb-1 block truncate text-[10px] text-ash" title={s}>{s === "One Size" ? "Qty" : variantLabel(s)}</span>
           <input
             name={`size:${s}`}
             defaultValue={stock[s] ?? ""}

@@ -2,6 +2,9 @@ import "server-only";
 import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "./stripe";
 import { DEMO_PRODUCTS } from "./demo-catalog";
+import type { ColorOption } from "./variants";
+
+export const STORE_CURRENCY = (process.env.STORE_CURRENCY ?? "eur").toLowerCase();
 
 export type Product = {
   id: string; // Stripe product id (or demo_<slug>)
@@ -24,6 +27,12 @@ export type Product = {
   colorHex: string | null;
   releaseAt: number | null; // ms timestamp; in the future = upcoming drop
   details: string[];
+  /** Colour options picked on the product page (empty = sizes only) */
+  colors: ColorOption[];
+  /** Existing "Colour / Size" combinations; null = every combination exists */
+  variants: string[] | null;
+  /** Demo catalogue only: combinations that start sold out */
+  soldOut: string[];
   createdAt: number;
   isDemo: boolean;
 };
@@ -44,7 +53,7 @@ function parseMoney(v: string | undefined): number | null {
 /**
  * Stripe product metadata the store understands (set these in the Stripe dashboard):
  *   slug        url slug, e.g. "brushstroke-tee-black" (defaults to the product name)
- *   category    "t-shirts" | "caps" | "hoodies" | anything you like
+ *   category    "t-shirts" | "sleeveless-and-tanks" | "tracksuits" | "hoodies" | anything you like
  *   collection  e.g. "brushstroke"
  *   sizes       comma-separated, e.g. "S,M,L,XL"  (omit for one-size items)
  *   featured    "true" to show in Featured Products on the homepage
@@ -56,6 +65,8 @@ function parseMoney(v: string | undefined): number | null {
  *   compare_at  original price in dollars, e.g. "40" → shows as a sale
  *   release_at  ISO date/time, e.g. "2026-12-01T18:00:00+01:00" → drop countdown, can't buy until then
  *   details     bullet points separated by "|", e.g. "240gsm cotton|Boxy fit|Made in Portugal"
+ *   colors      colour options on one product, e.g. "Black:#111111|White:#f4f4f2"
+ *   variants    (optional) only these "Colour / Size" combinations exist, separated by "|"
  */
 function fromStripe(p: Stripe.Product): Product | null {
   const price = p.default_price as Stripe.Price | null;
@@ -90,9 +101,23 @@ function fromStripe(p: Stripe.Product): Product | null {
       .split("|")
       .map((s) => s.trim())
       .filter(Boolean),
+    colors: parseColors(m.colors),
+    variants: m.variants ? m.variants.split("|").map((s) => s.trim()).filter(Boolean) : null,
+    soldOut: [],
     createdAt: p.created * 1000,
     isDemo: false,
   };
+}
+
+function parseColors(v: string | undefined): ColorOption[] {
+  return (v ?? "")
+    .split("|")
+    .map((c) => c.trim())
+    .filter(Boolean)
+    .map((c) => {
+      const [name, hex] = c.split(":").map((x) => x.trim());
+      return { name, hex: hex || "#cccccc" };
+    });
 }
 
 function slugify(s: string) {
@@ -103,9 +128,10 @@ function slugify(s: string) {
 }
 
 const DEFAULT_DETAILS: Record<string, string[]> = {
-  "t-shirts": ["240gsm heavyweight cotton", "Boxy, oversized fit", "Screen-printed graphics", "Pre-shrunk"],
-  hoodies: ["420gsm brushed-back fleece", "Double-lined hood", "Embroidered monogram", "Relaxed fit"],
-  caps: ["100% cotton twill", "Structured six-panel crown", "3D embroidery", "Adjustable strap"],
+  "t-shirts": ["Soft, breathable cotton", "Relaxed fit", "OOLU logo print", "Designed in Amsterdam"],
+  "sleeveless-and-tanks": ["Soft cotton jersey", "Clean sleeveless cut", "OOLU logo print", "Designed in Amsterdam"],
+  tracksuits: ["Lightweight shell or brushed fleece", "Elasticated cuffs, hem and waist", "OOLU logo with purple underline", "Designed in Amsterdam"],
+  hoodies: ["Brushed-back fleece", "Full zip, kangaroo pocket", "OOLU logo", "Designed in Amsterdam"],
 };
 
 function demoProducts(): Product[] {
@@ -120,8 +146,8 @@ function demoProducts(): Product[] {
     priceId: `demo_price_${d.slug}`,
     unitAmount: d.unitAmount,
     compareAtAmount: d.compareAt ?? null,
-    currency: "usd",
-    images: [`/images/products/${d.slug}.svg`, `/images/products/${d.slug}-back.svg`],
+    currency: STORE_CURRENCY,
+    images: d.images,
     category: d.category,
     collection: d.collection,
     sizes: d.sizes,
@@ -133,6 +159,9 @@ function demoProducts(): Product[] {
     colorHex: d.colorHex ?? null,
     releaseAt: d.releaseInDays ? hour + d.releaseInDays * 86_400_000 : null,
     details: DEFAULT_DETAILS[d.category] ?? [],
+    colors: d.colors,
+    variants: d.variants ?? null,
+    soldOut: d.soldOut,
     createdAt: base + i * 86_400_000,
     isDemo: true,
   }));
@@ -158,7 +187,7 @@ export async function getProducts(): Promise<Product[]> {
     if (mapped) products.push(mapped);
   }
   // Fall back to the demo catalog until the Stripe account has products.
-  const result = products.length ? sortProducts(products) : demoProducts();
+  const result = sortProducts(products.length ? products : demoProducts());
   cache = { at: Date.now(), products: result };
   return result;
 }

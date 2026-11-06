@@ -32,7 +32,7 @@ export function Countdown({ to, className, size = "lg" }: { to: number; classNam
         <div key={l} className="text-center">
           <div
             className={cx(
-              "font-display font-[800] tabular-nums",
+              "font-wordmark tabular-nums tracking-[0.02em]",
               size === "lg" ? "text-[clamp(36px,4.4vw,72px)] leading-none" : "text-xl",
             )}
           >

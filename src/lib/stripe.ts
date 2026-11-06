@@ -13,7 +13,7 @@ export function getStripe(): Stripe {
     throw new Error("STRIPE_SECRET_KEY is not set. Add it to .env.local (see .env.example).");
   }
   if (!client) {
-    client = new Stripe(key, { appInfo: { name: "Wstablished storefront" } });
+    client = new Stripe(key, { appInfo: { name: "OOLU storefront" } });
   }
   return client;
 }

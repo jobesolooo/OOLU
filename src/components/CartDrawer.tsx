@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart, cartSubtotal, MAX_QTY, type CartLine } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
+import { variantLabel } from "@/lib/variants";
 
 export function useCheckout() {
   const lines = useCart((s) => s.lines);
@@ -51,7 +52,7 @@ export function CartLineRow({ line, compact = false }: { line: CartLine; compact
             <Link href={`/products/${line.slug}`} className="text-[13px] font-medium hover:underline">
               {line.name}
             </Link>
-            {line.size !== "One Size" && <p className="mt-0.5 text-xs text-ash">Size {line.size}</p>}
+            {line.size !== "One Size" && <p className="mt-0.5 text-xs text-ash">{variantLabel(line.size)}</p>}
           </div>
           <button
             aria-label={`Remove ${line.name}`}
@@ -125,7 +126,7 @@ export function GiftCardInput({ subtotal }: { subtotal: number }) {
           setGiftCard({ code: data.code, balance: data.balance!, currency: data.currency! });
         }}
       >
-        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="WST-XXXX-XXXX-XXXX" className="input py-2.5 font-mono text-sm uppercase" aria-label="Gift card code" />
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="OOLU-XXXX-XXXX-XXXX" className="input py-2.5 font-mono text-sm uppercase" aria-label="Gift card code" />
         <button className="btn-solid shrink-0 px-4 py-2.5" disabled={busy || !code.trim()}>{busy ? "…" : "Apply"}</button>
       </form>
       {error && <p className="mt-2 text-xs text-red-700">{error}</p>}

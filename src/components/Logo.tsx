@@ -1,20 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { cx } from "@/lib/format";
 
-export function Logo({ className, divider = false }: { className?: string; divider?: boolean }) {
+/** OOLU mark (purple letters + holographic ring). `wordmark` adds the OOLU letters beside it. */
+export function Logo({ className, wordmark = false, size = 44 }: { className?: string; wordmark?: boolean; size?: number }) {
   return (
-    <Link href="/" className={cx("flex items-center text-white", className)} aria-label={`${site.name} home`}>
-      <span className="font-serif text-[34px] leading-none font-black tracking-tight sm:text-[clamp(32px,3.6vw,48px)]">W</span>
-      {divider && <span className="mx-6 h-12 w-px bg-white/40" aria-hidden />}
-      <span
-        className={cx(
-          "text-[11px] font-medium tracking-(--tracking-mark) sm:text-[clamp(11px,1.15vw,15px)]",
-          divider ? "" : "ml-5 sm:ml-7",
-        )}
-      >
-        {site.wordmark}
-      </span>
+    <Link href="/" className={cx("flex items-center gap-3", className)} aria-label={`${site.name} home`}>
+      <Image src="/images/brand/logo-mark.png" alt="" width={size} height={size} priority className="h-auto object-contain" style={{ width: size }} />
+      {wordmark && <span className="font-wordmark text-[28px] leading-none tracking-[0.06em]">{site.wordmark}</span>}
     </Link>
   );
 }

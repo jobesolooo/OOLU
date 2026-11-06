@@ -11,6 +11,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { ensureStripeCustomer } from "@/lib/customers";
 import { shippingConfig } from "@/lib/shipping";
 import { MAX_QTY } from "@/lib/constants";
+import { allVariantKeys, variantLabel } from "@/lib/variants";
 
 const Body = z.object({
   items: z
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
     if (!product) return fail("An item in your bag is no longer available. Please remove it and try again.", 409);
     if (product.isDemo) return fail("This store still shows demo products. Add products in Stripe (or run `npm run stripe:seed`).", 409);
     if (isUpcoming(product)) return fail(`${product.name} hasn't dropped yet.`, 409);
-    if (!product.sizes.includes(item.size)) return fail(`Size ${item.size} isn't available for ${product.name}.`, 409);
+    if (!allVariantKeys(product).includes(item.size)) return fail(`${variantLabel(item.size)} isn't available for ${product.name}.`, 409);
     const left = stock.get(stockKey(product.id, item.size));
     if (left !== undefined && left < item.quantity) {
       return fail(
@@ -139,7 +140,7 @@ export async function POST(req: Request) {
           unit_amount: i.unitAmount,
           tax_behavior: "exclusive",
           product_data: {
-            name: i.size && i.size !== "One Size" ? `${i.name} — ${i.size}` : i.name,
+            name: i.size && i.size !== "One Size" ? `${i.name} — ${variantLabel(i.size)}` : i.name,
             images: i.image && toAbsolute(i.image) ? [i.image] : undefined,
             metadata: { productId: i.productId, size: i.size ?? "" },
           },

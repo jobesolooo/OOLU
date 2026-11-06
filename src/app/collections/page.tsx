@@ -19,7 +19,7 @@ export default async function CollectionsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Same mindset. Different energy." title="Collections" />
+      <PageHeader eyebrow="Find your fit" title="Collections" />
       <div className="container-x grid gap-4 py-10 sm:grid-cols-2 lg:grid-cols-3">
         {[...groups.entries()].map(([slug, items]) => {
           const meta = COLLECTIONS[slug] ?? { title: slug.replace(/-/g, " "), blurb: "" };

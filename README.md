@@ -1,11 +1,12 @@
-# Wstablished storefront (OOLU)
+# OOLU storefront
 
-Next.js 16 + TypeScript e-commerce site for **Wstablished**, built from the homepage mockup, with Stripe payments, customer accounts and an admin dashboard.
+Next.js 16 + TypeScript e-commerce site for **OOLU** — *Rooted in Africa. Created in Amsterdam. Made for the world.* Branding, copy, photography and the catalogue come from [ooluclothing.shop](https://ooluclothing.shop). Stripe payments (EUR), customer accounts and an admin dashboard.
 
 ## What's included
 
 **Storefront**
-- Homepage built from the mockup (hero, category tiles and "Fresh drops" use photos from the mockup), plus a drop countdown, New in, On sale, journal teaser, recently viewed and a newsletter band
+- Homepage in the OOLU layout: full-screen hero, promo strip, serif marquee, New Arrivals, Shop by category, "OOLU means trust" story, feature blocks, newsletter — plus drop countdown, on sale, journal teaser and recently viewed
+- Brand system: Newsreader (headings), Roboto Mono (UI), Bebas Neue (footer wordmark), lavender accent `#a592ff`, prices formatted like `€29,00`
 - Shop with category / sale filters and sorting, collections, search
 - Product pages: gallery with zoom, colour swatches, sale prices, size guide, details/shipping/returns/care, reviews with fit summary, "you may also like", recently viewed, Google product schema
 - Wishlist (heart on every product, `/wishlist`), slide-out bag with free-shipping meter and gift card input
@@ -33,7 +34,7 @@ Next.js 16 + TypeScript e-commerce site for **Wstablished**, built from the home
 - Admin rights (from `ADMIN_EMAILS`) only apply once that email is confirmed
 
 **Admin (`/admin`)**
-Orders & fulfilment, analytics (revenue chart, AOV, conversion, top products), products & stock, returns, review moderation, inbox, discount codes, gift cards, subscribers (+ CSV export), store settings (announcement bar, drop countdown, popup %).
+Orders & fulfilment, analytics (revenue chart, AOV, conversion, top products), products & stock, returns, review moderation, inbox, discount codes, gift cards, subscribers (+ CSV export), store settings (promo strip under the hero, drop countdown, popup %).
 
 **Products live in Stripe.** Add or edit them in the Stripe dashboard; the site reads them automatically. Until Stripe has products, the site shows a built-in demo catalog.
 
@@ -109,33 +110,36 @@ Each product needs a **default price**. The site also reads these optional **met
 
 | Key | Example | Purpose |
 | --- | --- | --- |
-| `slug` | `brushstroke-tee-black` | URL (defaults to the name) |
-| `category` | `t-shirts`, `caps`, `hoodies` | Shop filters / homepage tiles |
-| `collection` | `brushstroke` | Collections page |
-| `sizes` | `S,M,L,XL,XXL` | Size picker (omit for one-size items) |
+| `slug` | `oolu-t-shirt-coral-red` | URL (defaults to the name) |
+| `category` | `t-shirts`, `sleeveless-and-tanks`, `tracksuits`, `hoodies` | Shop filters / homepage tiles |
+| `collection` | `tracksuits` | Collections page |
+| `colors` | `Purple:#8e5bd6\|Green:#6f8f6a` | Colour picker on one product (name:hex, separated with `\|`) |
+| `variants` | `Purple / S\|Purple / M` | Which colour/size combinations exist (omit = all) |
+| `sizes` | `S,M,L` | Size picker (omit for one-size items) |
 | `featured` | `true` | Shows in "Featured products" on the homepage |
 | `new` | `true` | "New" tag and New Arrivals |
 | `sort` | `1` | Lower numbers show first |
-| `group` | `brushstroke-tee` | Same value on each colourway → colour swatches |
+| `group` | `oolu-tee` | Same value on separate colourway products → colour swatches |
 | `color` / `color_hex` | `Black` / `#151515` | Swatch name and colour |
-| `compare_at` | `40` | Original price in dollars → shows as a sale |
+| `compare_at` | `39.00` | Original price in euros → shows as a sale |
 | `release_at` | `2026-12-01T18:00:00+01:00` | Drop time → countdown + notify me |
-| `details` | `240gsm cotton\|Boxy fit` | Bullet points (separate with `\|`) |
+| `details` | `100% cotton\|Relaxed fit` | Bullet points (separate with `\|`) |
 
 Changes appear within a minute (or instantly with the webhook / "Refresh from Stripe" button in admin). Stock per size is set in **Admin → Products & stock**; an empty box means "not tracked".
 
-## Swapping in real photography
+## Brand assets
 
-All brand copy and image paths live in `src/lib/site.ts`. Replace the placeholder files in `public/images/` (or point the paths at new files):
+All brand copy and image paths live in `src/lib/site.ts`; colours and fonts in `src/app/globals.css` (`@theme`).
 
 | File | Where it shows |
 | --- | --- |
-| `hero.svg` | Hero background |
-| `hero-figure.svg` | Model cut-out in front of the big WSTABLISHED wordmark (transparent PNG works best; set `hero.foreground` to `null` if the hero photo already includes the model) |
-| `tile-*.jpg`, `drops-photo.jpg` | Category tiles and "Fresh drops" band (cut from the mockup) |
-| `footer-skyline.svg` | Footer background |
-
-Product photos come from Stripe, not from this folder.
+| `public/images/brand/logo.png` | Header logo (mark + "live in the present") |
+| `public/images/brand/logo-mark.png` | Favicon, emails, gift card |
+| `public/images/brand/hero.jpg` | Homepage hero, social share image |
+| `public/images/brand/tile-*.jpg` | Shop by category tiles |
+| `public/images/brand/story-roots.jpg`, `look-friends.jpg`, `made-to-move.jpg` | Story + feature blocks, About, journal |
+| `public/images/brand/tracksuit-duo*.jpg` | Sign-in pages, newsletter popup, drop banner |
+| `public/images/products/*` | Demo catalogue photos (used until Stripe has products; `npm run stripe:seed` uploads them once the site is on https) |
 
 ## Deploying (Vercel recommended)
 

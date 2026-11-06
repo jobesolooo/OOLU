@@ -17,12 +17,12 @@ export function AccountShell({ user, active, children }: { user: CurrentUser; ac
       <section className="grain relative bg-night text-white">
         <div className="container-x flex flex-wrap items-end justify-between gap-6 py-[clamp(48px,5vw,88px)]">
           <div className="flex items-center gap-5">
-            <span className="grid size-16 place-items-center rounded-full bg-white font-display text-2xl font-[900] text-black uppercase">
+            <span className="grid size-16 place-items-center rounded-full bg-white font-display font-normal tracking-[-0.02em] text-2xl text-black">
               {(user.name ?? user.email).charAt(0)}
             </span>
             <div>
               <p className="eyebrow text-white/70">Account</p>
-              <h1 className="mt-2 font-display text-[clamp(32px,3.4vw,56px)] leading-none font-[900] uppercase">Hey{first ? `, ${first}` : ""}</h1>
+              <h1 className="mt-2 font-display font-normal tracking-[-0.02em] text-[clamp(32px,3.4vw,56px)] leading-none">Hey{first ? `, ${first}` : ""}</h1>
               <p className="mt-2 text-sm text-white/60">{user.email}</p>
             </div>
           </div>

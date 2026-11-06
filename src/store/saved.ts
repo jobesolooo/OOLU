@@ -32,7 +32,7 @@ export const useWishlist = create<WishlistState>()(
       remove: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
       has: (id) => get().items.some((i) => i.id === id),
     }),
-    { name: "wst-wishlist", storage: createJSONStorage(() => localStorage) },
+    { name: "oolu-wishlist", storage: createJSONStorage(() => localStorage) },
   ),
 );
 
@@ -44,6 +44,6 @@ export const useRecentlyViewed = create<RecentState>()(
       items: [],
       record: (p) => set((s) => ({ items: [p, ...s.items.filter((i) => i.id !== p.id)].slice(0, 12) })),
     }),
-    { name: "wst-recent", storage: createJSONStorage(() => localStorage) },
+    { name: "oolu-recent", storage: createJSONStorage(() => localStorage) },
   ),
 );

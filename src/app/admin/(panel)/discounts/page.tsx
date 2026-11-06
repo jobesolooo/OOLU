@@ -10,7 +10,7 @@ import { AdminForm } from "../FormMessage";
 function describe(p: Stripe.PromotionCode) {
   const c = p.promotion?.coupon;
   if (!c || typeof c === "string") return "—";
-  return c.percent_off ? `${c.percent_off}% off` : c.amount_off ? `${formatMoney(c.amount_off, c.currency ?? "usd")} off` : "—";
+  return c.percent_off ? `${c.percent_off}% off` : c.amount_off ? `${formatMoney(c.amount_off, c.currency ?? undefined)} off` : "—";
 }
 
 export default async function DiscountsPage() {
@@ -21,7 +21,7 @@ export default async function DiscountsPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
       <div className="h-fit bg-white p-6">
-        <h1 className="font-display text-2xl font-[900] uppercase">New discount code</h1>
+        <h1 className="font-display font-normal tracking-[-0.02em] text-2xl">New discount code</h1>
         <p className="mt-2 text-xs text-ash">Customers enter these in the promo code box at checkout.</p>
         <AdminForm action={createDiscount} submitLabel="Create code" className="mt-6 space-y-3">
           <input name="code" required placeholder="CODE e.g. FAMILY20" className="input font-mono uppercase" />
