@@ -13,8 +13,16 @@ const privateNetworks = [
   "*.local",
 ];
 
+/** Tunnels for testing on other devices or sharing a preview (ngrok, Cloudflare, localtunnel). */
+const tunnels = ["*.ngrok-free.app", "*.ngrok-free.dev", "*.ngrok.app", "*.ngrok.dev", "*.ngrok.io", "*.trycloudflare.com", "*.loca.lt"];
+const extraOrigins = process.env.ALLOWED_DEV_ORIGINS?.split(",").map((s) => s.trim()).filter(Boolean) ?? [];
+
 const nextConfig: NextConfig = {
-  allowedDevOrigins: [...privateNetworks, ...(process.env.ALLOWED_DEV_ORIGINS?.split(",").map((s) => s.trim()).filter(Boolean) ?? [])],
+  allowedDevOrigins: [...privateNetworks, ...tunnels, ...extraOrigins],
+  experimental: {
+    // Forms (logins, admin saves) submitted through a tunnel whose host header is rewritten.
+    serverActions: { allowedOrigins: process.env.NODE_ENV === "production" ? extraOrigins : [...tunnels, ...extraOrigins] },
+  },
   images: {
     remotePatterns: [
       // Product photos uploaded in the Stripe dashboard
