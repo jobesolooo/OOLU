@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { site, CATEGORIES } from "@/lib/site";
+import { PaymentIcons } from "./PaymentIcons";
 import { NewsletterForm } from "./Newsletter";
+import { InstagramIcon, TikTokIcon } from "./icons";
 
 const COLUMNS = [
   {
@@ -26,15 +28,16 @@ const COLUMNS = [
   {
     title: "Follow",
     links: [
-      { label: `Instagram · ${site.socialHandles.instagram}`, href: site.social.instagram, external: true },
-      { label: `TikTok · ${site.socialHandles.tiktok}`, href: site.social.tiktok, external: true },
       { label: "Journal", href: "/journal" },
       { label: "About OOLU", href: "/about" },
     ],
   },
 ] as { title: string; links: { label: string; href: string; external?: boolean }[] }[];
 
-const PAYMENTS = ["Visa", "Mastercard", "Amex", "iDEAL", "Bancontact", "Klarna", "Apple Pay", "Google Pay"];
+const SOCIALS = [
+  { name: "Instagram", href: site.social.instagram, handle: site.socialHandles.instagram, Icon: InstagramIcon, hover: "hover:bg-[linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7)]" },
+  { name: "TikTok", href: site.social.tiktok, handle: site.socialHandles.tiktok, Icon: TikTokIcon, hover: "hover:bg-white hover:text-black" },
+];
 
 export function Footer() {
   return (
@@ -53,6 +56,20 @@ export function Footer() {
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <h2 className="mb-5 text-[12px] tracking-[0.06em] text-accent uppercase">{col.title}</h2>
+              {col.title === "Follow" && (
+                <ul className="mb-5 space-y-3">
+                  {SOCIALS.map(({ name, href, handle, Icon, hover }) => (
+                    <li key={name}>
+                      <a href={href} target="_blank" rel="noreferrer" aria-label={`${site.name} on ${name} (${handle})`} className="group/s flex items-center gap-3 text-[12px] tracking-[0.04em]">
+                        <span className={`grid size-9 place-items-center rounded-full bg-white/10 transition-all duration-300 group-hover/s:scale-110 ${hover}`}>
+                          <Icon className="size-[17px]" />
+                        </span>
+                        <span className="text-white/90 group-hover/s:text-white">{handle}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <ul className="space-y-3.5 text-[12px] tracking-[0.04em] uppercase">
                 {col.links.map((l) => (
                   <li key={l.href}>
@@ -73,13 +90,7 @@ export function Footer() {
         </div>
 
         <div className="mt-[clamp(48px,5vw,80px)] flex flex-col gap-6 border-t border-white/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <ul className="flex flex-wrap gap-2" aria-label="Accepted payment methods">
-            {PAYMENTS.map((p) => (
-              <li key={p} className="rounded-[3px] bg-white/10 px-2.5 py-1.5 text-[10px] tracking-[0.04em] text-white/85">
-                {p}
-              </li>
-            ))}
-          </ul>
+          <PaymentIcons />
           <a href="#top" className="text-[12px] tracking-[0.06em] uppercase hover:underline underline-offset-4">
             Back to top ↑
           </a>

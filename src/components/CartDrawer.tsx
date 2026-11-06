@@ -8,6 +8,7 @@ import { Check, Minus, Plus, X } from "lucide-react";
 import { useCart, cartSubtotal, MAX_QTY, type CartLine } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/variants";
+import { PaymentIcons } from "./PaymentIcons";
 
 export function useCheckout() {
   const lines = useCart((s) => s.lines);
@@ -274,6 +275,7 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
               <button className="btn-solid mt-4 w-full py-4" onClick={checkout} disabled={pending}>
                 {pending ? "Redirecting…" : "Checkout"}
               </button>
+              <PaymentIcons size="sm" className="mt-4 justify-center" />
               <Link
                 href="/cart"
                 className="mt-3 block text-center text-[11px] tracking-[0.14em] uppercase underline-offset-4 hover:underline"

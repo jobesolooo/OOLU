@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMounted } from "@/lib/use-mounted";
 import { useCart, cartSubtotal } from "@/store/cart";
 import { formatMoney } from "@/lib/format";
+import { PaymentIcons } from "@/components/PaymentIcons";
 import { CartLineRow, FreeShippingMeter, GiftCardInput, useCheckout } from "@/components/CartDrawer";
 
 export function CartView({ freeShippingThreshold }: { freeShippingThreshold: number }) {
@@ -45,6 +46,8 @@ export function CartView({ freeShippingThreshold }: { freeShippingThreshold: num
         <button className="btn-solid mt-5 w-full py-4" onClick={checkout} disabled={pending}>
           {pending ? "Redirecting…" : "Checkout"}
         </button>
+        <p className="mt-4 text-center text-[11px] text-ash">Secure checkout by Stripe</p>
+        <PaymentIcons size="sm" className="mt-2 justify-center" />
       </aside>
     </div>
   );

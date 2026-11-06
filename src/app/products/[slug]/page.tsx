@@ -11,6 +11,7 @@ import { cx, formatMoneyShort } from "@/lib/format";
 import { shippingConfig } from "@/lib/shipping";
 import { RETURN_WINDOW_DAYS } from "@/lib/returns";
 import { AddToCart } from "@/components/AddToCart";
+import { PaymentIcons } from "@/components/PaymentIcons";
 import { ProductCard, toSaved } from "@/components/ProductCard";
 import { Price, Stars } from "@/components/Price";
 import { Countdown } from "@/components/Countdown";
@@ -158,6 +159,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             <li className="flex items-center gap-3"><ShieldCheck className="size-4 shrink-0" strokeWidth={1.3} /> Secure checkout</li>
             <li className="flex items-center gap-3"><Leaf className="size-4 shrink-0" strokeWidth={1.3} /> Built to last</li>
           </ul>
+          <PaymentIcons size="sm" className="mt-5" />
 
           <div className="mt-8 divide-y divide-black/10 border-y border-black/10">
             {product.details.length > 0 && (
