@@ -308,6 +308,21 @@ export async function sendPasswordReset(email: string, token: string) {
   });
 }
 
+/** Staff created an account for this person: invite them to choose a password. */
+export async function sendAccountInvite(email: string, name: string | null, token: string) {
+  await sendEmail({
+    to: email,
+    subject: `Your ${site.name} account is ready`,
+    html: layout(
+      name ? `Welcome, ${name}` : "Your account is ready",
+      `<p style="font-size:14px;line-height:1.6">We've set up a ${site.name} account for you, so you can track orders, save favourites and check out faster. Choose a password to start using it.</p>${button(
+        `${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`,
+        "Choose a password",
+      )}<p style="font-size:12px;color:#777">This link works for 7 days. You can also sign in with Google or Apple using this email.</p>`,
+    ),
+  });
+}
+
 export async function sendSecurityNotice(email: string, what: string) {
   await sendEmail({
     to: email,

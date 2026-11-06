@@ -58,6 +58,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
   },
   {
     "slug": "oolu-hoodie-tracksuit-set-black",
+    "group": "hoodie-tracksuit-set",
+    "color": "Black",
+    "colorHex": "#151515",
     "name": "OOLU Hoodie Tracksuit Set – Black",
     "description": "The OOLU Hoodie Tracksuit Set in black: a zip-up hoodie with a contrast zip, kangaroo pocket and ribbed cuffs, plus matching wide-leg sweatpants. Both pieces carry the white OOLU logo.",
     "unitAmount": 11900,
@@ -83,6 +86,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
   },
   {
     "slug": "oolu-hoodie-tracksuit-set-grey",
+    "group": "hoodie-tracksuit-set",
+    "color": "Grey",
+    "colorHex": "#9a9ca0",
     "name": "OOLU Hoodie Tracksuit Set – Grey",
     "description": "The OOLU Hoodie Tracksuit Set in grey: a zip-up hoodie with a kangaroo pocket and ribbed cuffs, plus matching wide-leg sweatpants. Both pieces carry the OOLU logo.",
     "unitAmount": 11900,
@@ -381,6 +387,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
   },
   {
     "slug": "oolu-t-shirt-hot-pink",
+    "group": "oolu-colour-tee",
+    "color": "Hot Pink",
+    "colorHex": "#ff2d8a",
     "name": "OOLU T-Shirt – Hot Pink",
     "description": "The OOLU T-Shirt in hot pink, with an OOLU chest print and OOLU YOUR ROOTS. on the back. An easy everyday essential with a clean short-sleeve silhouette. Simple to wear, easy to style, and ready to become a reliable part of your rotation. Short-sleeve design 100% cotton Easy to pair with your everyday looks Available in size M Keep it casual with denim or make it part of a sharper layered look. This is the kind of piece you’ll reach for when you want effortless, no-fuss style.",
     "unitAmount": 2900,
@@ -408,6 +417,9 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
   },
   {
     "slug": "oolu-t-shirt-coral-red",
+    "group": "oolu-colour-tee",
+    "color": "Coral Red",
+    "colorHex": "#f0605a",
     "name": "OOLU T-Shirt – Coral Red",
     "description": "The OOLU T-Shirt in coral red, with an OOLU chest print and YOUR ROOTS. on the back. An easy everyday essential with a clean short-sleeve silhouette. Simple to wear, easy to style, and ready to become a reliable part of your rotation. Short-sleeve design 100% cotton Easy to pair with your everyday looks Keep it casual with denim or make it part of a sharper layered look. This is the kind of piece you’ll reach for when you want effortless, no-fuss style.",
     "unitAmount": 2900,

@@ -18,6 +18,7 @@ export async function Reviews({
   canReview,
   signedIn,
   alreadyReviewed,
+  colorOf = {},
 }: {
   reviews: Review[];
   summary: ReviewSummary;
@@ -27,6 +28,8 @@ export async function Reviews({
   canReview: boolean;
   signedIn: boolean;
   alreadyReviewed: boolean;
+  /** productId → colour name, for reviews written on another colourway of this item */
+  colorOf?: Record<string, string>;
 }) {
   const { t, locale } = await getT();
   const fmtDate = (d: Date | string) => new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(d));
@@ -117,6 +120,7 @@ export async function Reviews({
                     <BadgeCheck className="size-3.5" /> {t("reviews.verified")}
                   </span>
                 )}
+                {r.productId !== productId && colorOf[r.productId] && <span className="rounded-full bg-accent/20 px-2 py-0.5">{colorOf[r.productId]}</span>}
                 {r.size && <span className="rounded-full bg-stone px-2 py-0.5">{r.size}</span>}
                 {r.fit && <span className="rounded-full bg-stone px-2 py-0.5">{t(FIT_KEY[r.fit])}</span>}
               </div>

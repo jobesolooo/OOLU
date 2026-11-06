@@ -46,10 +46,12 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   if (!product) notFound();
 
   const [{ t }, { money }] = await Promise.all([getT(), getMoney()]);
-  const [stockMap, variants, reviews, ratings, user, all] = await Promise.all([
+  const variants = await getVariants(product);
+  // Reviews are shared by every colour of the same item.
+  const reviewIds = [...new Set([product.id, ...variants.map((v) => v.id)])];
+  const [stockMap, reviews, ratings, user, all] = await Promise.all([
     getStockMap([product.id]),
-    getVariants(product),
-    getApprovedReviews([product.id]),
+    getApprovedReviews(reviewIds),
     getRatingsMap(),
     getCurrentUser(),
     getProducts(),
@@ -226,6 +228,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
       <Reviews
         reviews={reviews}
+        colorOf={Object.fromEntries(variants.filter((v) => v.color).map((v) => [v.id, v.color!]))}
         summary={summary}
         productId={product.id}
         slug={product.slug}

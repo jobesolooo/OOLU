@@ -1,6 +1,7 @@
 import "server-only";
 import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getDb, schema } from "./db";
+import { getProducts } from "./catalog";
 
 export type ReviewSummary = { count: number; average: number; distribution: number[] /* index 0 = 1 star */ };
 
@@ -36,7 +37,21 @@ export async function getRatingsMap() {
     .from(schema.reviews)
     .where(ne(schema.reviews.status, "rejected"))
     .groupBy(schema.reviews.productId);
-  return new Map(rows.map((r) => [r.productId, { count: r.count, average: r.average }]));
+  // Colourways of the same item share their reviews, so they share the rating too.
+  const products = await getProducts();
+  const groupOf = new Map(products.map((p) => [p.id, p.group ?? p.id]));
+  const byGroup = new Map<string, { count: number; sum: number }>();
+  for (const r of rows) {
+    const g = groupOf.get(r.productId) ?? r.productId;
+    const cur = byGroup.get(g) ?? { count: 0, sum: 0 };
+    byGroup.set(g, { count: cur.count + r.count, sum: cur.sum + r.average * r.count });
+  }
+  const map = new Map<string, { count: number; average: number }>();
+  for (const p of products) {
+    const g = byGroup.get(p.group ?? p.id);
+    if (g) map.set(p.id, { count: g.count, average: g.sum / g.count });
+  }
+  return map;
 }
 
 /** True when this user has a paid order containing the product. */

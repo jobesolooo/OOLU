@@ -137,6 +137,8 @@ export async function moderateReview(form: FormData) {
   if (action === "delete") await db.delete(schema.reviews).where(eq(schema.reviews.id, id));
   else await db.update(schema.reviews).set({ status: action === "approve" ? "approved" : "rejected" }).where(eq(schema.reviews.id, id));
   revalidatePath("/admin/reviews");
+  // Product pages, product cards and star ratings everywhere.
+  revalidatePath("/", "layout");
 }
 
 /* ── Messages ────────────────────────────────────────────── */
