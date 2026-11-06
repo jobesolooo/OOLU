@@ -8,6 +8,7 @@ import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { getStockMap, stockKey } from "@/lib/inventory";
 import { attachCheckoutSession, createPendingOrder } from "@/lib/orders";
 import { getCurrentUser } from "@/lib/auth";
+import { ensureStripeCustomer } from "@/lib/customers";
 import { shippingConfig } from "@/lib/shipping";
 import { MAX_QTY } from "@/lib/constants";
 
@@ -116,13 +117,21 @@ export async function POST(req: Request) {
 
   try {
     const stripe = getStripe();
+    const customerId = user ? await ensureStripeCustomer(user) : null;
     const giftCoupon = giftCard && giftCardAmount > 0 ? await createGiftCardCoupon(giftCardAmount, currency, giftCard.code.slice(-4)) : null;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       client_reference_id: order.id,
       metadata: { orderId: order.id },
       payment_intent_data: { metadata: { orderId: order.id } },
-      ...(user?.email ? { customer_email: user.email } : {}),
+      // Signed-in shoppers get a Stripe customer, so cards and addresses are remembered next time.
+      ...(customerId
+        ? {
+            customer: customerId,
+            customer_update: { shipping: "auto" as const, name: "auto" as const },
+            saved_payment_method_options: { payment_method_save: "enabled" as const },
+          }
+        : {}),
       line_items: orderItems.map((i) => ({
         quantity: i.quantity,
         price_data: {

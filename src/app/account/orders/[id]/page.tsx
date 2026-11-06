@@ -9,6 +9,7 @@ import { OrderDetail } from "@/components/OrderDetail";
 import { OrderTimeline } from "@/components/orders/OrderTimeline";
 import { ReturnForm } from "@/components/orders/ReturnForm";
 import { ReturnList } from "@/components/orders/ReturnList";
+import { AccountShell } from "@/components/auth/AccountShell";
 
 export const metadata: Metadata = { title: "Order" };
 
@@ -23,10 +24,11 @@ export default async function AccountOrderPage({ params }: PageProps<"/account/o
   const eligible = returnEligibility(order);
 
   return (
-    <div className="container-x section-y space-y-10">
+    <AccountShell user={user} active="orders">
+    <div className="space-y-10">
       <div>
-        <Link href="/account" className="text-[11px] tracking-[0.2em] text-ash uppercase hover:text-ink">← Account</Link>
-        <h1 className="mt-3 font-display text-4xl font-[900] uppercase md:text-5xl">Order #{order.number}</h1>
+        <Link href="/account" className="text-[11px] tracking-[0.2em] text-ash uppercase hover:text-ink">← All orders</Link>
+        <h2 className="mt-3 font-display text-4xl font-[900] uppercase md:text-5xl">Order #{order.number}</h2>
       </div>
       <OrderTimeline order={order} />
       <OrderDetail order={order} items={items} />
@@ -47,5 +49,6 @@ export default async function AccountOrderPage({ params }: PageProps<"/account/o
         <p className="text-sm text-ash">{eligible.reason}</p>
       )}
     </div>
+    </AccountShell>
   );
 }

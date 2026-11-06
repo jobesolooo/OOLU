@@ -7,6 +7,7 @@ import { AnnouncementBar, Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
 import { NewsletterPopup } from "@/components/Newsletter";
+import { AccountSync } from "@/components/auth/AccountSync";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -46,6 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <AccountSync />
         <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
         {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />

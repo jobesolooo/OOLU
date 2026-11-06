@@ -28,6 +28,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const nav: { label: string; href: string; badge?: number }[] = [
     { label: "Orders", href: "/admin", badge: c.orders },
     { label: "Analytics", href: "/admin/analytics" },
+    { label: "Customers", href: "/admin/customers" },
     { label: "Products & stock", href: "/admin/inventory" },
     { label: "Returns", href: "/admin/returns", badge: c.returns },
     { label: "Reviews", href: "/admin/reviews", badge: c.reviews },

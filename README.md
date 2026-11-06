@@ -25,6 +25,13 @@ Next.js 16 + TypeScript e-commerce site for **Wstablished**, built from the home
 - Legal templates: privacy, terms, cookies, returns policy, imprint (EU/NL — fill in the [brackets] and have them checked)
 - Journal / lookbook with "shop the look" (content in `src/content/journal.ts`)
 
+**Accounts**
+- Sign up / sign in with **Google**, **Apple**, or email + password (show/hide password, strength rule)
+- Email confirmation (also pulls in orders placed earlier as a guest), forgot / reset password, rate-limited login
+- Profile & security: change name, add/change password, connect or disconnect Google/Apple, newsletter toggle, sign out of all devices, delete account
+- Wishlist saved to the account and synced across devices; Stripe remembers cards and addresses for signed-in shoppers
+- Admin rights (from `ADMIN_EMAILS`) only apply once that email is confirmed
+
 **Admin (`/admin`)**
 Orders & fulfilment, analytics (revenue chart, AOV, conversion, top products), products & stock, returns, review moderation, inbox, discount codes, gift cards, subscribers (+ CSV export), store settings (announcement bar, drop countdown, popup %).
 
@@ -70,6 +77,25 @@ Copy the `whsec_...` it prints into `STRIPE_WEBHOOK_SECRET` and restart `npm run
 ### 3. Become admin
 
 Register at `/account/register` with an email listed in `ADMIN_EMAILS`, then open `/admin`.
+
+## Setting up Google & Apple sign-in
+
+The buttons are always shown; until keys are added they explain that the provider isn't set up yet.
+
+**Google** (free, ~5 min)
+1. [Google Cloud Console](https://console.cloud.google.com) → create a project → *APIs & Services → OAuth consent screen* (External, add your app name + logo).
+2. *Credentials → Create credentials → OAuth client ID → Web application*.
+3. Authorized redirect URIs: `http://localhost:3000/api/auth/google/callback` and `https://<your-domain>/api/auth/google/callback`.
+4. Put the client ID and secret in `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`.
+
+**Apple** (needs a paid Apple Developer account, and an https domain — Apple doesn't allow localhost)
+1. [developer.apple.com](https://developer.apple.com/account/resources) → *Identifiers* → create an **App ID** with "Sign in with Apple" enabled.
+2. Create a **Services ID** (this is `APPLE_CLIENT_ID`, e.g. `com.wstablished.web`) → enable Sign in with Apple → add your domain and the return URL `https://<your-domain>/api/auth/apple/callback`.
+3. *Keys* → create a key with Sign in with Apple → download the `.p8` file. Its Key ID is `APPLE_KEY_ID`; paste the file contents into `APPLE_PRIVATE_KEY`.
+4. `APPLE_TEAM_ID` is shown top-right in the developer portal.
+5. To test Apple locally, use a tunnel (e.g. `ngrok http 3000`) and set `NEXT_PUBLIC_SITE_URL` to the https tunnel URL.
+
+In local dev without `RESEND_API_KEY`, confirmation and reset emails are printed in the terminal — copy the link from there.
 
 ## Managing products in Stripe
 

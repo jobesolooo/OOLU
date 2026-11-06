@@ -15,7 +15,11 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   name: text("name"),
-  passwordHash: text("password_hash").notNull(),
+  image: text("image"),
+  // Null for people who only sign in with Google / Apple.
+  passwordHash: text("password_hash"),
+  emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+  sessionVersion: integer("session_version").notNull().default(1),
   role: text("role", { enum: ["customer", "admin"] }).notNull().default("customer"),
   stripeCustomerId: text("stripe_customer_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -107,6 +111,53 @@ export const inventory = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.productId, t.size] })],
+);
+
+/* ── Sign-in with Google / Apple ──────────────────────────── */
+export const OAUTH_PROVIDERS = ["google", "apple"] as const;
+export type OAuthProvider = (typeof OAUTH_PROVIDERS)[number];
+export const oauthAccounts = pgTable(
+  "oauth_accounts",
+  {
+    provider: text("provider", { enum: OAUTH_PROVIDERS }).notNull(),
+    providerUserId: text("provider_user_id").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    email: text("email"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.provider, t.providerUserId] }), index("oauth_user_idx").on(t.userId)],
+);
+
+/* ── One-time tokens: email verification + password reset ── */
+export const authTokens = pgTable(
+  "auth_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type", { enum: ["verify_email", "reset_password"] }).notNull(),
+    tokenHash: text("token_hash").notNull().unique(), // sha256 of the token; the raw token only lives in the email
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("auth_tokens_user_idx").on(t.userId)],
+);
+
+/* ── Wishlist saved to the account (syncs across devices) ── */
+export const wishlistItems = pgTable(
+  "wishlist_items",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: text("product_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.productId] })],
 );
 
 /** Stripe webhook idempotency: each event is processed once. */

@@ -9,7 +9,9 @@ type Mail = { to: string; subject: string; html: string; replyTo?: string };
 export async function sendEmail(mail: Mail) {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
-    console.info(`[email:dev] To: ${mail.to} | ${mail.subject}`);
+    // Dev mode: print the email (and any links in it) to the terminal instead of sending.
+    const links = [...mail.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((l) => !l.startsWith("mailto:"));
+    console.info(`[email:dev] To: ${mail.to} | ${mail.subject}${links.length ? `\n  ${links.join("\n  ")}` : ""}`);
     return { skipped: true as const };
   }
   const from = process.env.EMAIL_FROM || `${site.name} <onboarding@resend.dev>`;
@@ -270,5 +272,47 @@ export async function sendContactNotification(msg: { name: string; email: string
       )}`,
     ),
     replyTo: msg.email,
+  });
+}
+
+export async function sendVerifyEmail(email: string, token: string) {
+  await sendEmail({
+    to: email,
+    subject: `Confirm your email — ${site.name}`,
+    html: layout(
+      "Confirm your email",
+      `<p style="font-size:14px;line-height:1.6">Tap the button to confirm this is your email. It also connects any orders you placed as a guest to your account.</p>${button(
+        `${siteUrl()}/account/verify?token=${encodeURIComponent(token)}`,
+        "Confirm email",
+      )}<p style="font-size:12px;color:#777">This link expires in 24 hours. If you didn't create an account, ignore this email.</p>`,
+    ),
+  });
+}
+
+export async function sendPasswordReset(email: string, token: string) {
+  await sendEmail({
+    to: email,
+    subject: `Reset your password — ${site.name}`,
+    html: layout(
+      "Reset your password",
+      `<p style="font-size:14px;line-height:1.6">Someone (hopefully you) asked to reset the password for this account.</p>${button(
+        `${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`,
+        "Choose a new password",
+      )}<p style="font-size:12px;color:#777">This link expires in 1 hour and can be used once. If you didn't ask for this, you can ignore this email — your password won't change.</p>`,
+    ),
+  });
+}
+
+export async function sendSecurityNotice(email: string, what: string) {
+  await sendEmail({
+    to: email,
+    subject: `Security update on your ${site.name} account`,
+    html: layout(
+      "Account change",
+      `<p style="font-size:14px;line-height:1.6">${esc(what)}</p><p style="font-size:12px;color:#777">If this wasn't you, reset your password right away and contact us.</p>${button(
+        `${siteUrl()}/account/forgot`,
+        "Reset password",
+      )}`,
+    ),
   });
 }

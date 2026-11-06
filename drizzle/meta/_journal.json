@@ -15,6 +15,13 @@
       "when": 1793945894346,
       "tag": "0001_commerce_features",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793947744074,
+      "tag": "0002_auth",
+      "breakpoints": true
     }
   ]
 }

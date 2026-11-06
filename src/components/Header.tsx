@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Search, User, ShoppingBag, ChevronDown, Menu, X, Heart } from "lucide-react";
 import { useWishlist } from "@/store/saved";
+import { useSession } from "@/store/session";
 import { site } from "@/lib/site";
 import { cx } from "@/lib/format";
 import { useCart, cartCount } from "@/store/cart";
@@ -35,6 +36,7 @@ export function Header() {
   const count = mounted ? cartCount(lines) : 0;
   const saved = useWishlist((s) => s.items.length);
   const savedCount = mounted ? saved : 0;
+  const me = useSession((s) => s.user);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -82,8 +84,14 @@ export function Header() {
               </span>
             )}
           </Link>
-          <Link href="/account" aria-label="Account">
-            <User className="size-[21px]" strokeWidth={1.5} />
+          <Link href="/account" aria-label={me ? `Account (${me.name ?? me.email})` : "Sign in"} className="flex items-center">
+            {me ? (
+              <span className="grid size-[26px] place-items-center rounded-full bg-white text-[11px] font-bold text-black uppercase">
+                {(me.name ?? me.email).trim().charAt(0)}
+              </span>
+            ) : (
+              <User className="size-[21px]" strokeWidth={1.5} />
+            )}
           </Link>
           <button aria-label={`Cart, ${count} items`} className="relative" onClick={() => setOpen(true)}>
             <ShoppingBag className="size-[21px]" strokeWidth={1.5} />
