@@ -72,17 +72,22 @@ export async function AuthShell({
           <div className="absolute -bottom-1/4 -left-1/4 size-[50%] rounded-full bg-accent/10 blur-[120px]" />
         </div>
 
+        {/* Staff entrance: a small pill that smoothly widens to reveal "Studio". */}
         <Link
           href="/admin/login"
           title={t("auth.staffAria")}
           aria-label={t("auth.staffAria")}
-          className="group absolute top-5 right-5 flex items-center gap-3 text-ash transition-colors hover:text-ink sm:top-6 sm:right-6"
+          className="group absolute top-5 right-5 inline-flex h-[42px] items-center rounded-full border border-black/10 bg-white/80 p-[5px] shadow-[0_8px_24px_-14px_rgba(0,0,0,0.35)] backdrop-blur-md transition-[background-color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink hover:bg-ink hover:shadow-[0_14px_32px_-12px_rgba(107,84,224,0.65)] focus-visible:border-ink focus-visible:bg-ink focus-visible:outline-none active:scale-[0.97] sm:top-6 sm:right-6"
         >
-          <span className="max-w-0 overflow-hidden text-[11px] font-semibold tracking-[0.2em] whitespace-nowrap uppercase opacity-0 transition-all duration-300 group-hover:max-w-28 group-hover:opacity-100">
-            {t("auth.staff")}
+          <span className="grid size-[30px] shrink-0 place-items-center rounded-full bg-mist ring-1 ring-black/5 transition-colors duration-500 group-hover:bg-white/10 group-hover:ring-white/15 group-focus-visible:bg-white/10">
+            <StaffMark className="w-[20px] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110 group-hover:-rotate-[10deg]" />
           </span>
-          <span className="grid h-[42px] w-[54px] place-items-center rounded-full border border-black/15 bg-white transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white">
-            <StaffMark className="w-[27px] transition-transform duration-300 group-hover:scale-110" />
+          <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:grid-cols-[1fr] group-focus-visible:grid-cols-[1fr]">
+            <span className="overflow-hidden">
+              <span className="block pr-2.5 pl-3 text-[10px] font-semibold tracking-[0.24em] whitespace-nowrap text-white uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:delay-150 group-focus-visible:opacity-100">
+                Studio
+              </span>
+            </span>
           </span>
         </Link>
 

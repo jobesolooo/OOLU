@@ -2663,6 +2663,10 @@
   "Rooted in Africa. Created in Amsterdam. Made for the world.",
   "Geworteld in Afrika. Gemaakt in Amsterdam. Voor de wereld."
  ],
+ "story.read": [
+  "Read the full story",
+  "Lees het hele verhaal"
+ ],
  "story.signoff": [
   "OOLU — Built on trust.",
   "OOLU — Gebouwd op vertrouwen."
@@ -2670,6 +2674,26 @@
  "story.title": [
   "OOLU means trust.",
   "OOLU betekent vertrouwen."
+ ],
+ "story.v1": [
+  "Loyalty",
+  "Loyaliteit"
+ ],
+ "story.v2": [
+  "Connection",
+  "Verbinding"
+ ],
+ "story.v3": [
+  "Ambition",
+  "Ambitie"
+ ],
+ "story.v4": [
+  "Courage",
+  "Moed"
+ ],
+ "story.word": [
+  "TRUST",
+  "TRUST"
  ],
  "success.account": [
   "Your account",

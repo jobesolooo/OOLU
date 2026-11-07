@@ -166,7 +166,7 @@ export function AddToCart({ product, stock, sizeChart, category }: Props) {
           <button type="button" className="btn-solid flex-1 px-4 py-[18px] text-[13px] whitespace-nowrap" onClick={onAdd} disabled={everythingOut}>
             {everythingOut ? t("pdp.soldOut") : added ? <span key="added" className="animate-fade-in">{t("pdp.added")}</span> : t("pdp.addToBag")}
           </button>
-          <WishlistButton product={product} className="grid w-12 shrink-0 place-items-center border border-black/20 hover:border-ink sm:w-14" />
+          <WishlistButton product={product} className="w-12 shrink-0 border border-black/20 transition-colors hover:border-ink sm:w-14 [&[aria-pressed=true]]:text-[#6b54e0]" />
         </div>
       )}
       {error && <p className="text-[13px] text-red-700">{error}</p>}

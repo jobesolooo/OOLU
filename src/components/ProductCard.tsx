@@ -73,7 +73,7 @@ export async function ProductCard({
       </Link>
       <WishlistButton
         product={toSaved(product)}
-        className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-white/90 opacity-100 shadow-sm transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100 [&[aria-pressed=true]]:opacity-100"
+        className="absolute top-2.5 right-2.5 size-10 rounded-full bg-white/85 text-ink shadow-[0_4px_14px_-4px_rgba(0,0,0,0.25)] backdrop-blur-md transition-[opacity,transform,background-color,color] duration-300 hover:scale-110 hover:bg-white active:scale-95 sm:top-3 sm:right-3 sm:size-9 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100 [&[aria-pressed=true]]:text-[#6b54e0] [&[aria-pressed=true]]:opacity-100"
       />
     </div>
   );

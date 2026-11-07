@@ -42,29 +42,105 @@ export async function CategoryTiles({ counts }: { counts: Record<string, number>
   );
 }
 
+/**
+ * "Our story": giant outlined TRUST drifting behind, framed photo with the spinning
+ * badge, headline with the key word in lavender, value tags, then the three-line
+ * "Rooted in Africa / Created in Amsterdam / Made for the world" as a numbered band.
+ */
 export async function Story() {
   const { t } = await getT();
   const { story } = site;
+  const title = t("story.title");
+  // Highlight the last word of the headline ("trust." / "vertrouwen." …).
+  const cut = title.trimEnd().lastIndexOf(" ");
+  const [lead, key] = cut > 0 ? [title.slice(0, cut + 1), title.slice(cut + 1)] : ["", title];
+  const lines = t("story.p3")
+    .split(/(?<=\.)\s+/)
+    .map((l) => l.replace(/\.$/, ""))
+    .filter(Boolean);
+
   return (
-    <section className="grid bg-bone md:min-h-[min(calc(100svh-var(--nav-h)),900px)] md:grid-cols-[7fr_5fr]">
-      <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto">
-        <Image src={story.image} alt={t("story.alt")} fill sizes="(min-width:768px) 58vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out hover:scale-[1.03]" />
-      </div>
-      <div className="flex items-center px-[clamp(20px,5vw,96px)] py-14">
-        <div data-reveal className="max-w-[440px]">
-          <p className="eyebrow">{t("story.eyebrow")}</p>
-          <h2 className="mt-3 font-display text-[clamp(30px,2.6vw,44px)] leading-[1.05] tracking-[-0.02em]">{t("story.title")}</h2>
-          <div className="mt-6 space-y-4 text-[13px] leading-[1.6]">
-            <p>{t("story.p1")}</p>
-            <p>{t("story.p2")}</p>
-            <p>{t("story.p3")}</p>
-            <p className="pt-2 uppercase">{t("story.signoff")}</p>
+    <section className="relative isolate overflow-hidden bg-bone">
+      <p
+        aria-hidden
+        className="drift pointer-events-none absolute top-[38%] left-0 -z-10 font-wordmark leading-[0.8] whitespace-nowrap text-transparent select-none [-webkit-text-stroke:1.5px_rgba(107,84,224,0.18)]"
+        style={{ fontSize: "clamp(200px, 30vw, 520px)" }}
+      >
+        {t("story.word")} {t("story.word")} {t("story.word")}
+      </p>
+
+      <div className="container-x grid items-center gap-[clamp(48px,6vw,112px)] py-[clamp(64px,8vw,140px)] lg:grid-cols-[1fr_1.05fr]">
+        {/* photo with offset frame + spinning badge */}
+        <div data-reveal className="relative mx-auto w-full max-w-[620px] pr-4 pb-4 sm:pr-6 sm:pb-6">
+          <span aria-hidden className="absolute inset-0 top-4 left-4 border border-[#6b54e0]/50 sm:top-6 sm:left-6" />
+          <div className="group relative aspect-[4/3] overflow-hidden bg-stone lg:aspect-[5/4]">
+            <Image
+              src={story.image}
+              alt={t("story.alt")}
+              fill
+              sizes="(min-width:1024px) 45vw, 100vw"
+              className="object-cover object-center transition-transform duration-[1.6s] ease-out group-hover:scale-[1.04]"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
+            <p className="absolute bottom-5 left-5 text-[10px] tracking-[0.2em] text-white/90 uppercase">Amsterdam · {t("brand.established")}</p>
           </div>
-          <Link href={story.ctaHref} className="mt-7 inline-flex border border-ink px-5 py-3.5 text-[11px] tracking-[0.06em] uppercase transition-colors hover:bg-ink hover:text-white">
-            {t("story.cta")}
-          </Link>
+          <div aria-hidden className="absolute -top-6 -right-2 grid size-[clamp(88px,9vw,124px)] place-items-center rounded-full bg-ink text-white shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] sm:-right-6">
+            <svg viewBox="0 0 100 100" className="spin absolute inset-0 size-full">
+              <defs>
+                <path id="story-badge" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
+              </defs>
+              <text className="fill-current font-mono text-[9.5px] tracking-[0.24em] uppercase">
+                <textPath href="#story-badge">{t("story.signoff")} · </textPath>
+              </text>
+            </svg>
+            <Image src="/images/brand/logo-mark.png" alt="" width={44} height={42} className="w-[38%]" />
+          </div>
+        </div>
+
+        {/* words */}
+        <div data-reveal>
+          <p className="text-[11px] tracking-[0.18em] text-[#6b54e0] uppercase">{t("story.eyebrow")}</p>
+          <h2 className="mt-4 font-display text-[clamp(44px,5.4vw,96px)] leading-[0.92] tracking-[-0.035em] text-balance">
+            {lead}
+            <em className="text-[#6b54e0] not-italic">{key}</em>
+          </h2>
+          <p className="mt-8 max-w-[540px] font-display text-[clamp(19px,1.5vw,24px)] leading-[1.35] tracking-[-0.01em]">{t("story.p1")}</p>
+          <p className="mt-5 max-w-[520px] text-[13px] leading-[1.75] text-black/70">{t("story.p2")}</p>
+          <ul className="mt-7 flex flex-wrap gap-2">
+            {(["story.v1", "story.v2", "story.v3", "story.v4"] as const).map((k) => (
+              <li key={k} className="rounded-full border border-black/15 bg-white/60 px-4 py-2 text-[11px] tracking-[0.06em] uppercase backdrop-blur">
+                {t(k)}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+            <Link
+              href={story.ctaHref}
+              className="group inline-flex items-center gap-3 bg-ink px-6 py-4 text-[11px] tracking-[0.08em] text-white uppercase transition-[transform,background-color] hover:bg-[#6b54e0] active:scale-[0.98]"
+            >
+              {t("story.cta")}
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.5} />
+            </Link>
+            <Link href="/journal/oolu-means-trust" className="text-[11px] tracking-[0.08em] uppercase underline underline-offset-[6px] transition-colors hover:text-[#6b54e0]">
+              {t("story.read")}
+            </Link>
+          </div>
         </div>
       </div>
+
+      {/* Rooted in Africa · Created in Amsterdam · Made for the world */}
+      {lines.length === 3 && (
+        <div className="border-t border-black/10">
+          <ol data-reveal="stagger" className="container-x grid divide-y divide-black/10 md:grid-cols-3 md:divide-x md:divide-y-0">
+            {lines.map((l, i) => (
+              <li key={l} className="flex items-baseline gap-4 py-7 md:px-8 md:py-10 md:first:pl-0 md:last:pr-0">
+                <span className="font-wordmark text-[22px] text-[#6b54e0]">0{i + 1}</span>
+                <span className="font-display text-[clamp(22px,2.1vw,34px)] leading-[1.05] tracking-[-0.02em]">{l}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </section>
   );
 }
@@ -254,11 +330,11 @@ export async function JournalTeaser({ posts }: { posts: JournalPost[] }) {
             {t("home.readJournal")} <ArrowRight className="size-3.5" strokeWidth={1.5} />
           </Link>
         </div>
-        <div data-reveal="stagger" className="grid gap-8 md:grid-cols-3">
+        <div data-reveal="stagger" className={posts.length === 2 ? "grid gap-8 md:grid-cols-2" : "grid gap-8 md:grid-cols-3"}>
           {posts.map((p) => (
             <Link key={p.slug} href={`/journal/${p.slug}`} className="group">
               <div className="relative aspect-[4/3] overflow-hidden bg-ink">
-                <Image src={p.cover} alt="" fill sizes="(min-width:768px) 33vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
+                <Image src={p.cover} alt="" fill sizes={posts.length === 2 ? "(min-width:768px) 50vw, 100vw" : "(min-width:768px) 33vw, 100vw"} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
               </div>
               <p className="mt-4 text-[11px] tracking-[0.18em] text-ash uppercase">
                 {t(`journal.cat.${p.category}`)} · {new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(p.date))}

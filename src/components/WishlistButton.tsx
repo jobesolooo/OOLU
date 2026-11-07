@@ -21,9 +21,15 @@ export function WishlistButton({ product, className, label = false }: { product:
         e.stopPropagation();
         toggle(product);
       }}
-      className={cx("inline-flex items-center gap-2", className)}
+      className={cx("inline-flex items-center justify-center gap-2", className)}
     >
-      <Heart className={cx("size-[18px] transition-colors", saved && "fill-current")} strokeWidth={1.5} />
+      {/* key re-mounts the icon on change so the pop plays each time it's toggled */}
+      <Heart
+        key={String(saved)}
+        className={cx("size-[18px] shrink-0 transition-colors", saved && "animate-pop fill-current")}
+        strokeWidth={1.5}
+        aria-hidden
+      />
       {label && <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">{saved ? t("wishlist.saved") : t("wishlist.save")}</span>}
     </button>
   );

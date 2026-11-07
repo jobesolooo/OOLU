@@ -56,7 +56,8 @@ export default async function HomePage() {
         />
       )}
       {onSale.length >= 4 && <ProductRow title={t("home.onSale")} products={onSale} href="/shop?sale=1" ratings={ratings} />}
-      <JournalTeaser posts={latestPosts(3, locale)} />
+      {/* The "OOLU means trust" story already has its own section above. */}
+      <JournalTeaser posts={latestPosts(3, locale).filter((p) => p.slug !== "oolu-means-trust").slice(0, 2)} />
       <RecentlyViewed />
       <NewsletterBand percentOff={settings.popup.percentOff} />
     </>
