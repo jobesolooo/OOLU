@@ -16,7 +16,7 @@ async function handle(req: Request, provider: OAuthProvider, params: URLSearchPa
   const next = flow?.next ?? "/account";
 
   const fail = (error: string) => {
-    const target = flow?.linkUserId ? `/account/settings?error=${encodeURIComponent(error)}` : `/account/login?error=${encodeURIComponent(error)}&next=${encodeURIComponent(next)}`;
+    const target = flow?.linkUserId ? `/account/security?error=${encodeURIComponent(error)}` : `/account/login?error=${encodeURIComponent(error)}&next=${encodeURIComponent(next)}`;
     const res = NextResponse.redirect(new URL(target, origin), 303);
     res.cookies.delete(OAUTH_COOKIE);
     return res;
@@ -63,7 +63,7 @@ async function handle(req: Request, provider: OAuthProvider, params: URLSearchPa
   await signIn(result.user);
   if (result.created) await sendWelcome(result.user.email, result.user.name);
 
-  const dest = flow.linkUserId ? `/account/settings?connected=${provider}` : result.created ? `${next}${next.includes("?") ? "&" : "?"}welcome=1` : next;
+  const dest = flow.linkUserId ? `/account/security?connected=${provider}` : result.created ? `${next}${next.includes("?") ? "&" : "?"}welcome=1` : next;
   const res = NextResponse.redirect(new URL(dest, origin), 303);
   res.cookies.delete(OAUTH_COOKIE);
   return res;

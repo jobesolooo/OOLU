@@ -43,6 +43,462 @@
   "About",
   "Over ons"
  ],
+ "ac.addAddress": [
+  "Add address",
+  "Adres toevoegen"
+ ],
+ "ac.addFirstAddress": [
+  "Add your delivery address",
+  "Voeg je bezorgadres toe"
+ ],
+ "ac.addr.added": [
+  "Address added.",
+  "Adres toegevoegd."
+ ],
+ "ac.addr.deleted": [
+  "Address deleted.",
+  "Adres verwijderd."
+ ],
+ "ac.addr.updated": [
+  "Address saved.",
+  "Adres opgeslagen."
+ ],
+ "ac.addrLabel": [
+  "Label",
+  "Label"
+ ],
+ "ac.addrLabelHint": [
+  "Optional",
+  "Optioneel"
+ ],
+ "ac.addrLabelPh": [
+  "Home, Work…",
+  "Thuis, Werk…"
+ ],
+ "ac.addrPhoneHint": [
+  "For the courier, optional.",
+  "Voor de bezorger, optioneel."
+ ],
+ "ac.addressBook": [
+  "Address book",
+  "Adresboek"
+ ],
+ "ac.addressBookSub": [
+  "{count} of {max} saved.",
+  "{count} van {max} opgeslagen."
+ ],
+ "ac.addressFormSub": [
+  "We ship to the countries in the list.",
+  "We verzenden naar de landen in de lijst."
+ ],
+ "ac.allSet": [
+  "All set.",
+  "Helemaal compleet."
+ ],
+ "ac.birthday": [
+  "Birthday",
+  "Verjaardag"
+ ],
+ "ac.birthdayHint": [
+  "Optional.",
+  "Optioneel."
+ ],
+ "ac.bottom": [
+  "Bottom",
+  "Onder"
+ ],
+ "ac.cancel": [
+  "Cancel",
+  "Annuleren"
+ ],
+ "ac.changeEmail": [
+  "Change email",
+  "E-mailadres wijzigen"
+ ],
+ "ac.city": [
+  "City",
+  "Plaats"
+ ],
+ "ac.confirmFailed": [
+  "That link didn't work",
+  "Die link werkt niet"
+ ],
+ "ac.confirmInvalid": [
+  "The link has expired or was already used. Request a new one from your profile.",
+  "De link is verlopen of al gebruikt. Vraag een nieuwe aan via je profiel."
+ ],
+ "ac.confirmTaken": [
+  "Another account already uses that email address, so we couldn't switch to it.",
+  "Een ander account gebruikt dat e-mailadres al, dus we konden het niet wijzigen."
+ ],
+ "ac.country": [
+  "Country",
+  "Land"
+ ],
+ "ac.currentEmail": [
+  "Current email",
+  "Huidig e-mailadres"
+ ],
+ "ac.default": [
+  "Default",
+  "Standaard"
+ ],
+ "ac.defaultNote": [
+  "Your default address is filled in at checkout. You can still change it there.",
+  "Je standaardadres wordt bij het afrekenen ingevuld. Je kunt het daar nog aanpassen."
+ ],
+ "ac.delete": [
+  "Delete",
+  "Verwijderen"
+ ],
+ "ac.deleteAddressQ": [
+  "Delete this address?",
+  "Dit adres verwijderen?"
+ ],
+ "ac.deleteReviewQ": [
+  "Delete this review? This can't be undone.",
+  "Deze review verwijderen? Dit kan niet ongedaan worden gemaakt."
+ ],
+ "ac.deleteSub": [
+  "Removes your account for good. Orders are kept for our records, without your account.",
+  "Verwijdert je account definitief. Bestellingen bewaren we voor onze administratie, los van je account."
+ ],
+ "ac.deliverTo": [
+  "Deliver to",
+  "Bezorgen op"
+ ],
+ "ac.deliverToSub": [
+  "Your default address. Checkout fills it in for you.",
+  "Je standaardadres. Bij het afrekenen wordt het automatisch ingevuld."
+ ],
+ "ac.download": [
+  "Download my data",
+  "Download mijn gegevens"
+ ],
+ "ac.edit": [
+  "Edit",
+  "Bewerken"
+ ],
+ "ac.editAddress": [
+  "Edit address",
+  "Adres bewerken"
+ ],
+ "ac.editDetails": [
+  "Edit details",
+  "Gegevens bewerken"
+ ],
+ "ac.editReview": [
+  "Edit review",
+  "Review bewerken"
+ ],
+ "ac.emailChanged": [
+  "Your email address has been changed.",
+  "Je e-mailadres is gewijzigd."
+ ],
+ "ac.emailSub": [
+  "Where we send order updates and sign-in links.",
+  "Waar we bestelupdates en inloglinks naartoe sturen."
+ ],
+ "ac.emailsSub": [
+  "Choose what lands in your inbox. Order emails always come.",
+  "Kies wat er in je inbox komt. Bestelmails krijg je altijd."
+ ],
+ "ac.exportBody": [
+  "Download your profile, addresses, orders, reviews, wishlist and email preferences as one file (JSON).",
+  "Download je profiel, adressen, bestellingen, reviews, verlanglijst en e-mailvoorkeuren als één bestand (JSON)."
+ ],
+ "ac.eyebrow": [
+  "Your account",
+  "Je account"
+ ],
+ "ac.filter.active": [
+  "On the way",
+  "Onderweg"
+ ],
+ "ac.filter.all": [
+  "All",
+  "Alle"
+ ],
+ "ac.filter.done": [
+  "Completed",
+  "Afgerond"
+ ],
+ "ac.fit": [
+  "Fit",
+  "Pasvorm"
+ ],
+ "ac.fitLarge": [
+  "Runs large",
+  "Valt groot"
+ ],
+ "ac.fitSmall": [
+  "Runs small",
+  "Valt klein"
+ ],
+ "ac.fitTrue": [
+  "True to size",
+  "Valt normaal"
+ ],
+ "ac.hi": [
+  "Hi, {name}",
+  "Hoi, {name}"
+ ],
+ "ac.hiNoName": [
+  "Welcome back",
+  "Welkom terug"
+ ],
+ "ac.latestOrder": [
+  "Latest order",
+  "Laatste bestelling"
+ ],
+ "ac.latestOrderSub": [
+  "Tap it for tracking, invoice and returns.",
+  "Tik erop voor track & trace, factuur en retouren."
+ ],
+ "ac.line1": [
+  "Street and number",
+  "Straat en huisnummer"
+ ],
+ "ac.line2": [
+  "Apartment, floor (optional)",
+  "Appartement, verdieping (optioneel)"
+ ],
+ "ac.makeDefault": [
+  "Use as my default address",
+  "Gebruik als mijn standaardadres"
+ ],
+ "ac.manageAddresses": [
+  "Manage addresses",
+  "Adressen beheren"
+ ],
+ "ac.memberSince": [
+  "Member since",
+  "Lid sinds"
+ ],
+ "ac.methodsSub": [
+  "Ways you can sign in to this account.",
+  "Manieren waarop je bij dit account kunt inloggen."
+ ],
+ "ac.nav.addresses": [
+  "Addresses",
+  "Adressen"
+ ],
+ "ac.nav.orders": [
+  "Orders",
+  "Bestellingen"
+ ],
+ "ac.nav.overview": [
+  "Overview",
+  "Overzicht"
+ ],
+ "ac.nav.privacy": [
+  "Privacy & emails",
+  "Privacy & e-mails"
+ ],
+ "ac.nav.profile": [
+  "Profile",
+  "Profiel"
+ ],
+ "ac.nav.reviews": [
+  "Reviews",
+  "Reviews"
+ ],
+ "ac.nav.security": [
+  "Sign-in & security",
+  "Inloggen & beveiliging"
+ ],
+ "ac.nav.wishlist": [
+  "Wishlist",
+  "Verlanglijst"
+ ],
+ "ac.newAddress": [
+  "New address",
+  "Nieuw adres"
+ ],
+ "ac.newEmail": [
+  "New email",
+  "Nieuw e-mailadres"
+ ],
+ "ac.noReturns": [
+  "No returns.",
+  "Geen retouren."
+ ],
+ "ac.noReviews": [
+  "You haven't written a review yet. You can review anything you've bought from its product page.",
+  "Je hebt nog geen review geschreven. Je kunt alles wat je hebt gekocht beoordelen op de productpagina."
+ ],
+ "ac.noSize": [
+  "Not set",
+  "Niet ingesteld"
+ ],
+ "ac.noneHere": [
+  "Nothing here.",
+  "Niets te zien."
+ ],
+ "ac.ordersSub": [
+  "{count} in total.",
+  "{count} in totaal."
+ ],
+ "ac.passwordSub": [
+  "At least 8 characters. Changing it signs you out on other devices.",
+  "Minstens 8 tekens. Na een wijziging word je op andere apparaten uitgelogd."
+ ],
+ "ac.pendingEmail": [
+  "We sent a confirmation link to {email}. The change happens once you click it.",
+  "We hebben een bevestigingslink gestuurd naar {email}. De wijziging gaat in zodra je erop klikt."
+ ],
+ "ac.personal": [
+  "Personal details",
+  "Persoonlijke gegevens"
+ ],
+ "ac.personalSub": [
+  "Used for your orders and to tailor sizes. Only your name is required.",
+  "Gebruikt voor je bestellingen en om maten af te stemmen. Alleen je naam is verplicht."
+ ],
+ "ac.phone": [
+  "Phone",
+  "Telefoon"
+ ],
+ "ac.phoneHint": [
+  "For delivery questions only.",
+  "Alleen voor vragen over de bezorging."
+ ],
+ "ac.postcode": [
+  "Postcode",
+  "Postcode"
+ ],
+ "ac.rating": [
+  "Rating",
+  "Beoordeling"
+ ],
+ "ac.recipient": [
+  "Recipient",
+  "Ontvanger"
+ ],
+ "ac.region": [
+  "Region / state (optional)",
+  "Provincie / staat (optioneel)"
+ ],
+ "ac.removedProduct": [
+  "Removed product",
+  "Verwijderd product"
+ ],
+ "ac.returns": [
+  "Returns",
+  "Retouren"
+ ],
+ "ac.returnsSub": [
+  "Start a return from the order itself.",
+  "Start een retour vanuit de bestelling zelf."
+ ],
+ "ac.rev.deleted": [
+  "Review deleted.",
+  "Review verwijderd."
+ ],
+ "ac.rev.updated": [
+  "Review saved.",
+  "Review opgeslagen."
+ ],
+ "ac.reviewBody": [
+  "Your review",
+  "Je review"
+ ],
+ "ac.reviewHidden": [
+  "Hidden",
+  "Verborgen"
+ ],
+ "ac.reviewLive": [
+  "Live",
+  "Zichtbaar"
+ ],
+ "ac.reviewTitle": [
+  "Title",
+  "Titel"
+ ],
+ "ac.reviewsSub": [
+  "Edit or remove what you've written.",
+  "Bewerk of verwijder wat je hebt geschreven."
+ ],
+ "ac.saveAddress": [
+  "Save address",
+  "Adres opslaan"
+ ],
+ "ac.saveReview": [
+  "Save review",
+  "Review opslaan"
+ ],
+ "ac.sendLink": [
+  "Send confirmation link",
+  "Bevestigingslink sturen"
+ ],
+ "ac.setDefault": [
+  "Make default",
+  "Als standaard instellen"
+ ],
+ "ac.sizeBottom": [
+  "Size: bottoms",
+  "Maat: broeken"
+ ],
+ "ac.sizeTop": [
+  "Size: tops",
+  "Maat: tops"
+ ],
+ "ac.sizes": [
+  "Sizes",
+  "Maten"
+ ],
+ "ac.todoAddress": [
+  "Add an address",
+  "Voeg een adres toe"
+ ],
+ "ac.todoConfirm": [
+  "Confirm your email",
+  "Bevestig je e-mailadres"
+ ],
+ "ac.todoPhone": [
+  "Add a phone number",
+  "Voeg een telefoonnummer toe"
+ ],
+ "ac.todoSizes": [
+  "Save your sizes",
+  "Sla je maten op"
+ ],
+ "ac.todoSub": [
+  "A few things left to finish your profile.",
+  "Nog een paar dingen om je profiel af te maken."
+ ],
+ "ac.top": [
+  "Top",
+  "Boven"
+ ],
+ "ac.verifiedBuyer": [
+  "Verified buyer",
+  "Geverifieerde koper"
+ ],
+ "ac.viewOnProduct": [
+  "View on product",
+  "Bekijk bij product"
+ ],
+ "ac.yourData": [
+  "Your data",
+  "Je gegevens"
+ ],
+ "ac.yourDataSub": [
+  "A copy of everything we keep about you.",
+  "Een kopie van alles wat we over je bewaren."
+ ],
+ "ac.yourDetails": [
+  "Your details",
+  "Je gegevens"
+ ],
+ "ac.yourPassword": [
+  "Your password",
+  "Je wachtwoord"
+ ],
+ "ac.yourReviews": [
+  "Your reviews",
+  "Je reviews"
+ ],
  "acct.admin": [
   "Admin",
   "Admin"

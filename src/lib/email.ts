@@ -294,6 +294,20 @@ export async function sendVerifyEmail(email: string, token: string) {
   });
 }
 
+export async function sendEmailChange(newEmail: string, token: string) {
+  await sendEmail({
+    to: newEmail,
+    subject: `Confirm your new email — ${site.name}`,
+    html: layout(
+      "Confirm your new email",
+      `<p style="font-size:14px;line-height:1.6">Tap the button to make this the email for your ${site.name} account. You'll sign in with it from then on.</p>${button(
+        `${siteUrl()}/account/confirm-email?token=${encodeURIComponent(token)}`,
+        "Confirm new email",
+      )}<p style="font-size:12px;color:#777">This link expires in 24 hours. If you didn't ask for this, ignore this email; nothing changes.</p>`,
+    ),
+  });
+}
+
 export async function sendPasswordReset(email: string, token: string) {
   await sendEmail({
     to: email,

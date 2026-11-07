@@ -99,7 +99,7 @@ export const verifyPassword = (pw: string, hash: string) => bcrypt.compare(pw, h
 /* ── One-time tokens (email verification, password reset) ── */
 const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
-export async function createAuthToken(userId: string, type: "verify_email" | "reset_password", ttlMinutes: number) {
+export async function createAuthToken(userId: string, type: "verify_email" | "reset_password" | "change_email", ttlMinutes: number) {
   const raw = randomBytes(32).toString("base64url");
   const db = await getDb();
   // Only the newest token of each type is valid.
@@ -117,7 +117,7 @@ export async function createAuthToken(userId: string, type: "verify_email" | "re
 }
 
 /** Marks the token used and returns its user id, or null if invalid/expired/used. */
-export async function consumeAuthToken(raw: string, type: "verify_email" | "reset_password") {
+export async function consumeAuthToken(raw: string, type: "verify_email" | "reset_password" | "change_email") {
   if (!raw || raw.length > 100) return null;
   const db = await getDb();
   const [row] = await db

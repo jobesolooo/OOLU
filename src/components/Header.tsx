@@ -63,7 +63,9 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   // Pages that open with a full-bleed dark hero get the transparent header too.
-  const overHero = HERO_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)));
+  const overHero = HERO_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)))
+    // Signed-in account pages open on a photo hero too (sign-in/up pages don't).
+    || (/^\/account(\/|$)/.test(pathname) && !/^\/account\/(login|register|forgot|reset|verify|confirm-email)/.test(pathname));
   const clear = overHero && !scrolled && !searchOpen;
   const badge = clear ? "bg-white text-black" : "bg-ink text-white";
 

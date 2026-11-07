@@ -22,8 +22,40 @@ export const users = pgTable("users", {
   sessionVersion: integer("session_version").notNull().default(1),
   role: text("role", { enum: ["customer", "admin"] }).notNull().default("customer"),
   stripeCustomerId: text("stripe_customer_id"),
+  // Optional profile details the customer manages in their account.
+  phone: text("phone"),
+  birthday: text("birthday"), // YYYY-MM-DD
+  sizeTop: text("size_top"),
+  sizeBottom: text("size_bottom"),
+  // New email waiting for confirmation (see auth tokens "change_email").
+  pendingEmail: text("pending_email"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/* ── Address book ────────────────────────────────────────── */
+export const addresses = pgTable(
+  "addresses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    label: text("label"),
+    name: text("name").notNull(),
+    line1: text("line1").notNull(),
+    line2: text("line2"),
+    postalCode: text("postal_code").notNull(),
+    city: text("city").notNull(),
+    region: text("region"),
+    country: text("country").notNull(), // ISO 3166-1 alpha-2
+    phone: text("phone"),
+    isDefault: boolean("is_default").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("addresses_user_idx").on(t.userId)],
+);
+export type Address = typeof addresses.$inferSelect;
 
 export const ORDER_STATUSES = [
   "pending", // checkout started, not paid
@@ -138,7 +170,7 @@ export const authTokens = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type", { enum: ["verify_email", "reset_password"] }).notNull(),
+    type: text("type", { enum: ["verify_email", "reset_password", "change_email"] }).notNull(),
     tokenHash: text("token_hash").notNull().unique(), // sha256 of the token; the raw token only lives in the email
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     usedAt: timestamp("used_at", { withTimezone: true }),

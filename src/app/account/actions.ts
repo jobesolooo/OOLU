@@ -172,7 +172,7 @@ export async function resetPassword(_: FormState, form: FormData): Promise<FormS
 /* ── Profile & security (signed in) ──────────────────────── */
 async function me() {
   const user = await getCurrentUser();
-  if (!user) redirect("/account/login?next=/account/settings");
+  if (!user) redirect("/account/login?next=/account");
   return user;
 }
 
@@ -202,7 +202,7 @@ export async function changePassword(_: FormState, form: FormData): Promise<Form
   await db.update(schema.users).set({ passwordHash: await hashPassword(parsed.data.password) }).where(eq(schema.users.id, user.id));
   await rotateSessions(user.id); // other devices get signed out
   await sendSecurityNotice(user.email, row.passwordHash ? "Your password was changed." : "A password was added to your account.");
-  revalidatePath("/account/settings");
+  revalidatePath("/account", "layout");
   return { ok: row.passwordHash ? "Password changed. Other devices were signed out." : "Password added. You can now sign in with email too." };
 }
 
@@ -211,12 +211,12 @@ export async function disconnectProvider(form: FormData) {
   const provider = z.enum(OAUTH_PROVIDERS).parse(form.get("provider"));
   const providers = await getLinkedProviders(user.id);
   // Never leave an account without a way to sign in.
-  if (!user.hasPassword && providers.length <= 1) redirect("/account/settings?error=last_login_method");
+  if (!user.hasPassword && providers.length <= 1) redirect("/account/security?error=last_login_method");
   const db = await getDb();
   await db.delete(schema.oauthAccounts).where(and(eq(schema.oauthAccounts.userId, user.id), eq(schema.oauthAccounts.provider, provider)));
   await sendSecurityNotice(user.email, `${provider === "google" ? "Google" : "Apple"} sign-in was disconnected from your account.`);
-  revalidatePath("/account/settings");
-  redirect("/account/settings?disconnected=1");
+  revalidatePath("/account", "layout");
+  redirect("/account/security?disconnected=1");
 }
 
 export async function signOutEverywhere() {
@@ -237,7 +237,7 @@ export async function setNewsletter(form: FormData) {
   } else if (existing) {
     await db.update(schema.subscribers).set({ unsubscribedAt: new Date() }).where(eq(schema.subscribers.id, existing.id));
   }
-  revalidatePath("/account/settings");
+  revalidatePath("/account", "layout");
 }
 
 export async function deleteAccount(_: FormState, form: FormData): Promise<FormState> {

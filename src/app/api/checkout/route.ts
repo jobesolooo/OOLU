@@ -9,6 +9,7 @@ import { getStockMap, stockKey } from "@/lib/inventory";
 import { attachCheckoutSession, createPendingOrder } from "@/lib/orders";
 import { getCurrentUser } from "@/lib/auth";
 import { ensureStripeCustomer } from "@/lib/customers";
+import { defaultAddress, syncShippingToStripe } from "@/lib/account";
 import { shippingConfig } from "@/lib/shipping";
 import { MAX_QTY } from "@/lib/constants";
 import { allVariantKeys, variantLabel } from "@/lib/variants";
@@ -121,6 +122,11 @@ export async function POST(req: Request) {
   try {
     const stripe = getStripe();
     const customerId = user ? await ensureStripeCustomer(user) : null;
+    // Pre-fill Stripe's address form with the default address from the account.
+    if (user && customerId) {
+      const addr = await defaultAddress(user.id);
+      if (addr) await syncShippingToStripe(user.id, addr);
+    }
     const giftCoupon = giftCard && giftCardAmount > 0 ? await createGiftCardCoupon(giftCardAmount, currency, giftCard.code.slice(-4)) : null;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

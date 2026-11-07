@@ -2,8 +2,8 @@
 
 import { useT, useTx } from "@/components/Prefs";
 import { useActionState } from "react";
-import { BadgeCheck } from "lucide-react";
-import { changePassword, deleteAccount, updateProfile, type FormState } from "../actions";
+import { changePassword, deleteAccount, type FormState } from "../actions";
+import { Field } from "../forms";
 import { PasswordInput } from "../AuthForm";
 
 function Msg({ state }: { state: FormState }) {
@@ -12,42 +12,26 @@ function Msg({ state }: { state: FormState }) {
   return <p className={`text-[13px] ${state.error ? "text-red-700" : "text-emerald-700"}`} role="status">{tx(state.error ?? state.ok)}</p>;
 }
 
-export function ProfileForm({ name, email, verified }: { name: string; email: string; verified: boolean }) {
-  const t = useT();
-  const [state, action, pending] = useActionState<FormState, FormData>(updateProfile, undefined);
-  return (
-    <form action={action} className="space-y-4">
-      <label className="block">
-        <span className="label mb-2 block text-[11px]">{t("auth.name")}</span>
-        <input name="name" defaultValue={name} required maxLength={80} autoComplete="name" className="input" />
-      </label>
-      <div>
-        <span className="label mb-2 block text-[11px]">{t("auth.email")}</span>
-        <p className="flex items-center gap-2 text-[15px]">
-          {email}
-          {verified ? (
-            <span className="flex items-center gap-1 text-xs text-emerald-700"><BadgeCheck className="size-4" /> {t("set.confirmed")}</span>
-          ) : (
-            <span className="text-xs text-amber-700">{t("set.notConfirmed")}</span>
-          )}
-        </p>
-      </div>
-      <Msg state={state} />
-      <button className="btn-solid" disabled={pending}>{pending ? t("auth.saving") : t("set.save")}</button>
-    </form>
-  );
-}
-
 export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
   const t = useT();
   const [state, action, pending] = useActionState<FormState, FormData>(changePassword, undefined);
   return (
-    <form action={action} className="space-y-3">
-      {hasPassword && <PasswordInput name="current" autoComplete="current-password" placeholder={t("auth.currentPw")} />}
-      <PasswordInput autoComplete="new-password" placeholder={t("auth.newPw")} />
-      <PasswordInput name="confirm" autoComplete="new-password" placeholder={t("auth.repeatPw")} />
-      <Msg state={state} />
-      <button className="btn-solid" disabled={pending}>{pending ? t("auth.saving") : hasPassword ? t("set.changePw") : t("set.addPw")}</button>
+    <form action={action} className="grid grid-cols-[minmax(0,1fr)] gap-x-4 gap-y-5 sm:grid-cols-2">
+      {hasPassword && (
+        <Field label={t("auth.currentPw")} className="sm:col-span-2 sm:max-w-[calc(50%-8px)]">
+          <PasswordInput name="current" autoComplete="current-password" />
+        </Field>
+      )}
+      <Field label={t("auth.newPw")}>
+        <PasswordInput autoComplete="new-password" />
+      </Field>
+      <Field label={t("auth.repeatPw")}>
+        <PasswordInput name="confirm" autoComplete="new-password" />
+      </Field>
+      <div className="space-y-3 sm:col-span-2">
+        <Msg state={state} />
+        <button className="btn-solid" disabled={pending}>{pending ? t("auth.saving") : hasPassword ? t("set.changePw") : t("set.addPw")}</button>
+      </div>
     </form>
   );
 }
