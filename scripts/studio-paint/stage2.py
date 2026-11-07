@@ -62,6 +62,24 @@ def fabric(poly,base,seed,light=-1,rim=LAV,rimk=0.5,folds=6,fold_len=(0.25,0.7),
 
 fl0=mask([(0,900),(BX0,BY1),(BX1,BY1),(1440,900)])
 mul(fl0,0.55)
+
+def garment(name,cx,top,width,light=1,rimk=0.45,k=0.62,seed=0):
+    """Place a real product cut-out, relit for the room: dimmed, shaded from one side, rim light."""
+    g=Image.open(f"cut/{name}.png"); r=width*S/g.width
+    g=g.resize((int(g.width*r),int(g.height*r)),Image.LANCZOS)
+    a=np.asarray(g,np.float32)/255; h,w=a.shape[:2]
+    x0,y0=int((cx-width/2)*S),int(top*S)
+    m=np.zeros((H,W),np.float32); rgb=np.zeros((H,W,3),np.float32)
+    ys,xs=slice(max(0,y0),min(H,y0+h)),slice(max(0,x0),min(W,x0+w))
+    sa=a[ys.start-y0:ys.stop-y0, xs.start-x0:xs.stop-x0]
+    m[ys,xs]=sa[:,:,3]; rgb[ys,xs]=sa[:,:,:3]
+    u=np.clip((XX-(cx-width/2))/width,0,1); v=np.clip((YY-top)/(h/S),0,1)
+    lit=k*(0.7+0.5*(u if light>0 else 1-u))*(1.05-0.3*v)
+    rgb=rgb**1.15*lit[:,:,None]*np.array([0.9,0.92,1.0],np.float32)
+    paint(m,rgb)
+    add(nd.gaussian_filter(edge(m,-light,3),1.5*S)*m,(0.72,0.66,1.0),rimk)
+    return m
+
 # ════════ contact shadows first (under everything)
 mul(ell(300,722,150,26,10),0.35)
 mul(ell(1255,768,190,22,12),0.4)
@@ -96,9 +114,17 @@ add(ell(110,830,170,40,30),(0.25,0.4,0.9),0.2)
 screens=[]
 def screen(x0,y0,x1,y1,kind,skew=0.0):
     w,h=int((x1-x0)*S),int((y1-y0)*S)
-    s=Image.new("RGB",(w,h),(4,5,12)); d=ImageDraw.Draw(s)
-    for gx in range(0,w,int(14*S)): d.line([(gx,0),(gx,h)],fill=(10,12,26))
-    for gy in range(0,h,int(14*S)): d.line([(0,gy),(w,gy)],fill=(10,12,26))
+    if kind.startswith("page:"):
+        pg=Image.open("cut/page-"+kind[5:]+".png").convert("RGB")
+        r=max(w/pg.width,h/pg.height); pg=pg.resize((int(pg.width*r+1),int(pg.height*r+1)),Image.LANCZOS)
+        s=pg.crop((0,0,w,h))
+    else:
+        s=Image.new("RGB",(w,h),(4,5,12))
+    d=ImageDraw.Draw(s)
+    page=kind.startswith("page:")
+    if not page:
+        for gx in range(0,w,int(14*S)): d.line([(gx,0),(gx,h)],fill=(10,12,26))
+        for gy in range(0,h,int(14*S)): d.line([(0,gy),(w,gy)],fill=(10,12,26))
     hdr=(186,170,255)
     if kind=="os":
         d.text((10*S,8*S),"OOLU",font=bebas(30),fill=(244,239,227))
@@ -142,6 +168,7 @@ def screen(x0,y0,x1,y1,kind,skew=0.0):
             for t in np.linspace(0,1,9): p=lerp(a,b,t); d.ellipse([p[0]-1.5*S,p[1]-1.5*S,p[0]+1.5*S,p[1]+1.5*S],fill=(230,226,255))
         d.text((w*0.5,8*S),"SEAM 1.0",font=mono(5.5),fill=hdr)
     a=np.asarray(s,np.float32)/255
+    if page: a=(a**1.1)*np.array([0.86,0.87,0.95],np.float32)   # monitor gamma, slightly cool
     # scanlines
     a*= (0.9+0.1*(np.arange(h)%int(3*S)<S))[:,None,None]
     m=np.zeros((H,W),np.float32); y0p,x0p=int(y0*S),int(x0*S)
@@ -153,9 +180,9 @@ def screen(x0,y0,x1,y1,kind,skew=0.0):
     screens.append({"x":x0,"y":y0,"w":x1-x0,"h":y1-y0,"kind":kind})
 # mounting frame behind screens
 paint(mask([(470,262),(970,262),(970,452),(470,452)],1),(0.035,0.035,0.045))
-screen(585,272,855,442,"os")
-screen(480,272,577,355,"drop"); screen(480,362,577,442,"cam")
-screen(863,272,960,355,"stock"); screen(863,362,960,442,"pattern")
+screen(585,272,855,442,"page:home")
+screen(480,272,577,355,"page:shop"); screen(480,362,577,442,"page:product")
+screen(863,272,960,355,"page:journal"); screen(863,362,960,442,"page:gift")
 # console desk
 desk_top=[(455,470),(985,470),(1010,500),(430,500)]
 paint(mask([(470,452),(970,452),(985,470),(455,470)]),(0.05,0.05,0.06))
@@ -181,22 +208,10 @@ add(np.clip(ell(cx,base,128,22,0.6)-ell(cx,base,124,19,0.6),0,1),LAV,0.9)       
 add(nd.gaussian_filter(np.clip(ell(cx,base,128,22)-ell(cx,base,124,19),0,1),8*S),LAV,0.7)
 paint(mask([(cx-3,575),(cx+3,575),(cx+3,base-2),(cx-3,base-2)]),(0.25,0.25,0.3))
 paint(mask([(cx-14,574),(cx+14,574),(cx+10,590),(cx-10,590)],0.5),(0.12,0.12,0.14))
-# hoodie
-hood=[(cx-30,398),(cx-16,384),(cx,380),(cx+16,384),(cx+30,398),
-      (cx+62,414),(cx+80,440),(cx+92,520),(cx+88,560),(cx+72,562),(cx+66,512),(cx+62,470),
-      (cx+60,578),(cx-60,578),(cx-62,470),(cx-66,512),(cx-72,562),(cx-88,560),(cx-92,520),(cx-80,440),(cx-62,414)]
-m=fabric(hood,(0.2,0.2,0.24),seed=9,folds=9,fold_len=(0.2,0.55),rimk=0.7,gloss=0.08)
-# hood opening, cuffs, hem, pocket, drawcords, chest print
-paint(ell(cx,392,18,11,1),(0.025,0.025,0.03))
-for x0 in (cx-88,cx+72):
-    mul(mask([(x0,548),(x0+16,548),(x0+16,560),(x0,560)],0.6),0.6)
-mul(mask([(cx-60,564),(cx+60,564),(cx+60,578),(cx-60,578)],0.8),0.65)
-mul(mask([(cx-34,520),(cx+34,520),(cx+40,556),(cx-40,556)],1.2),0.7)
-add(nd.gaussian_filter(mask([(cx-34,519),(cx+34,519),(cx+34,521),(cx-34,521)]),0.6*S),(1,1,1),0.08)
-for dx in (-7,7):
-    paint(mask([(cx+dx-1,400),(cx+dx+1,400),(cx+dx+1.5,446),(cx+dx-0.5,446)],0.4),(0.75,0.74,0.72))
-im,d=layer(); d.text(((cx-22)*S,456*S),"OOLU",font=bebas(22),fill=255)
-t=arr(im,0.15); paint(t*0.9*m,(0.86,0.84,0.8))
+# hoodie: the real OOLU hoodie from the black tracksuit set
+m=garment("hoodie-black",cx,372,250,light=-1,rimk=0.75,k=0.95)
+hb=np.where(m.max(1)>0.5)[0].max()/S
+paint(mask([(cx-3,hb-6),(cx+3,hb-6),(cx+3,base-2),(cx-3,base-2)]),(0.25,0.25,0.3))
 # spotlight hit on shoulders
 add(ell(cx-20,420,60,30,22)*m,(0.9,0.9,1),0.12)
 
@@ -207,27 +222,17 @@ for x in (rx0,rx1):
     paint(mask([(x-26,766),(x+26,766),(x+26,772),(x-26,772)],0.5),(0.12,0.12,0.14))
 paint(mask([(rx0-6,ry-3),(rx1+6,ry-3),(rx1+6,ry+3),(rx0-6,ry+3)],0.5),(0.42,0.43,0.48))
 add(nd.gaussian_filter(mask([(rx0,ry-3),(rx1,ry-3),(rx1,ry-2),(rx0,ry-2)]),0.5*S),(1,1,1),0.4)
-items=[("jacket",1150,(0.13,0.13,0.15)),("hoodie",1196,(0.42,0.38,0.52)),("jacket",1240,(0.09,0.09,0.1)),
-       ("tee",1282,(0.82,0.8,0.75)),("trousers",1318,(0.16,0.16,0.18)),("hoodie",1360,(0.55,0.54,0.56))]
-for i,(kind,x,c) in enumerate(items):
-    # hanger
+items=[("zip-grey",1166,132),("tee-white",1208,118),("tee-purple",1250,118),("hoodie-grey",1292,130),
+       ("tee-pink",1330,118),("tee-black",1362,114)]
+prev=None
+for i,(name,x,wd) in enumerate(items):
     hk,hd=layer(); hd.arc([(x-6)*S,(ry-8)*S,(x+6)*S,(ry+4)*S],180,360,fill=200,width=int(1.5*S))
-    hd.line(P((x,ry+1),(x-28,ry+16),(x+28,ry+16),(x,ry+1)),fill=200,width=int(1.5*S))
+    hd.line(P((x,ry+1),(x-44,ry+16),(x+44,ry+16),(x,ry+1)),fill=200,width=int(1.5*S))
     paint(arr(hk),(0.55,0.56,0.6))
-    if kind=="trousers":
-        poly=[(x-24,ry+14),(x+24,ry+14),(x+28,ry+250),(x+6,ry+250),(x,ry+70),(x-6,ry+250),(x-28,ry+250)]
-    elif kind=="tee":
-        poly=[(x-30,ry+16),(x-10,ry+12),(x+10,ry+12),(x+30,ry+16),(x+44,ry+50),(x+30,ry+56),(x+30,ry+150),(x-30,ry+150),(x-30,ry+56),(x-44,ry+50)]
-    else:
-        L=230 if kind=="jacket" else 200
-        poly=[(x-32,ry+16),(x-12,ry+10),(x+12,ry+10),(x+32,ry+16),(x+40,ry+40),(x+44,ry+L-10),(x+30,ry+L),(x-30,ry+L),(x-44,ry+L-10),(x-40,ry+40)]
-    m=fabric(poly,c,seed=20+i,light=1,rim=(0.75,0.7,1.0),rimk=0.35,folds=6 if kind!="tee" else 4,fold_len=(0.35,0.85))
-    if kind=="jacket":
-        paint(mask([(x-0.8,ry+14),(x+0.8,ry+14),(x+0.8,ry+222),(x-0.8,ry+222)]),(0.38,0.38,0.42))  # zip
-        add(mask([(x-0.6,ry+14),(x+0.6,ry+14),(x+0.6,ry+222),(x-0.6,ry+222)]),(1,1,1),0.2)
-    if kind=="hoodie":
-        mul(mask([(x-24,ry+150),(x+24,ry+150),(x+28,ry+182),(x-28,ry+182)],1),0.72)
-    mul(np.clip(nd.shift(m,(0,-8*S),order=0)-m,0,1)*0.0+edge(m,-1,10)*0.0,1)
+    if prev is not None:   # each piece shades the one hanging behind it
+        mul(np.clip(nd.shift(prev,(0,0),order=0),0,1)*np.clip(1-np.abs(XX-(x-wd/2))/16,0,1),0.45)
+    m=garment(name,x,ry+8,wd,light=1,rimk=0.35,k=0.6)
+    prev=m
 # shadow of the rack on the wall/floor
 mul(ell(1260,780,180,16,14),0.5)
 
