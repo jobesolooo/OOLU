@@ -151,6 +151,20 @@ export async function setMessageStatus(form: FormData) {
   revalidatePath("/admin/messages");
 }
 
+/** Delete one inbox message, or (with `all=done`) every message marked done. */
+export async function deleteMessage(form: FormData) {
+  await requireAdmin();
+  const db = await getDb();
+  if (form.get("all") === "done") {
+    await db.delete(schema.contactMessages).where(eq(schema.contactMessages.status, "done"));
+  } else {
+    const id = z.string().uuid().parse(form.get("id"));
+    await db.delete(schema.contactMessages).where(eq(schema.contactMessages.id, id));
+  }
+  revalidatePath("/admin/messages");
+  revalidatePath("/admin", "layout");
+}
+
 /* ── Returns ─────────────────────────────────────────────── */
 export async function updateReturn(_: ActionResult, form: FormData): Promise<ActionResult> {
   await requireAdmin();

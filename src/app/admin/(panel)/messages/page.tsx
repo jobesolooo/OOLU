@@ -3,7 +3,8 @@ import { AdminEmpty } from "../Empty";
 import { Inbox } from "lucide-react";
 import { getDb, schema } from "@/lib/db";
 import { formatDate } from "@/lib/format";
-import { setMessageStatus } from "../actions";
+import { deleteMessage, setMessageStatus } from "../actions";
+import { ConfirmButton } from "../ConfirmButton";
 import { AdminHeader, Segmented } from "../ui";
 
 export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/messages">) {
@@ -17,7 +18,22 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
         eyebrow="People"
         title="Inbox"
         description="Messages from the contact form. Reply opens your email app with the subject filled in."
-        actions={<Segmented items={(["new", "done"] as const).map((s) => ({ href: `/admin/messages?status=${s}`, label: s === "new" ? "Open" : "Done", active: s === status }))} />}
+        actions={
+          <div className="flex flex-wrap items-center gap-3">
+            <Segmented items={(["new", "done"] as const).map((s) => ({ href: `/admin/messages?status=${s}`, label: s === "new" ? "Open" : "Done", active: s === status }))} />
+            {status === "done" && rows.length > 0 && (
+              <form action={deleteMessage}>
+                <input type="hidden" name="all" value="done" />
+                <ConfirmButton
+                  message={`Delete all ${rows.length} done message${rows.length === 1 ? "" : "s"}? This can't be undone.`}
+                  className="border border-rose-200 px-4 py-2.5 text-[11px] tracking-[0.1em] text-rose-700 uppercase transition-colors hover:bg-rose-50"
+                >
+                  Delete all done
+                </ConfirmButton>
+              </form>
+            )}
+          </div>
+        }
       />
       <ul className="space-y-3">
         {rows.length === 0 && (
@@ -37,12 +53,21 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
                 <p className="font-display text-[22px] tracking-[-0.01em]">{m.topic}{m.orderNumber ? ` · Order #${m.orderNumber}` : ""}</p>
                 <p className="text-xs text-ash">{m.name} · {m.email} · {formatDate(m.createdAt)}</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.topic}`)}`} className="btn-solid px-4 py-2.5">Reply</a>
                 <form action={setMessageStatus}>
                   <input type="hidden" name="id" value={m.id} />
                   <input type="hidden" name="status" value={m.status === "new" ? "done" : "new"} />
                   <button className="border border-black/20 px-4 py-2.5 text-[11px] tracking-[0.1em] uppercase">{m.status === "new" ? "Mark done" : "Reopen"}</button>
+                </form>
+                <form action={deleteMessage}>
+                  <input type="hidden" name="id" value={m.id} />
+                  <ConfirmButton
+                    message={`Delete this message from ${m.name}? This can't be undone.`}
+                    className="border border-rose-200 px-4 py-2.5 text-[11px] tracking-[0.1em] text-rose-700 uppercase transition-colors hover:bg-rose-50"
+                  >
+                    Delete
+                  </ConfirmButton>
                 </form>
               </div>
             </div>
