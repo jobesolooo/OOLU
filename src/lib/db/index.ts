@@ -9,7 +9,8 @@ export type DB = PostgresJsDatabase<typeof schema>;
 const globalForDb = globalThis as unknown as { __oolu_db?: Promise<DB> };
 
 async function connect(): Promise<DB> {
-  const url = process.env.DATABASE_URL;
+  // Vercel's Neon/Postgres integration sets DATABASE_URL (and POSTGRES_URL on older setups).
+  const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
   if (url) {
     const postgres = (await import("postgres")).default;
