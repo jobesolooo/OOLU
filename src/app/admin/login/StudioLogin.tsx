@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
 import { studioAction, type StudioState } from "./actions";
 import { StaffMark } from "@/components/auth/StaffMark";
-import { WaterGL } from "./WaterGL";
+import { StudioScene } from "./StudioScene";
 
 /* ── Passcode boxes ──────────────────────────────────────── */
 /**
@@ -93,55 +92,38 @@ function CodeBoxes({ onComplete, onType, disabled }: { onComplete: () => void; o
   );
 }
 
-/* ── Cave scenery ────────────────────────────────────────── */
+/* ── The studio ──────────────────────────────────────────── */
 /**
- * Background: a real photo taken from inside a cave, behind a waterfall
- * (Muhammad Kamran Khan, Unsplash License), graded to night with OOLU lavender.
- * Kept alive with a slow drifting camera, GPU-drawn water over the falls,
- * mist, spray and soft light.
+ * OOLU's underground studio: rock and poured concrete, a light ceiling, the
+ * monitor wall, rack, display turntable and cutting table (see StudioScene).
+ * Entrance: the panels switch on back to front, screens boot, a beam sweeps
+ * the floor. Only opacity/transform are animated, so it's smooth everywhere.
  */
-function Cave() {
+function Studio() {
   return (
-    <div aria-hidden className="studio-lights absolute inset-0 overflow-hidden bg-[#06050a]">
-      {/* the photo, slowly drifting */}
-      <div className="studio-drift absolute inset-[-6%]">
-        <Image
-          src="/images/studio/cave.jpg"
-          alt=""
-          fill
-          priority
-          sizes="112vw"
-          className="object-cover object-[22%_40%] [filter:brightness(0.4)_saturate(0.3)_contrast(1.2)]"
-        />
-        {/* night grade: lavender in the light, near-black in the shadows */}
-        <div className="absolute inset-0 bg-[#4b3a9e] mix-blend-color opacity-60" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,5,10,0.55),rgba(6,5,10,0.05)_35%,rgba(6,5,10,0.35)_70%,rgba(6,5,10,0.9))]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,5,10,0.15)_0%,transparent_40%,rgba(6,5,10,0.55)_100%)]" />
-      </div>
-      {/* live water over the photo's waterfall */}
-      <WaterGL
-        mode="shimmer"
-        scale={0.35}
-        fps={30}
-        className="absolute inset-y-0 left-[8%] h-full w-[52%] opacity-80 mix-blend-screen [mask-image:radial-gradient(60%_55%_at_50%_48%,black_35%,transparent_80%)] max-md:left-0 max-md:w-full"
-      />
-      {/* light pouring in from the cave mouth */}
-      <div className="studio-shaft absolute top-[-10%] right-[2%] h-[90vh] w-[38vw] origin-top-right rotate-[18deg] bg-[linear-gradient(to_bottom,rgba(214,204,255,0.16),rgba(165,146,255,0.05)_55%,transparent)] blur-2xl" />
-      {/* drifting mist */}
-      <div className="studio-mist absolute inset-x-[-20%] bottom-[6vh] h-[34vh] bg-[radial-gradient(50%_50%_at_30%_50%,rgba(200,190,255,0.12),transparent_70%),radial-gradient(40%_50%_at_75%_60%,rgba(200,190,255,0.09),transparent_70%)] blur-xl" />
-      {/* spray drifting up */}
-      {[8, 19, 27, 36, 47, 58, 71, 84, 93].map((x, i) => (
+    <div aria-hidden className="absolute inset-0 overflow-hidden bg-[#050409]">
+      <StudioScene />
+      {/* beam that sweeps across once the lights are on */}
+      <div className="lab-sweep absolute inset-y-0 left-0 w-[40vw] bg-[linear-gradient(100deg,transparent,rgba(230,224,255,0.10)_45%,rgba(230,224,255,0.16)_50%,rgba(230,224,255,0.10)_55%,transparent)]" />
+      {/* dust floating in the light */}
+      {[12, 23, 31, 44, 57, 66, 74, 86, 92].map((x, i) => (
         <span
           key={x}
-          className="studio-spray absolute bottom-[10vh] size-1 rounded-full bg-[#d9d2ff]/60"
-          style={{ left: `${x}%`, animationDelay: `${(i * 0.9) % 6}s`, animationDuration: `${6 + (i % 3) * 2}s` }}
+          className="lab-mote absolute size-[3px] rounded-full bg-[#ece8ff]/60"
+          style={{ left: `${x}%`, top: `${30 + ((i * 17) % 45)}%`, animationDelay: `${(i * 1.3) % 9}s`, animationDuration: `${9 + (i % 4) * 3}s` }}
         />
       ))}
-      {/* vignette + a soft dark halo so the sign-in stays readable */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_45%,transparent_40%,rgba(4,3,8,0.85)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(30%_38%_at_50%_52%,rgba(5,4,8,0.6),transparent_75%)]" />
-      {/* grain */}
-      <div className="absolute inset-0 opacity-[0.07] mix-blend-overlay" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
+      {/* keep the centre calm so the sign-in reads clearly */}
+      <div className="absolute inset-0 bg-[radial-gradient(34%_42%_at_50%_52%,rgba(5,4,9,0.82),rgba(5,4,9,0.35)_60%,transparent_85%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_40%,transparent_55%,rgba(3,2,6,0.8)_100%)]" />
+      {/* location tag, bottom-left */}
+      <div className="lab-tag absolute bottom-5 left-5 hidden font-mono text-[10px] tracking-[0.18em] text-[#ece8ff]/80 uppercase sm:block">
+        <div className="border border-[#ece8ff]/40 bg-black/40 px-3 py-1.5 backdrop-blur-sm">OOLU Studio</div>
+        <div className="mt-1 border border-[#ece8ff]/40 bg-black/40 px-3 py-1.5 backdrop-blur-sm">Sublevel −2 · Amsterdam</div>
+        <div className="mt-1 px-1 text-[#ece8ff]/50">52.3676° N · 4.9041° E</div>
+      </div>
+      {/* power off → lights on */}
+      <div className="lab-dark absolute inset-0 bg-[#020104]" />
     </div>
   );
 }
@@ -158,8 +140,8 @@ export function StudioLogin({ next, notice }: { next?: string; notice?: string |
 
   return (
     <div className="fixed inset-0 z-[90] overflow-hidden bg-[#050505] text-[#f4efe3]">
-      {/* ── Inside the cave ── */}
-      <Cave />
+      {/* ── Inside the studio ── */}
+      <Studio />
 
       {/* ── Panel ── */}
       <div className="relative flex h-full flex-col">
@@ -238,12 +220,6 @@ export function StudioLogin({ next, notice }: { next?: string; notice?: string |
         </main>
       </div>
 
-      {/* ── Waterfall entrance (plays once on load) ── */}
-      <div aria-hidden className="studio-falls pointer-events-none absolute inset-0 overflow-hidden bg-[#05040a]">
-        <WaterGL mode="curtain" partAt={1.5} partFor={1.15} stopAfter={3.2} scale={0.75} className="absolute inset-0 size-full" />
-        {/* the light dims before you step through */}
-        <div className="studio-dim absolute inset-0 bg-black" />
-      </div>
     </div>
   );
 }

@@ -187,56 +187,55 @@ details > summary::-webkit-details-marker { display: none; }
 details[open] .rotate-open { transform: rotate(45deg); }
 
 /* ── Staff studio ─────────────────────────────────────────── */
-/* Entrance: you stand behind a waterfall, the light dims, the water parts and
-   you step through into the cave (≈3s). Then slow ambient motion in the cave. */
-@keyframes studio-dim {
-  0%, 15% { opacity: 0; }
-  30% { opacity: 0.55; }
-  36% { opacity: 0.25; }
-  48% { opacity: 0.6; }
-  60% { opacity: 0.68; }
-  100% { opacity: 0; }
+/* Entrance: lights off, then the ceiling panels switch on back to front, the screens
+   boot and a beam sweeps the floor (~2s). Only opacity/transform are animated. */
+@keyframes lab-dark { 0% { opacity: 1; } 20% { opacity: 0.92; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes lab-on {
+  0% { opacity: 0; }
+  35% { opacity: 0.95; }
+  45% { opacity: 0.25; }
+  60% { opacity: 1; }
+  100% { opacity: 1; }
 }
-@keyframes studio-through {
-  0% { transform: scale(1); filter: blur(0); opacity: 1; }
-  70% { transform: scale(1.3); filter: blur(3px); opacity: 1; }
-  100% { transform: scale(1.45); filter: blur(10px); opacity: 0; visibility: hidden; }
+@keyframes lab-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lab-boot {
+  0% { opacity: 0; transform: scaleY(0.02); }
+  40% { opacity: 1; transform: scaleY(0.02); }
+  100% { opacity: 1; transform: scaleY(1); }
 }
-@keyframes studio-lights { from { opacity: 0; filter: brightness(0.3); } to { opacity: 1; filter: none; } }
+@keyframes lab-sweep { 0% { transform: translateX(-40vw); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(110vw); opacity: 0; } }
+@keyframes lab-scan { from { transform: translateY(-14px); } to { transform: translateY(150px); } }
+@keyframes lab-ring { to { stroke-dashoffset: -240; } }
+@keyframes lab-flicker { 0%, 92%, 100% { opacity: 1; } 93% { opacity: 0.3; } 94% { opacity: 1; } 96% { opacity: 0.5; } }
+@keyframes lab-blink { 50% { opacity: 0.25; } }
+@keyframes lab-neon { 0% { opacity: 0; } 20% { opacity: 1; } 28% { opacity: 0.2; } 40% { opacity: 1; } 46% { opacity: 0.5; } 60%, 100% { opacity: 1; } }
+@keyframes lab-mote { 0% { transform: translate(0, 0); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translate(2vw, -16vh); opacity: 0; } }
 @keyframes studio-rise {
   from { opacity: 0; transform: translateY(28px) scale(0.98); filter: blur(4px); }
   to { opacity: 1; transform: none; filter: none; }
 }
 @keyframes studio-blink { 50% { opacity: 0; } }
-@keyframes studio-shaft { 0% { opacity: 0.55; transform: translateX(-1.5vw); } 100% { opacity: 1; transform: translateX(1.5vw); } }
-@keyframes studio-mist { 0% { transform: translateX(-6%); } 100% { transform: translateX(6%); } }
-@keyframes studio-drift {
-  0% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.06) translate(-1.2%, -0.8%); }
-  100% { transform: scale(1.03) translate(1%, 0.6%); }
-}
-@keyframes studio-spray {
-  0% { transform: translateY(0); opacity: 0; }
-  15% { opacity: 0.8; }
-  100% { transform: translateY(-46vh) translateX(2vw); opacity: 0; }
-}
 
-/* the water curtain */
-
-.studio-falls { animation: studio-through 1.2s cubic-bezier(0.55, 0, 0.3, 1) 1.75s forwards; }
-.studio-dim { opacity: 0; animation: studio-dim 2.6s ease-in-out 0.1s forwards; }
-.studio-lights { opacity: 0; animation: studio-lights 1.4s ease-out 2.1s forwards; }
-.studio-rise { opacity: 0; animation: studio-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 2.7s forwards; }
+.lab-dark { animation: lab-dark 1.6s ease-out 0.3s forwards; }
+.lab-lp { opacity: 0; animation: lab-on 0.5s steps(1, end) forwards; }
+.lab-flicker { animation: lab-on 0.5s steps(1, end) forwards, lab-flicker 7s linear 3s infinite; }
+.lab-glowin { opacity: 0; animation: lab-fade-in 1s ease-out 1.1s forwards; }
+.lab-screen { opacity: 0; transform-box: fill-box; transform-origin: center; animation: lab-boot 0.45s ease-out forwards; }
+.lab-scan { animation: lab-scan 3.2s linear infinite; }
+.lab-sweep { opacity: 0; animation: lab-sweep 1.4s ease-in-out 1.5s forwards; }
+.lab-ring { animation: lab-ring 6s linear infinite; }
+.lab-blink { animation: lab-blink 1.6s ease-in-out infinite; }
+.lab-neon { opacity: 0; animation: lab-neon 0.9s steps(1, end) forwards; }
+.lab-mote { opacity: 0; animation: lab-mote 10s ease-in-out infinite; }
+.lab-tag { opacity: 0; animation: lab-fade-in 0.6s ease-out 1.8s forwards; }
+.studio-rise { opacity: 0; animation: studio-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 1.9s forwards; }
 .studio-caret { animation: studio-blink 1s steps(1) infinite; }
-.studio-shaft { animation: studio-shaft 9s ease-in-out infinite alternate; }
-.studio-mist { animation: studio-mist 18s ease-in-out infinite alternate; }
-.studio-drift { animation: studio-drift 38s ease-in-out infinite alternate; }
-.studio-spray { animation: studio-spray 7s ease-out infinite; opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .studio-falls { display: none; }
-  .studio-lights, .studio-rise { animation: none; opacity: 1; }
-  .studio-caret, .studio-shaft, .studio-mist, .studio-spray, .studio-drift { animation: none; }
+  .lab-dark { display: none; }
+  .lab-lp, .lab-glowin, .lab-screen, .lab-tag, .lab-neon, .studio-rise { animation: none; opacity: 1; transform: none; }
+  .lab-flicker, .lab-scan, .lab-sweep, .lab-ring, .lab-blink, .lab-mote, .studio-caret { animation: none; }
+  .lab-sweep, .lab-mote { display: none; }
 }
 
 /* ── OOLU marquee ───────────────────────────────────────── */
