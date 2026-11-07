@@ -95,7 +95,7 @@ function CodeBoxes({ onComplete, onType, disabled }: { onComplete: () => void; o
 /* ── The studio ──────────────────────────────────────────── */
 /**
  * OOLU's underground studio: rock and poured concrete, a light ceiling, the
- * monitor wall, rack, display turntable and cutting table (see StudioScene).
+ * monitor wall, server racks, the display form, the garment rail and the cutting bench (see StudioScene).
  * Entrance: the panels switch on back to front, screens boot, a beam sweeps
  * the floor. Only opacity/transform are animated, so it's smooth everywhere.
  */
@@ -114,7 +114,9 @@ function Studio() {
         />
       ))}
       {/* keep the centre calm so the sign-in reads clearly */}
-      <div className="absolute inset-0 bg-[radial-gradient(34%_42%_at_50%_52%,rgba(5,4,9,0.82),rgba(5,4,9,0.35)_60%,transparent_85%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(40%_50%_at_50%_52%,rgba(5,4,9,0.9),rgba(5,4,9,0.6)_55%,rgba(5,4,9,0.15)_85%,transparent)]" />
+      {/* phones: the form covers most of the screen, so calm the whole picture a bit more */}
+      <div className="absolute inset-0 bg-[#050409]/55 sm:hidden" />
       <div className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_40%,transparent_55%,rgba(3,2,6,0.8)_100%)]" />
       {/* location tag, bottom-left */}
       <div className="lab-tag absolute bottom-5 left-5 hidden font-mono text-[10px] tracking-[0.18em] text-[#ece8ff]/80 uppercase sm:block">
