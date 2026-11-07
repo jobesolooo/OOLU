@@ -96,6 +96,23 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
                     {b.caption && <figcaption className="mt-3 px-4 text-sm text-ash sm:px-0">{b.caption}</figcaption>}
                   </figure>
                 );
+              case "list":
+                return (
+                  <section key={i}>
+                    {b.title && <h3 className="eyebrow mb-4">{b.title}</h3>}
+                    <dl className="divide-y divide-black/10 border-y border-black/10">
+                      {b.items.map((it, j) => (
+                        <div key={j} className="grid gap-1 py-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-8">
+                          <dt className="font-display text-[22px] leading-tight tracking-[-0.01em]">
+                            <span className="mr-2 font-mono text-[11px] tracking-normal text-accent tabular-nums">{String(j + 1).padStart(2, "0")}</span>
+                            {it.label}
+                          </dt>
+                          <dd className="text-[15px] leading-[1.75] text-black/75">{it.text}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
+                );
               case "products": {
                 const items = b.slugs.map((s) => bySlug.get(s)).filter((p) => p != null);
                 if (!items.length) return null;
