@@ -6,6 +6,7 @@ import { getSettings } from "@/lib/settings";
 import { site } from "@/lib/site";
 import { DEFAULT_CURRENCY, formatMoneyShort } from "@/lib/format";
 import { getLocale, stripeLocale } from "@/i18n/server";
+import { siteUrl } from "@/lib/site-url";
 
 const Body = z.object({
   amount: z.number().int().positive(),
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     message: d.message || null,
   });
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL ? siteUrl() : new URL(req.url).origin;
   try {
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",

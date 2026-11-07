@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/catalog";
 import { JOURNAL } from "@/content/journal";
+import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base = siteUrl();
   const products = await getProducts();
   const staticPages = ["", "/shop", "/collections", "/journal", "/drops", "/gift-cards", "/about", "/help", "/help/contact", "/track"];
   const legal = ["privacy", "terms", "cookies", "returns", "imprint"].map((p) => `/legal/${p}`);

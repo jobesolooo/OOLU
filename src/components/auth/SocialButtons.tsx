@@ -1,6 +1,7 @@
 import { AppleBrandIcon } from "../icons";
 import { getT } from "@/i18n/server";
 import { dictionaries, type MessageKey } from "@/i18n/messages";
+import { isProviderConfigured } from "@/lib/oauth";
 
 export function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -17,19 +18,32 @@ export function AppleIcon({ className }: { className?: string }) {
   return <AppleBrandIcon className={className} />;
 }
 
-/** Plain links (not JS) so they work everywhere and keep the OAuth redirect server-side. */
+/**
+ * Plain links (not JS) so they work everywhere and keep the OAuth redirect server-side.
+ * Only providers that are set up are shown; with none, nothing (not even the divider) renders.
+ */
 export async function SocialButtons({ next, mode }: { next?: string; mode: "login" | "register" }) {
   const { t } = await getT();
   const q = next ? `?next=${encodeURIComponent(next)}` : "";
+  const google = isProviderConfigured("google");
+  const apple = isProviderConfigured("apple");
+  if (!google && !apple) return null;
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <a href={`/api/auth/google${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Google" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 border border-black/20 bg-white px-4 text-[15px] font-medium transition-colors hover:border-ink">
-        <GoogleIcon className="size-5" /> Google
-      </a>
-      <a href={`/api/auth/apple${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Apple" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 bg-black px-4 text-[15px] font-medium text-white transition-opacity hover:opacity-85">
-        <AppleIcon className="size-5" /> Apple
-      </a>
-    </div>
+    <>
+      <div className={google && apple ? "grid gap-3 sm:grid-cols-2" : "grid"}>
+        {google && (
+          <a href={`/api/auth/google${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Google" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 border border-black/20 bg-white px-4 text-[15px] font-medium transition-colors hover:border-ink">
+            <GoogleIcon className="size-5" /> Google
+          </a>
+        )}
+        {apple && (
+          <a href={`/api/auth/apple${q}`} aria-label={t(mode === "login" ? "auth.continueWith" : "auth.signUpWith", { provider: "Apple" })} className="flex h-[clamp(50px,6.6vh,60px)] w-full items-center justify-center gap-3 bg-black px-4 text-[15px] font-medium text-white transition-opacity hover:opacity-85">
+            <AppleIcon className="size-5" /> Apple
+          </a>
+        )}
+      </div>
+      <OrDivider />
+    </>
   );
 }
 

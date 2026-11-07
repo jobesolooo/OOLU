@@ -24,10 +24,11 @@ import { RecentlyViewed, RecordView } from "@/components/RecentlyViewed";
 import { Scroller } from "@/components/Scroller";
 import { MobileBuyBar } from "@/components/product/MobileBuyBar";
 import { allVariantKeys } from "@/lib/variants";
+import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = siteUrl();
 
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
   const product = await getProductBySlug((await params).slug);

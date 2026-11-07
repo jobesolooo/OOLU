@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { AuthForm } from "../AuthForm";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { OrDivider, SocialButtons } from "@/components/auth/SocialButtons";
+import { SocialButtons } from "@/components/auth/SocialButtons";
 import { getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,7 +33,6 @@ export default async function RegisterPage({ searchParams }: PageProps<"/account
       }
     >
       <SocialButtons next={next} mode="register" />
-      <OrDivider />
       <AuthForm mode="register" next={next} />
     </AuthShell>
   );

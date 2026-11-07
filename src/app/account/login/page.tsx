@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth";
 import { AuthForm } from "../AuthForm";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { authErrorMessage, OrDivider, SocialButtons } from "@/components/auth/SocialButtons";
+import { authErrorMessage, SocialButtons } from "@/components/auth/SocialButtons";
 import { getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,7 +29,6 @@ export default async function LoginPage({ searchParams }: PageProps<"/account/lo
       )}
       {error && <p className="mb-6 border border-red-200 bg-red-50 p-4 text-[13px] text-red-800" role="alert">{error}</p>}
       <SocialButtons next={next} mode="login" />
-      <OrDivider />
       <AuthForm mode="login" next={next} />
     </AuthShell>
   );

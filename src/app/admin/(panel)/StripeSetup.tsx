@@ -1,6 +1,7 @@
 import { CheckCircle2, Circle } from "lucide-react";
 import { isStripeConfigured } from "@/lib/stripe";
 import { cx } from "@/lib/format";
+import { siteUrl } from "@/lib/site-url";
 
 export const WEBHOOK_EVENTS = [
   "checkout.session.completed",
@@ -21,7 +22,7 @@ export function StripeSetup({ compact = false }: { compact?: boolean }) {
   const key = process.env.STRIPE_SECRET_KEY ?? "";
   const live = key.startsWith("sk_live") || key.startsWith("rk_live");
   const hook = Boolean(process.env.STRIPE_WEBHOOK_SECRET);
-  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://your-domain").replace(/\/$/, "");
+  const site = siteUrl();
   const steps = [
     {
       done: isStripeConfigured(),

@@ -13,6 +13,7 @@ import { shippingConfig } from "@/lib/shipping";
 import { MAX_QTY } from "@/lib/constants";
 import { allVariantKeys, variantLabel } from "@/lib/variants";
 import { getLocale, stripeLocale } from "@/i18n/server";
+import { siteUrl } from "@/lib/site-url";
 
 const Body = z.object({
   items: z
@@ -101,7 +102,7 @@ export async function POST(req: Request) {
     giftCardAmount,
   });
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL ? siteUrl() : new URL(req.url).origin;
   const ship = shippingConfig();
   const freeShipping = ship.freeShippingThreshold > 0 && subtotal >= ship.freeShippingThreshold;
 

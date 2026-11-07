@@ -16,8 +16,9 @@ import { Footer } from "@/components/Footer";
 import { StoreOnly } from "@/components/StoreOnly";
 import { NewsletterPopup } from "@/components/Newsletter";
 import { AccountSync } from "@/components/auth/AccountSync";
+import { siteUrl } from "@/lib/site-url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = siteUrl();
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t, locale } = await getT();

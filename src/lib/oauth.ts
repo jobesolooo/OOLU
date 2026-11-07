@@ -5,8 +5,8 @@ import { and, eq } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import type { OAuthProvider } from "./db/schema";
 import { isAdminEmail, linkGuestOrders } from "./auth";
+import { siteUrl } from "@/lib/site-url";
 
-const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 export const callbackUrl = (p: OAuthProvider) => `${siteUrl()}/api/auth/${p}/callback`;
 
 export function isProviderConfigured(p: OAuthProvider) {

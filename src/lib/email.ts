@@ -4,6 +4,7 @@ import { site } from "./site";
 import { formatMoney } from "./format";
 import { variantLabel } from "./variants";
 import type { Order, OrderItem, ShippingAddress } from "./db/schema";
+import { siteUrl } from "@/lib/site-url";
 
 type Mail = { to: string; subject: string; html: string; replyTo?: string };
 
@@ -30,7 +31,6 @@ export async function sendEmail(mail: Mail) {
 const esc = (s: string | null | undefined) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 function layout(title: string, body: string) {
   const base = siteUrl().replace(/\/$/, "");
