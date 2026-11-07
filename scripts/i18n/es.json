@@ -39,10 +39,10 @@
  "auth.createLink": "Crea una cuenta",
  "auth.currentPw": "Contraseña actual",
  "auth.email": "Email",
- "auth.err.apple_not_configured": "El inicio de sesión con Apple aún no está configurado.",
+ "auth.err.apple_not_configured": "El acceso con Apple aún no está disponible. Usa tu email por ahora.",
  "auth.err.cancelled": "Se canceló el inicio de sesión.",
  "auth.err.expired": "Ese intento de inicio de sesión caducó. Inténtalo de nuevo.",
- "auth.err.google_not_configured": "El inicio de sesión con Google aún no está configurado.",
+ "auth.err.google_not_configured": "El acceso con Google aún no está disponible. Usa tu email por ahora.",
  "auth.err.last_login_method": "Añade antes una contraseña — si no, no tendrías forma de iniciar sesión.",
  "auth.err.provider_error": "No pudimos completar el inicio de sesión con ese servicio. Inténtalo de nuevo.",
  "auth.err.sign_in_first": "Inicia sesión primero para vincular otro método de acceso.",
@@ -705,7 +705,7 @@
  "wishlist.addAria": "Guardar {name} en favoritos",
  "wishlist.chooseSize": "Elegir talla",
  "wishlist.clear": "Borrar todo",
- "wishlist.count": "{count} guardados · en este dispositivo",
+ "wishlist.count": "{count} guardado(s) en tu cuenta",
  "wishlist.empty": "Aún no has guardado nada. Toca el corazón de un producto para guardarlo aquí.",
  "wishlist.emptyTitle": "Aún no hay nada guardado.",
  "wishlist.eyebrow": "Guardado para luego",
@@ -830,5 +830,6 @@
  "ac.yourDataSub": "Una copia de todo lo que guardamos sobre ti.",
  "ac.exportBody": "Descarga tu perfil, direcciones, pedidos, reseñas, favoritos y preferencias de email en un solo archivo (JSON).",
  "ac.download": "Descargar mis datos",
- "ac.deleteSub": "Elimina tu cuenta para siempre. Guardamos los pedidos para nuestros registros, sin tu cuenta."
+ "ac.deleteSub": "Elimina tu cuenta para siempre. Guardamos los pedidos para nuestros registros, sin tu cuenta.",
+ "set.soon": "Disponible pronto"
 }

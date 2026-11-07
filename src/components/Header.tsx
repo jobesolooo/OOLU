@@ -114,7 +114,7 @@ export function Header() {
           <button aria-label={t("nav.search")} onClick={() => setSearchOpen(true)} className="grid size-9 place-items-center sm:size-auto">
             <Search className="size-[19px]" strokeWidth={1.5} />
           </button>
-          <Link href="/wishlist" aria-label={t("nav.wishlistAria", { count: savedCount })} className="relative hidden sm:block">
+          <Link href="/account/wishlist" aria-label={t("nav.wishlistAria", { count: savedCount })} className="relative hidden sm:block">
             <Heart className="size-[19px]" strokeWidth={1.5} />
             {savedCount > 0 && (
               <span className={cx("absolute -top-1.5 -right-2 grid size-[16px] place-items-center rounded-full text-[9px] font-bold", badge)}>
@@ -183,7 +183,7 @@ export function Header() {
             <div className="mt-4 grid grid-cols-2 gap-x-4">
               {(
                 [
-                  ["nav.wishlist", "/wishlist"],
+                  ["nav.wishlist", "/account/wishlist"],
                   ["nav.account", "/account"],
                   ["nav.giftCards", "/gift-cards"],
                   ["nav.track", "/track"],

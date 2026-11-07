@@ -616,8 +616,8 @@
   "E-mail"
  ],
  "auth.err.apple_not_configured": [
-  "Apple sign-in isn't set up yet.",
-  "Inloggen met Apple is nog niet ingesteld."
+  "Apple sign-in isn't available yet. Use your email for now.",
+  "Inloggen met Apple is nog niet beschikbaar. Gebruik voorlopig je e-mailadres."
  ],
  "auth.err.cancelled": [
   "Sign-in was cancelled.",
@@ -628,8 +628,8 @@
   "Die inlogpoging is verlopen. Probeer het opnieuw."
  ],
  "auth.err.google_not_configured": [
-  "Google sign-in isn't set up yet.",
-  "Inloggen met Google is nog niet ingesteld."
+  "Google sign-in isn't available yet. Use your email for now.",
+  "Inloggen met Google is nog niet beschikbaar. Gebruik voorlopig je e-mailadres."
  ],
  "auth.err.last_login_method": [
   "Add a password first — otherwise you'd have no way to sign in.",
@@ -2919,6 +2919,10 @@
   "You sign in with {providers}. Add a password to also sign in with email.",
   "Je logt in met {providers}. Voeg een wachtwoord toe om ook met je e-mailadres in te loggen."
  ],
+ "set.soon": [
+  "Available soon",
+  "Binnenkort beschikbaar"
+ ],
  "set.typeDelete": [
   "Type \"DELETE\" to confirm",
   "Typ \"DELETE\" om te bevestigen"
@@ -3288,8 +3292,8 @@
   "Alles wissen"
  ],
  "wishlist.count": [
-  "{count} saved · stored on this device",
-  "{count} bewaard · opgeslagen op dit apparaat"
+  "{count} saved to your account",
+  "{count} bewaard in je account"
  ],
  "wishlist.empty": [
   "Nothing saved yet. Tap the heart on any product to keep it here.",

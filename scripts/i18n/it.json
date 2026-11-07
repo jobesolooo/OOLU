@@ -39,10 +39,10 @@
  "auth.createLink": "Crea un account",
  "auth.currentPw": "Password attuale",
  "auth.email": "Email",
- "auth.err.apple_not_configured": "L'accesso con Apple non è ancora configurato.",
+ "auth.err.apple_not_configured": "L'accesso con Apple non è ancora disponibile. Per ora usa la tua email.",
  "auth.err.cancelled": "Accesso annullato.",
  "auth.err.expired": "Il tentativo di accesso è scaduto. Riprova.",
- "auth.err.google_not_configured": "L'accesso con Google non è ancora configurato.",
+ "auth.err.google_not_configured": "L'accesso con Google non è ancora disponibile. Per ora usa la tua email.",
  "auth.err.last_login_method": "Aggiungi prima una password — altrimenti non potresti più accedere.",
  "auth.err.provider_error": "Non siamo riusciti a completare l'accesso con quel servizio. Riprova.",
  "auth.err.sign_in_first": "Accedi prima di collegare un altro metodo di accesso.",
@@ -705,7 +705,7 @@
  "wishlist.addAria": "Salva {name} nei preferiti",
  "wishlist.chooseSize": "Scegli la taglia",
  "wishlist.clear": "Svuota",
- "wishlist.count": "{count} salvati · memorizzati su questo dispositivo",
+ "wishlist.count": "{count} salvati nel tuo account",
  "wishlist.empty": "Ancora niente di salvato. Tocca il cuore su un prodotto per tenerlo qui.",
  "wishlist.emptyTitle": "Ancora niente di salvato.",
  "wishlist.eyebrow": "Salvati per dopo",
@@ -830,5 +830,6 @@
  "ac.yourDataSub": "Una copia di tutto ciò che conserviamo su di te.",
  "ac.exportBody": "Scarica profilo, indirizzi, ordini, recensioni, preferiti e preferenze email in un unico file (JSON).",
  "ac.download": "Scarica i miei dati",
- "ac.deleteSub": "Elimina il tuo account per sempre. Gli ordini restano nei nostri archivi, senza il tuo account."
+ "ac.deleteSub": "Elimina il tuo account per sempre. Gli ordini restano nei nostri archivi, senza il tuo account.",
+ "set.soon": "Presto disponibile"
 }

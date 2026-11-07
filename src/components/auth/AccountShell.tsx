@@ -11,7 +11,7 @@ import type { MessageKey } from "@/i18n/messages";
 export const ACCOUNT_TABS = [
   { key: "overview", label: "ac.nav.overview", href: "/account" },
   { key: "orders", label: "ac.nav.orders", href: "/account/orders" },
-  { key: "wishlist", label: "ac.nav.wishlist", href: "/wishlist" },
+  { key: "wishlist", label: "ac.nav.wishlist", href: "/account/wishlist" },
   { key: "addresses", label: "ac.nav.addresses", href: "/account/addresses" },
   { key: "reviews", label: "ac.nav.reviews", href: "/account/reviews" },
   { key: "profile", label: "ac.nav.profile", href: "/account/profile" },

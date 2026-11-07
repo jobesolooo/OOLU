@@ -61,7 +61,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
       tiles={[
         { icon: Package, label: t("acct.orders"), value: orders.length, href: "/account/orders" },
         { icon: RefreshCw, label: t("acct.openReturns"), value: openReturns.length, href: "/account/orders#returns" },
-        { icon: Heart, label: t("acct.wishlist"), value: wish.n, href: "/wishlist" },
+        { icon: Heart, label: t("acct.wishlist"), value: wish.n, href: "/account/wishlist" },
         { icon: MapPin, label: t("ac.nav.addresses"), value: addresses.length, href: "/account/addresses", accent: true },
       ]}
     >

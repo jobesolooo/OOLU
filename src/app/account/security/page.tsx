@@ -25,11 +25,10 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
     : one(sp.disconnected)
       ? t("set.disconnected")
       : authErrorMessage(err, t);
-  // Only show providers that are set up, plus any already linked.
   const providers = [
     { id: "google" as const, name: "Google", Icon: GoogleIcon },
     { id: "apple" as const, name: "Apple", Icon: AppleIcon },
-  ].filter((p) => isProviderConfigured(p.id) || linked.includes(p.id));
+  ];
   const btn = "border border-black/20 px-4 py-2.5 text-[11px] tracking-[0.08em] uppercase transition-colors hover:border-ink";
 
   return (
@@ -62,10 +61,12 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
                     <input type="hidden" name="provider" value={id} />
                     <button className={btn}>{t("set.disconnect")}</button>
                   </form>
-                ) : (
+                ) : isProviderConfigured(id) ? (
                   <a href={`/api/auth/${id}?link=1`} className={btn}>
                     {t("set.connect")}
                   </a>
+                ) : (
+                  <span className="text-[11px] tracking-[0.08em] text-ash uppercase">{t("set.soon")}</span>
                 )}
               </li>
             );

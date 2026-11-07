@@ -39,10 +39,10 @@
  "auth.createLink": "Cria uma conta",
  "auth.currentPw": "Palavra-passe atual",
  "auth.email": "Email",
- "auth.err.apple_not_configured": "O início de sessão com Apple ainda não está configurado.",
+ "auth.err.apple_not_configured": "O início de sessão com Apple ainda não está disponível. Usa o teu email por agora.",
  "auth.err.cancelled": "O início de sessão foi cancelado.",
  "auth.err.expired": "Essa tentativa de início de sessão expirou. Tenta novamente.",
- "auth.err.google_not_configured": "O início de sessão com Google ainda não está configurado.",
+ "auth.err.google_not_configured": "O início de sessão com Google ainda não está disponível. Usa o teu email por agora.",
  "auth.err.last_login_method": "Adiciona primeiro uma palavra-passe — caso contrário deixarias de conseguir entrar.",
  "auth.err.provider_error": "Não conseguimos concluir o início de sessão com esse serviço. Tenta novamente.",
  "auth.err.sign_in_first": "Inicia sessão primeiro para ligar outro método de acesso.",
@@ -705,7 +705,7 @@
  "wishlist.addAria": "Guardar {name} nos favoritos",
  "wishlist.chooseSize": "Escolher tamanho",
  "wishlist.clear": "Limpar tudo",
- "wishlist.count": "{count} guardados · neste dispositivo",
+ "wishlist.count": "{count} guardado(s) na tua conta",
  "wishlist.empty": "Ainda não guardaste nada. Toca no coração de um produto para o guardar aqui.",
  "wishlist.emptyTitle": "Ainda não guardaste nada.",
  "wishlist.eyebrow": "Guardado para depois",
@@ -830,5 +830,6 @@
  "ac.yourDataSub": "Uma cópia de tudo o que guardamos sobre ti.",
  "ac.exportBody": "Descarrega o teu perfil, moradas, encomendas, avaliações, favoritos e preferências de email num só ficheiro (JSON).",
  "ac.download": "Descarregar os meus dados",
- "ac.deleteSub": "Elimina a tua conta de vez. As encomendas ficam nos nossos registos, sem a tua conta."
+ "ac.deleteSub": "Elimina a tua conta de vez. As encomendas ficam nos nossos registos, sem a tua conta.",
+ "set.soon": "Disponível em breve"
 }
