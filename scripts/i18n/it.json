@@ -714,5 +714,7 @@
  "wishlist.save": "Salva",
  "wishlist.saved": "Salvato",
  "wishlist.subtitle": "I capi che hai salvato. Taglie e disponibilità possono cambiare, non aspettare troppo.",
- "wishlist.title": "Preferiti"
+ "wishlist.title": "Preferiti",
+ "auth.reasonWishlist": "Accedi per salvare i capi nei tuoi preferiti. Sono legati al tuo account, quindi li trovi su ogni dispositivo.",
+ "auth.guestStill": "Acquisti, pagamento e tracciamento dell'ordine funzionano anche senza account."
 }

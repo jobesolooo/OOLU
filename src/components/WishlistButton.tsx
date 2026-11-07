@@ -1,16 +1,24 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useWishlist, type SavedProduct } from "@/store/saved";
+import { useSession } from "@/store/session";
 import { useMounted } from "@/lib/use-mounted";
 import { cx } from "@/lib/format";
 import { useT } from "./Prefs";
 
+/** Product remembered while a signed-out shopper signs in; added to the wishlist afterwards (see AccountSync). */
+export const PENDING_WISH = "oolu-pending-wish";
+
 export function WishlistButton({ product, className, label = false }: { product: SavedProduct; className?: string; label?: boolean }) {
   const t = useT();
   const mounted = useMounted();
+  const router = useRouter();
+  const pathname = usePathname();
   const toggle = useWishlist((s) => s.toggle);
-  const saved = useWishlist((s) => s.items.some((i) => i.id === product.id)) && mounted;
+  const signedIn = useSession((s) => Boolean(s.user));
+  const saved = useWishlist((s) => s.items.some((i) => i.id === product.id)) && mounted && signedIn;
   return (
     <button
       type="button"
@@ -19,7 +27,17 @@ export function WishlistButton({ product, className, label = false }: { product:
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggle(product);
+        // The wishlist lives on the account, so saving asks a guest to sign in first.
+        const session = useSession.getState();
+        void (async () => {
+          const user = session.loaded ? session.user : await session.refresh();
+          if (user) return toggle(product);
+          try {
+            sessionStorage.setItem(PENDING_WISH, JSON.stringify(product));
+          } catch {}
+          const here = `${pathname}${window.location.search}`;
+          router.push(`/account/login?reason=wishlist&next=${encodeURIComponent(here)}`);
+        })();
       }}
       className={cx("inline-flex items-center justify-center gap-2", className)}
     >

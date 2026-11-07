@@ -26,8 +26,8 @@ export function Header() {
   const mounted = useMounted();
   const count = mounted ? cartCount(lines) : 0;
   const saved = useWishlist((s) => s.items.length);
-  const savedCount = mounted ? saved : 0;
   const me = useSession((s) => s.user);
+  const savedCount = mounted && me ? saved : 0;
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeSearch = useCallback(() => setSearchOpen(false), [setSearchOpen]);

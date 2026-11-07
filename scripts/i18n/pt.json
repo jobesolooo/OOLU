@@ -714,5 +714,7 @@
  "wishlist.save": "Guardar",
  "wishlist.saved": "Guardado",
  "wishlist.subtitle": "Peças que guardaste. Tamanhos e stock podem mudar, por isso não esperes muito.",
- "wishlist.title": "Favoritos"
+ "wishlist.title": "Favoritos",
+ "auth.reasonWishlist": "Inicia sessão para guardar peças nos teus favoritos. Ficam na tua conta, por isso tens acesso em qualquer dispositivo.",
+ "auth.guestStill": "Comprar, pagar e acompanhar a encomenda funciona sem conta."
 }

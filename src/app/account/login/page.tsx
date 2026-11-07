@@ -22,6 +22,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/account/lo
   return (
     <AuthShell eyebrow={t("auth.welcomeBack")} title={t("auth.signIn")}>
       {one(sp.signedout) && <p className="mb-6 bg-white p-4 text-[13px]">{t("auth.signedOutAll")}</p>}
+      {one(sp.reason) === "wishlist" && (
+        <p className="mb-6 border-l-2 border-accent bg-white p-4 text-[13px] leading-relaxed">
+          {t("auth.reasonWishlist")} <span className="text-ash">{t("auth.guestStill")}</span>
+        </p>
+      )}
       {error && <p className="mb-6 border border-red-200 bg-red-50 p-4 text-[13px] text-red-800" role="alert">{error}</p>}
       <SocialButtons next={next} mode="login" />
       <OrDivider />

@@ -211,6 +211,10 @@
   "Go to my account",
   "Naar mijn account"
  ],
+ "auth.guestStill": [
+  "Shopping, checkout and order tracking work without an account.",
+  "Shoppen, afrekenen en je bestelling volgen kan ook zonder account."
+ ],
  "auth.haveAccount": [
   "Already have an account?",
   "Heb je al een account?"
@@ -294,6 +298,10 @@
  "auth.pwRules": [
   "At least 8 characters, with letters and numbers. You'll be signed out on other devices.",
   "Minstens 8 tekens, met letters en cijfers. Je wordt op andere apparaten uitgelogd."
+ ],
+ "auth.reasonWishlist": [
+  "Sign in to save pieces to your wishlist. It's kept on your account, so it's there on every device.",
+  "Log in om items op je verlanglijst te bewaren. Die staat op je account, dus je ziet hem op elk apparaat."
  ],
  "auth.repeatPw": [
   "Repeat new password",

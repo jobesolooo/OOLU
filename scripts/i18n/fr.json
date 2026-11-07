@@ -714,5 +714,7 @@
  "wishlist.save": "Enregistrer",
  "wishlist.saved": "Enregistré",
  "wishlist.subtitle": "Les pièces que tu as gardées. Les tailles et le stock peuvent changer, alors n'attends pas trop.",
- "wishlist.title": "Favoris"
+ "wishlist.title": "Favoris",
+ "auth.reasonWishlist": "Connecte-toi pour enregistrer des pièces dans tes favoris. Ils sont liés à ton compte, donc disponibles sur tous tes appareils.",
+ "auth.guestStill": "Les achats, le paiement et le suivi de commande fonctionnent sans compte."
 }
