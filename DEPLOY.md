@@ -11,7 +11,10 @@ schedules the daily drop-alert job.
 
 ## 2. Add a database (1 min)
 Project → **Storage** → **Create Database** → **Neon (Postgres)** → free plan → connect to the project.
+Pick region **Frankfurt** (the site runs there too, see `vercel.json`) and set the env prefix to `DATABASE`.
 This adds `DATABASE_URL` automatically. (Your local test data stays on your Mac.)
+
+> Don't import `DATABASE_URL` from `.env.local`: it's empty there on purpose (your Mac uses the built-in database), and an empty value stops the build.
 
 ## 3. Environment variables
 Project → **Settings → Environment Variables**. Required:
