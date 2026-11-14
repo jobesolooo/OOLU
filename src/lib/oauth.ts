@@ -4,7 +4,7 @@ import { sealData, unsealData } from "iron-session";
 import { and, eq } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import type { OAuthProvider } from "./db/schema";
-import { isAdminEmail, linkGuestOrders } from "./auth";
+import { linkGuestOrders } from "./auth";
 import { siteUrl } from "@/lib/site-url";
 import { getKeys } from "./keys";
 import { getSettings } from "./settings";
@@ -133,7 +133,7 @@ export async function resolveOAuthUser(profile: OAuthProfile, linkUserId?: strin
       image: profile.image,
       passwordHash: null,
       emailVerifiedAt: new Date(),
-      role: isAdminEmail(email) ? "admin" : "customer",
+      role: "customer", // Google/Apple on the store always makes a customer; staff use the staff entrance
     })
     .returning();
   await db.insert(schema.oauthAccounts).values({ provider: profile.provider, providerUserId: profile.sub, userId: user.id, email });

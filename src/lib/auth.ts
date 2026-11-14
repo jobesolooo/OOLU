@@ -18,16 +18,11 @@ export type CurrentUser = {
   hasPassword: boolean;
 };
 
-function adminEmails() {
-  return (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-export function isAdminEmail(email: string) {
-  return adminEmails().includes(email.toLowerCase());
-}
+/**
+ * Staff access comes only from the account's role: the staff account (passcode or Google via
+ * Settings → Staff access) and anyone given "Staff access" under Customers. ADMIN_EMAILS no longer
+ * turns customer accounts into staff (see scripts/migrate.ts for the one-time clean-up).
+ */
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await getSession();
@@ -36,15 +31,12 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const [user] = await db.select().from(schema.users).where(eq(schema.users.id, session.userId)).limit(1);
   // Session was revoked (password changed, "sign out everywhere", account deleted).
   if (!user || (session.v ?? 1) !== user.sessionVersion) return null;
-  // ADMIN_EMAILS always wins, so access can be granted/revoked from env vars.
-  // Admin rights only apply once the email is verified (OAuth or verification link).
-  const admin = isAdminEmail(user.email) && Boolean(user.emailVerifiedAt);
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     image: user.image,
-    role: admin || user.role === "admin" ? "admin" : "customer",
+    role: user.role === "admin" ? "admin" : "customer",
     emailVerified: Boolean(user.emailVerifiedAt),
     hasPassword: Boolean(user.passwordHash),
   };

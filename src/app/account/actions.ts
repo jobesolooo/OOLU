@@ -61,7 +61,6 @@ export async function register(_: FormState, form: FormData): Promise<FormState>
 
   const [user] = await db
     .insert(schema.users)
-    // Admin rights come from ADMIN_EMAILS at request time, and only once the email is confirmed.
     .values({ name, email, passwordHash: await hashPassword(password) })
     .returning();
 
@@ -243,7 +242,7 @@ export async function setNewsletter(form: FormData) {
 export async function deleteAccount(_: FormState, form: FormData): Promise<FormState> {
   const user = await me();
   if (String(form.get("confirmDelete") ?? "").trim().toUpperCase() !== "DELETE") return { error: 'Type "DELETE" to confirm.' };
-  if (user.role === "admin") return { error: "Admin accounts can't be deleted here. Remove the email from ADMIN_EMAILS first." };
+  if (user.role === "admin") return { error: "Staff accounts can't be deleted here. Remove their staff access under Admin → Customers first." };
   const db = await getDb();
   // Orders are kept for tax records (detached from the account); everything personal is removed.
   await db.update(schema.orders).set({ userId: null }).where(eq(schema.orders.userId, user.id));
