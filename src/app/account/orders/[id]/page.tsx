@@ -25,7 +25,7 @@ export default async function AccountOrderPage({ params }: PageProps<"/account/o
   const { order, items } = data;
 
   const [returns, qty] = await Promise.all([getReturnsForOrder(order.id), returnableQuantities(order, items)]);
-  const eligible = returnEligibility(order);
+  const eligible = await returnEligibility(order);
   const { t, locale } = await getT();
   const fmtDate = (d: Date) => new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(d);
 

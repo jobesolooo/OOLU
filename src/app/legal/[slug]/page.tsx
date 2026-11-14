@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { LEGAL } from "@/content/legal";
+import { LEGAL, legalPages } from "@/content/legal";
+import { legalCompany } from "@/lib/business";
 import { PageHeader } from "@/components/PageHeader";
 import { getT } from "@/i18n/server";
 import { intlLocale } from "@/i18n/config";
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: PageProps<"/legal/[slug]">): 
 
 export default async function LegalPage({ params }: PageProps<"/legal/[slug]">) {
   const { slug } = await params;
-  const page = LEGAL[slug];
-  if (!page) notFound();
+  if (!LEGAL[slug]) notFound();
+  const page = legalPages(await legalCompany())[slug];
   const { t, locale } = await getT();
   const updated = new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long" }).format(new Date(page.updated));
   const anchor = (h: string) => h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");

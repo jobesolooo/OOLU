@@ -3,7 +3,7 @@
  * They are a starting point, not legal advice: fill in every [bracketed] value
  * and have them checked before going live.
  */
-export const COMPANY = {
+export const COMPANY: Record<"name" | "tradeName" | "address" | "kvk" | "vat" | "email" | "phone", string> = {
   name: "[Legal company name]",
   tradeName: "OOLU",
   address: "[Street + number], [Postcode] Amsterdam, Netherlands",
@@ -15,9 +15,11 @@ export const COMPANY = {
 
 export type LegalPage = { title: string; updated: string; sections: { h: string; p: string[] }[] };
 
-const C = COMPANY;
+export type Company = typeof COMPANY;
 
-export const LEGAL: Record<string, LegalPage> = {
+/** Build the legal pages for these company details (from Admin → Settings → Business details). */
+export function legalPages(C: Company): Record<string, LegalPage> {
+  return {
   privacy: {
     title: "Privacy policy",
     updated: "2026-11-06",
@@ -100,3 +102,7 @@ export const LEGAL: Record<string, LegalPage> = {
     ],
   },
 };
+}
+
+/** With the placeholder details: only for page slugs and titles. */
+export const LEGAL = legalPages(COMPANY);

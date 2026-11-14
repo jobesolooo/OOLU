@@ -8,6 +8,7 @@ import { keyStates } from "@/lib/keys";
 import { KEY_GROUPS } from "@/lib/keys-catalog";
 import { getSession } from "@/lib/session";
 import { AccountKeys } from "./AccountKeys";
+import { BusinessDetails } from "./BusinessDetails";
 
 export const dynamic = "force-dynamic";
 
@@ -18,12 +19,25 @@ export default async function SettingsAdmin() {
   const unlockedUntil = session.keysUntil ?? null; // the screen itself works out whether it has expired
   return (
     <>
-      <AdminHeader eyebrow="Setup" title="Store settings" description="Connections, account keys, the homepage promo strip, drop countdown and the newsletter popup. Every change shows on the store straight away." />
-      <div className="mb-3 max-w-3xl space-y-3">
-        <StripeSetup />
-        <AuthSetup />
-      </div>
-      <AdminForm action={saveStoreSettings} submitLabel="Save settings" className="max-w-3xl space-y-3">
+      <AdminHeader eyebrow="Setup" title="Store settings" description="Business details, account keys and homepage options. Fill in a field, press save, and it's live on the store straight away." />
+      <nav aria-label="Sections" className="no-scrollbar -mx-1 mb-6 flex max-w-3xl gap-1 overflow-x-auto px-1">
+        {[
+          ["#business", "Business details"],
+          ["#keys", "Account keys"],
+          ["#homepage", "Homepage"],
+          ["#guides", "Setup guides"],
+        ].map(([href, label]) => (
+          <a key={href} href={href} className="shrink-0 rounded-full bg-white px-4 py-2 text-[11px] font-medium tracking-[0.08em] whitespace-nowrap uppercase ring-1 ring-black/5 hover:bg-ink hover:text-white">
+            {label}
+          </a>
+        ))}
+      </nav>
+      <div className="max-w-3xl space-y-12">
+        <BusinessDetails />
+        <AccountKeys groups={KEY_GROUPS} states={states} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />
+        <section id="homepage" className="scroll-mt-6">
+          <h2 className="mb-3 text-[11px] font-semibold tracking-[0.14em] uppercase">Homepage</h2>
+      <AdminForm action={saveStoreSettings} submitLabel="Save homepage" className="space-y-3">
         <fieldset className="min-w-0 space-y-3 bg-white [&>legend~*]:clear-both p-6 ring-1 ring-black/5">
           <legend className="float-left mb-3 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">Promo strip (under the homepage hero)</legend>
           <input name="announcement" defaultValue={s.announcement} maxLength={140} className="input" />
@@ -67,8 +81,13 @@ export default async function SettingsAdmin() {
           </div>
         </fieldset>
       </AdminForm>
-      <div className="max-w-3xl">
-        <AccountKeys groups={KEY_GROUPS} states={states} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />
+        </section>
+        <section id="guides" className="scroll-mt-6 space-y-3">
+          <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Setup guides</h2>
+          <p className="text-[12px] text-ash">Where to find each key, and what&apos;s still missing. The ticks update as you save keys above.</p>
+          <StripeSetup />
+          <AuthSetup />
+        </section>
       </div>
     </>
   );

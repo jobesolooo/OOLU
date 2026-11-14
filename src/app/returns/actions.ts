@@ -36,7 +36,7 @@ export async function requestReturn(_: ReturnState, form: FormData): Promise<Ret
   }
   const { order, items } = data;
 
-  const eligible = returnEligibility(order);
+  const eligible = await returnEligibility(order);
   if (!eligible.ok) return { error: eligible.reason };
 
   const available = await returnableQuantities(order, items);

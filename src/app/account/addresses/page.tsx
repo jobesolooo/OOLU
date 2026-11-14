@@ -44,7 +44,7 @@ export default async function AddressesPage({ searchParams }: PageProps<"/accoun
           <AccountCard>
             <AddressForm
               address={editing ?? { name: user.name }}
-              countries={shippingCountries(locale)}
+              countries={await shippingCountries(locale)}
               firstOne={list.length === 0 || (Boolean(editing) && list.length === 1)}
             />
           </AccountCard>

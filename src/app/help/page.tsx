@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ArrowRight, Mail, Package, RefreshCw, Ruler } from "lucide-react";
 import { Plus } from "lucide-react";
 import { shippingConfig } from "@/lib/shipping";
-import { RETURN_WINDOW_DAYS } from "@/lib/returns";
+import { returnWindowDays } from "@/lib/returns";
 import { SIZE_GUIDES } from "@/lib/demo-catalog";
 import { PageHeader } from "@/components/PageHeader";
 import { SizeGuideTable } from "@/components/product/SizeGuide";
@@ -17,7 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HelpPage() {
-  const { freeShippingThreshold, flatRate } = shippingConfig();
+  const { freeShippingThreshold, flatRate } = await shippingConfig();
+  const returnDays = await returnWindowDays();
   const [{ t }, { money }] = await Promise.all([getT(), getMoney()]);
   const free = money(freeShippingThreshold, "EUR", true);
   const flat = money(flatRate, "EUR", true);
@@ -51,7 +52,7 @@ export default async function HelpPage() {
       id: "returns",
       title: t("help.returns"),
       faqs: [
-        [t("help.q.policy"), t("help.a.policy", { days: RETURN_WINDOW_DAYS })],
+        [t("help.q.policy"), t("help.a.policy", { days: returnDays })],
         [t("help.q.start"), <>{t("help.a.start1")} {link("/account", "help.a.where4")} {t("help.a.start2")} {link("/track", "help.a.where2")} {t("help.a.start3")}</>],
         [t("help.q.exchange"), t("help.a.exchange")],
         [t("help.q.refund"), t("help.a.refund")],

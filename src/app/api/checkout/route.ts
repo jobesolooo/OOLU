@@ -104,7 +104,7 @@ export async function POST(req: Request) {
   });
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL ? siteUrl() : new URL(req.url).origin;
-  const ship = shippingConfig();
+  const ship = (await shippingConfig());
   const freeShipping = ship.freeShippingThreshold > 0 && subtotal >= ship.freeShippingThreshold;
 
   const shippingRate = (name: string, amount: number, min: number, max: number): Stripe.Checkout.SessionCreateParams.ShippingOption => ({

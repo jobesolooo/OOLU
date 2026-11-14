@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { attachGiftCardSession, createPendingGiftCard } from "@/lib/giftcards";
 import { getSettings } from "@/lib/settings";
-import { site } from "@/lib/site";
+import { getBusiness } from "@/lib/business";
 import { DEFAULT_CURRENCY, formatMoneyShort } from "@/lib/format";
 import { getLocale, stripeLocale } from "@/i18n/server";
 import { siteUrl } from "@/lib/site-url";
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
             currency: DEFAULT_CURRENCY,
             unit_amount: d.amount,
             product_data: {
-              name: `${site.name} digital gift card — ${formatMoneyShort(d.amount)}`,
+              name: `${(await getBusiness()).name} digital gift card — ${formatMoneyShort(d.amount)}`,
               description: d.recipientEmail ? `Emailed to ${d.recipientEmail}` : "Emailed to you after purchase",
             },
           },

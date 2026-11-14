@@ -12,6 +12,7 @@ import { z } from "zod";
 import { getDb, schema } from "@/lib/db";
 import { consumeAuthToken, createAuthToken, getCurrentUser, markEmailVerified, rotateSessions, signIn, verifyPassword } from "@/lib/auth";
 import { AddressInput, deleteAddress, saveAddress, setDefaultAddress } from "@/lib/account";
+import { getBusiness } from "@/lib/business";
 import { sendEmailChange, sendSecurityNotice } from "@/lib/email";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
@@ -124,6 +125,7 @@ export async function confirmEmailChange(token: string): Promise<{ ok: true; ema
 /* ── Addresses ───────────────────────────────────────────── */
 export async function saveAddressAction(_: FormState, form: FormData): Promise<FormState> {
   const user = await me("/account/addresses");
+  await getBusiness(); // loads the countries AddressInput checks against
   const parsed = AddressInput.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the address" };
   const id = z.string().uuid().safeParse(form.get("id"));

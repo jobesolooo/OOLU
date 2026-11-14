@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { getOrderBySession, markOrderPaid } from "@/lib/orders";
 import { formatMoney } from "@/lib/format";
-import { site } from "@/lib/site";
+import { getBusiness } from "@/lib/business";
 import { ClearCart } from "./ClearCart";
 import { variantLabel } from "@/lib/variants";
 import { getT } from "@/i18n/server";
@@ -55,7 +55,7 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
       </h1>
       <p className="mt-4 text-sm leading-relaxed text-black/75">
         {paid
-          ? t("success.body", { brand: site.name, email: order.email ?? t("success.yourInbox") })
+          ? t("success.body", { brand: (await getBusiness()).name, email: order.email ?? t("success.yourInbox") })
           : t("success.pendingBody")}
       </p>
 

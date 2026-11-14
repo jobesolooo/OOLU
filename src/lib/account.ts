@@ -5,6 +5,7 @@ import { getDb, schema } from "./db";
 import type { Address } from "./db/schema";
 import { getStripe, isStripeConfigured } from "./stripe";
 import { shippingConfig } from "./shipping";
+import { biz } from "./business";
 
 /* ── Addresses ───────────────────────────────────────────── */
 export const AddressInput = z.object({
@@ -19,7 +20,8 @@ export const AddressInput = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .refine((c) => (shippingConfig().countries as string[]).includes(c), "We don't ship to that country yet"),
+    // biz() = the countries loaded for this request (callers run getBusiness() before parsing).
+    .refine((c) => biz().countries.includes(c), "We don't ship to that country yet"),
   phone: z.string().trim().max(30).optional().transform((v) => v || null),
   isDefault: z.string().optional().transform((v) => v === "on" || v === "true"),
 });
@@ -162,9 +164,9 @@ export async function getProfile(userId: string) {
 }
 
 /** Country options for the address form: the countries we ship to, named in the visitor's language. */
-export function shippingCountries(locale: string) {
+export async function shippingCountries(locale: string) {
   const names = new Intl.DisplayNames([locale, "en"], { type: "region" });
-  return (shippingConfig().countries as string[])
+  return ((await shippingConfig()).countries as string[])
     .map((code) => ({ code, name: names.of(code) ?? code }))
     .sort((a, b) => a.name.localeCompare(b.name, locale));
 }

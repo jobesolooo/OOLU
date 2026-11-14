@@ -34,7 +34,7 @@ export async function trackOrder(_: TrackResult, form: FormData): Promise<TrackR
   // Same message either way, so the form can't be used to discover orders.
   if (!found) return { error: "We couldn't find an order with that number and email." };
   const { order, items } = found;
-  const eligible = returnEligibility(order);
+  const eligible = await returnEligibility(order);
   const qty = await returnableQuantities(order, items);
   return {
     email: parsed.data.email,

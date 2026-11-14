@@ -11,7 +11,7 @@ import { clearKey, getKey, saveKey, turnOffKey } from "@/lib/keys";
 import { stripeClient } from "@/lib/stripe";
 import { invalidateCatalog } from "@/lib/catalog";
 import { sendEmail } from "@/lib/email";
-import { site } from "@/lib/site";
+import { getBusiness } from "@/lib/business";
 
 export type KeysResult = { ok?: string; error?: string; warn?: string; at?: number } | undefined;
 
@@ -118,7 +118,7 @@ export async function changeKeys(_: KeysResult, form: FormData): Promise<KeysRes
   if (to) {
     await sendEmail({
       to,
-      subject: `${site.name}: account keys changed (${group.title})`,
+      subject: `${(await getBusiness()).name}: account keys changed (${group.title})`,
       html: `<p>${by.replace(/[<>&"]/g, "")} changed account keys in the admin panel:</p><ul>${changed.map((c) => `<li>${group.title}: ${c}</li>`).join("")}</ul><p>${new Date().toUTCString()}</p><p>Not you? Sign in to the admin, check Settings → Account keys, and change the staff passcode.</p>`,
     });
   }

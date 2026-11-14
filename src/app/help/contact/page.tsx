@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowUpRight, Clock, LifeBuoy, MapPin, Package } from "lucide-react";
-import { site } from "@/lib/site";
+import { ArrowUpRight, Clock, LifeBuoy, Mail, MapPin, Package, Phone } from "lucide-react";
+import { getBusiness } from "@/lib/business";
 import { InstagramIcon, TikTokIcon } from "@/components/icons";
 import { ContactForm } from "./ContactForm";
 import { getT } from "@/i18n/server";
@@ -13,21 +13,27 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const { t } = await getT();
+  const [{ t }, b] = await Promise.all([getT(), getBusiness()]);
 
   const channels = [
+    ...(b.email
+      ? [{ href: `mailto:${b.email}`, external: true, title: b.email, body: t("contact.formTitle"), icon: <Mail className="size-5" strokeWidth={1.5} />, iconBg: "bg-white text-black" }]
+      : []),
+    ...(b.phone
+      ? [{ href: `tel:${b.phone.replace(/[^\d+]/g, "")}`, external: true, title: b.phone, body: b.hours ?? t("contact.hours"), icon: <Phone className="size-5" strokeWidth={1.5} />, iconBg: "bg-white/10 text-white" }]
+      : []),
     {
-      href: site.social.instagram,
+      href: b.social.instagram ?? "",
       external: true,
-      title: site.socialHandles.instagram,
+      title: b.handles.instagram ?? "",
       body: t("contact.instagramBody"),
       icon: <InstagramIcon className="size-5" />,
       iconBg: "bg-[linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7)] text-white",
     },
     {
-      href: site.social.tiktok,
+      href: b.social.tiktok ?? "",
       external: true,
-      title: site.socialHandles.tiktok,
+      title: b.handles.tiktok ?? "",
       body: t("contact.tiktokBody"),
       icon: <TikTokIcon className="size-5" />,
       iconBg: "bg-white text-black",
@@ -46,7 +52,7 @@ export default async function ContactPage() {
       icon: <Package className="size-5" strokeWidth={1.5} />,
       iconBg: "bg-white/10 text-white",
     },
-  ];
+  ].filter((c) => c.href);
 
   return (
     <>
@@ -58,7 +64,7 @@ export default async function ContactPage() {
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.85),rgba(6,6,6,0.4)_55%,rgba(6,6,6,0.15)),linear-gradient(0deg,rgba(6,6,6,0.9),transparent_55%)]" />
         <div className="container-x flex min-h-[min(72svh,680px)] flex-col justify-end pt-24 pb-[clamp(120px,14vw,220px)]">
           <p className="rise text-[11px] tracking-[0.14em] text-accent uppercase" style={{ "--delay": "100ms" } as React.CSSProperties}>
-            {t("contact.title")} · OOLU
+            {t("contact.title")} · {b.name}
           </p>
           <h1 className="rise mt-5 font-display text-[clamp(64px,11vw,176px)] leading-[0.88] tracking-[-0.04em]" style={{ "--delay": "220ms" } as React.CSSProperties}>
             {t("contact.heroTitle")}
@@ -130,10 +136,10 @@ export default async function ContactPage() {
               />
               <p className="text-[11px] tracking-[0.14em] uppercase opacity-70">{t("contact.studio")}</p>
               <p className="mt-3 flex items-center gap-2 font-display text-[28px] leading-none tracking-[-0.02em]">
-                <MapPin className="size-5" strokeWidth={1.5} /> {t("contact.studioBody")}
+                <MapPin className="size-5" strokeWidth={1.5} /> {b.city ?? t("contact.studioBody")}
               </p>
               <p className="mt-4 flex items-center gap-2 text-[12px]">
-                <Clock className="size-4" strokeWidth={1.5} /> {t("contact.hours")}
+                <Clock className="size-4" strokeWidth={1.5} /> {b.hours ?? t("contact.hours")}
               </p>
             </div>
           </div>

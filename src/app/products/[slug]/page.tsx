@@ -12,7 +12,7 @@ import { getT } from "@/i18n/server";
 import { getMoney } from "@/lib/rates";
 import type { MessageKey } from "@/i18n/messages";
 import { shippingConfig } from "@/lib/shipping";
-import { RETURN_WINDOW_DAYS } from "@/lib/returns";
+import { returnWindowDays } from "@/lib/returns";
 import { AddToCart } from "@/components/AddToCart";
 import { PaymentIcons } from "@/components/PaymentIcons";
 import { ProductCard, toSaved } from "@/components/ProductCard";
@@ -70,7 +70,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   // Similar items: same category first, then the rest of the catalogue (never this product or its colourways).
   const others = all.filter((p) => p.id !== product.id && !(product.group && p.group === product.group));
   const related = [...others.filter((p) => p.category === product.category), ...others.filter((p) => p.category !== product.category)].slice(0, 10);
-  const { freeShippingThreshold } = shippingConfig();
+  const { freeShippingThreshold } = await shippingConfig();
+  const returnDays = await returnWindowDays();
   const collection = product.collection ? COLLECTIONS[product.collection] : null;
   const sizeChart = SIZE_GUIDES[product.category] ?? null;
   const saved = toSaved(product);
@@ -172,7 +173,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           <ul className="mt-6 grid grid-cols-2 gap-2 text-[12px]">
             {[
               { Icon: Truck, text: t("pdp.freeShipping", { amount: money(freeShippingThreshold, "EUR", true) }) },
-              { Icon: RefreshCw, text: t("pdp.returns", { days: RETURN_WINDOW_DAYS }) },
+              { Icon: RefreshCw, text: t("pdp.returns", { days: returnDays }) },
               { Icon: ShieldCheck, text: t("pdp.secure") },
               { Icon: Leaf, text: t("pdp.builtToLast") },
             ].map(({ Icon, text }) => (
@@ -200,7 +201,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
               <Link href="/help#shipping" className="underline">{t("pdp.moreInfo")}</Link>
             </Accordion>
             <Accordion title={t("pdp.returnsTitle")}>
-              {t("pdp.returnsBody", { days: RETURN_WINDOW_DAYS })}{" "}
+              {t("pdp.returnsBody", { days: returnDays })}{" "}
               <Link href="/track" className="underline">{t("pdp.trackingPage")}</Link>.
             </Accordion>
             <Accordion title={t("pdp.care")}>{t("pdp.careBody")}</Accordion>

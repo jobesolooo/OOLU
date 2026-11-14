@@ -1,9 +1,12 @@
 import "server-only";
 import { desc, eq, inArray } from "drizzle-orm";
 import { getDb, schema } from "./db";
+import { getBusiness } from "./business";
+
+/** Days customers have to return an order (Admin → Settings → Business details). */
+export const returnWindowDays = async () => (await getBusiness()).returnDays;
 import type { Order, OrderItem, ReturnLine } from "./db/schema";
 
-export const RETURN_WINDOW_DAYS = Number(process.env.RETURN_WINDOW_DAYS ?? 30);
 export const RETURN_REASONS = [
   "Too small",
   "Too big",
@@ -36,7 +39,8 @@ export async function returnableQuantities(order: Order, items: OrderItem[]) {
   return new Map(items.map((i) => [i.id, Math.max(0, i.quantity - (used.get(i.id) ?? 0))]));
 }
 
-export function returnEligibility(order: Order) {
+export async function returnEligibility(order: Order) {
+  const RETURN_WINDOW_DAYS = await returnWindowDays();
   if (!RETURNABLE.includes(order.status)) return { ok: false as const, reason: "This order can't be returned." };
   const from = order.deliveredAt ?? order.shippedAt ?? order.paidAt ?? order.createdAt;
   const deadline = new Date(from).getTime() + RETURN_WINDOW_DAYS * 86_400_000;

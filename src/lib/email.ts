@@ -6,10 +6,12 @@ import { variantLabel } from "./variants";
 import type { Order, OrderItem, ShippingAddress } from "./db/schema";
 import { siteUrl } from "@/lib/site-url";
 import { getKey, getKeys } from "./keys";
+import { biz, getBusiness } from "./business";
 
 type Mail = { to: string; subject: string; html: string; replyTo?: string };
 
 export async function sendEmail(mail: Mail) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   const { RESEND_API_KEY: key, EMAIL_FROM } = await getKeys("RESEND_API_KEY", "EMAIL_FROM");
   if (!key) {
     // Dev mode: print the email (and any links in it) to the terminal instead of sending.
@@ -17,7 +19,7 @@ export async function sendEmail(mail: Mail) {
     console.info(`[email:dev] To: ${mail.to} | ${mail.subject}${links.length ? `\n  ${links.join("\n  ")}` : ""}`);
     return { skipped: true as const };
   }
-  const from = EMAIL_FROM || `${site.name} <onboarding@resend.dev>`;
+  const from = EMAIL_FROM || `${biz().name} <onboarding@resend.dev>`;
   try {
     const resend = new Resend(key);
     const { error } = await resend.emails.send({ from, ...mail });
@@ -47,7 +49,7 @@ function layout(title: string, body: string) {
 <h1 style="margin:0 0 16px;font-family:Newsreader,Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;letter-spacing:-0.5px">${esc(title)}</h1>
 ${body}
 </td></tr>
-<tr><td style="padding:20px 32px;background:#060606;color:#fdfdfd;font-size:11px;letter-spacing:1px;text-transform:uppercase"><span style="color:#a592ff">${esc(site.name)} · ${esc(site.established)}</span><br>${esc(site.tagline)}</td></tr>
+<tr><td style="padding:20px 32px;background:#060606;color:#fdfdfd;font-size:11px;letter-spacing:1px;text-transform:uppercase"><span style="color:#a592ff">${esc(biz().name)} · ${esc(site.established)}</span><br>${esc(biz().tagline ?? site.tagline)}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -83,10 +85,11 @@ function address(a: ShippingAddress | null) {
 }
 
 export async function sendOrderConfirmation(order: Order, items: OrderItem[]) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   if (!order.email) return;
   await sendEmail({
     to: order.email,
-    subject: `Order #${order.number} confirmed — ${site.name}`,
+    subject: `Order #${order.number} confirmed — ${biz().name}`,
     html: layout(
       "Thanks for your order",
       `<p style="font-size:14px;line-height:1.6">We've got your order <strong>#${order.number}</strong> and we're getting it ready. You'll get another email when it ships.</p>
@@ -97,6 +100,7 @@ ${itemsTable(order, items)}${address(order.shippingAddress)}
 }
 
 export async function sendAdminNewOrder(order: Order, items: OrderItem[]) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   const to = await getKey("ORDER_NOTIFICATION_EMAIL");
   if (!to) return;
   await sendEmail({
@@ -111,6 +115,7 @@ export async function sendAdminNewOrder(order: Order, items: OrderItem[]) {
 }
 
 export async function sendShippingUpdate(order: Order) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   if (!order.email) return;
   const tracking = order.trackingNumber
     ? `<p style="font-size:14px">Tracking: <strong>${esc(order.trackingCarrier)} ${esc(order.trackingNumber)}</strong></p>`
@@ -123,6 +128,7 @@ export async function sendShippingUpdate(order: Order) {
 }
 
 export async function sendRefundNotice(order: Order, amount: number) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   if (!order.email) return;
   await sendEmail({
     to: order.email,
@@ -135,9 +141,10 @@ export async function sendRefundNotice(order: Order, amount: number) {
 }
 
 export async function sendWelcome(email: string, name?: string | null) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `Welcome to ${site.name}`,
+    subject: `Welcome to ${biz().name}`,
     html: layout(
       `Welcome${name ? `, ${name}` : ""}`,
       `<p style="font-size:14px;line-height:1.6">Your account is set up. Track orders and check out faster next time.</p>
@@ -150,9 +157,10 @@ const button = (href: string, label: string) =>
   `<p style="margin-top:24px"><a href="${href}" style="display:inline-block;background:#060606;color:#fff;padding:12px 22px;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase">${esc(label)}</a></p>`;
 
 export async function sendNewsletterWelcome(email: string, code: string | null, percentOff: number) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: code ? `Your ${percentOff}% off code — ${site.name}` : `You're on the list — ${site.name}`,
+    subject: code ? `Your ${percentOff}% off code — ${biz().name}` : `You're on the list — ${biz().name}`,
     html: layout(
       "You're in.",
       `<p style="font-size:14px;line-height:1.6">First access to drops, restocks and stories from Amsterdam.</p>${
@@ -167,6 +175,7 @@ export async function sendNewsletterWelcome(email: string, code: string | null, 
 }
 
 export async function sendStockAlert(email: string, productName: string, size: string, slug: string, launch = false) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
     subject: launch ? `${productName} just dropped` : `Back in stock: ${productName}${size ? ` (${size})` : ""}`,
@@ -189,15 +198,16 @@ export async function sendGiftCardEmail(card: {
   message: string | null;
   purchaserEmail: string | null;
 }) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   const to = card.recipientEmail || card.purchaserEmail;
   if (!to) return;
   const from = card.senderName ? `${esc(card.senderName)} sent you` : "You've got";
   await sendEmail({
     to,
-    subject: `${card.senderName ? `${card.senderName} sent you` : "Your"} a ${site.name} gift card`,
+    subject: `${card.senderName ? `${card.senderName} sent you` : "Your"} a ${biz().name} gift card`,
     html: layout(
       `${formatMoney(card.initialAmount, card.currency)} gift card`,
-      `<p style="font-size:14px;line-height:1.6">${card.recipientName ? `${esc(card.recipientName)}, ` : ""}${from} a ${site.name} gift card.</p>
+      `<p style="font-size:14px;line-height:1.6">${card.recipientName ? `${esc(card.recipientName)}, ` : ""}${from} a ${biz().name} gift card.</p>
 ${card.message ? `<p style="font-size:14px;line-height:1.6;font-style:italic;border-left:3px solid #111;padding-left:12px">“${esc(card.message)}”</p>` : ""}
 <p style="font-size:22px;letter-spacing:3px;font-weight:bold;border:1px dashed #111;padding:14px;text-align:center">${esc(card.code)}</p>
 <p style="font-size:12px;color:#777">Enter the code in your bag before checkout. Any remaining balance stays on the card.</p>
@@ -243,9 +253,10 @@ const RETURN_COPY: Record<string, { subject: string; title: string; body: string
 };
 
 export async function sendReturnUpdate(email: string | null, orderNumber: number, status: string, note?: string | null) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   const copy = RETURN_COPY[status];
   if (!email || !copy) return;
-  const address = process.env.RETURN_ADDRESS;
+  const address = biz().returnAddress;
   await sendEmail({
     to: email,
     subject: `${copy.subject} (order #${orderNumber})`,
@@ -263,6 +274,7 @@ export async function sendReturnUpdate(email: string | null, orderNumber: number
 }
 
 export async function sendContactNotification(msg: { name: string; email: string; topic: string; orderNumber: string | null; message: string }) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   const to = await getKey("ORDER_NOTIFICATION_EMAIL");
   if (!to) return;
   await sendEmail({
@@ -282,9 +294,10 @@ export async function sendContactNotification(msg: { name: string; email: string
 }
 
 export async function sendVerifyEmail(email: string, token: string) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `Confirm your email — ${site.name}`,
+    subject: `Confirm your email — ${biz().name}`,
     html: layout(
       "Confirm your email",
       `<p style="font-size:14px;line-height:1.6">Tap the button to confirm this is your email. It also connects any orders you placed as a guest to your account.</p>${button(
@@ -296,12 +309,13 @@ export async function sendVerifyEmail(email: string, token: string) {
 }
 
 export async function sendEmailChange(newEmail: string, token: string) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: newEmail,
-    subject: `Confirm your new email — ${site.name}`,
+    subject: `Confirm your new email — ${biz().name}`,
     html: layout(
       "Confirm your new email",
-      `<p style="font-size:14px;line-height:1.6">Tap the button to make this the email for your ${site.name} account. You'll sign in with it from then on.</p>${button(
+      `<p style="font-size:14px;line-height:1.6">Tap the button to make this the email for your ${biz().name} account. You'll sign in with it from then on.</p>${button(
         `${siteUrl()}/account/confirm-email?token=${encodeURIComponent(token)}`,
         "Confirm new email",
       )}<p style="font-size:12px;color:#777">This link expires in 24 hours. If you didn't ask for this, ignore this email; nothing changes.</p>`,
@@ -310,9 +324,10 @@ export async function sendEmailChange(newEmail: string, token: string) {
 }
 
 export async function sendPasswordReset(email: string, token: string) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `Reset your password — ${site.name}`,
+    subject: `Reset your password — ${biz().name}`,
     html: layout(
       "Reset your password",
       `<p style="font-size:14px;line-height:1.6">Someone (hopefully you) asked to reset the password for this account.</p>${button(
@@ -325,12 +340,13 @@ export async function sendPasswordReset(email: string, token: string) {
 
 /** Staff created an account for this person: invite them to choose a password. */
 export async function sendAccountInvite(email: string, name: string | null, token: string) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `Your ${site.name} account is ready`,
+    subject: `Your ${biz().name} account is ready`,
     html: layout(
       name ? `Welcome, ${name}` : "Your account is ready",
-      `<p style="font-size:14px;line-height:1.6">We've set up a ${site.name} account for you, so you can track orders, save favourites and check out faster. Choose a password to start using it.</p>${button(
+      `<p style="font-size:14px;line-height:1.6">We've set up a ${biz().name} account for you, so you can track orders, save favourites and check out faster. Choose a password to start using it.</p>${button(
         `${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`,
         "Choose a password",
       )}<p style="font-size:12px;color:#777">This link works for 7 days. You can also sign in with Google or Apple using this email.</p>`,
@@ -339,9 +355,10 @@ export async function sendAccountInvite(email: string, name: string | null, toke
 }
 
 export async function sendSecurityNotice(email: string, what: string) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `Security update on your ${site.name} account`,
+    subject: `Security update on your ${biz().name} account`,
     html: layout(
       "Account change",
       `<p style="font-size:14px;line-height:1.6">${esc(what)}</p><p style="font-size:12px;color:#777">If this wasn't you, reset your password right away and contact us.</p>${button(
@@ -353,12 +370,13 @@ export async function sendSecurityNotice(email: string, what: string) {
 }
 
 export async function sendAdminCode(email: string, code: string, ttlMinutes: number) {
+  await getBusiness(); // store name, tagline and return address from Admin → Settings
   await sendEmail({
     to: email,
-    subject: `${code} is your ${site.name} admin code`,
+    subject: `${code} is your ${biz().name} admin code`,
     html: layout(
       "Admin sign-in",
-      `<p style="font-size:14px;line-height:1.6">Use this code to open the ${esc(site.name)} admin. It expires in ${ttlMinutes} minutes.</p>
+      `<p style="font-size:14px;line-height:1.6">Use this code to open the ${esc(biz().name)} admin. It expires in ${ttlMinutes} minutes.</p>
 <p style="font-size:36px;letter-spacing:12px;font-weight:bold;text-align:center;border:1px solid #111;padding:18px;font-family:Menlo,Consolas,monospace">${esc(code)}</p>
 <p style="font-size:12px;color:#777">Didn't try to sign in? Someone may know your email — you can ignore this, the code is useless without access to your inbox.</p>`,
     ),

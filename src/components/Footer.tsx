@@ -3,6 +3,7 @@ import { site, CATEGORIES } from "@/lib/site";
 import { PaymentIcons } from "./PaymentIcons";
 import { NewsletterForm } from "./Newsletter";
 import { InstagramIcon, TikTokIcon } from "./icons";
+import { getBusiness } from "@/lib/business";
 import { getT } from "@/i18n/server";
 import type { MessageKey } from "@/i18n/messages";
 
@@ -37,22 +38,28 @@ const COLUMNS: Col[] = [
   },
 ];
 
-const SOCIALS = [
-  { name: "Instagram", href: site.social.instagram, handle: site.socialHandles.instagram, Icon: InstagramIcon, hover: "hover:bg-[linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7)]" },
-  { name: "TikTok", href: site.social.tiktok, handle: site.socialHandles.tiktok, Icon: TikTokIcon, hover: "hover:bg-white hover:text-black" },
-];
-
 export async function Footer() {
-  const { t } = await getT();
+  const [{ t }, b] = await Promise.all([getT(), getBusiness()]);
+  // Business details from Admin → Settings; an empty social link hides that network.
+  const SOCIALS = [
+    { name: "Instagram", href: b.social.instagram, handle: b.handles.instagram, Icon: InstagramIcon, hover: "hover:bg-[linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7)]" },
+    { name: "TikTok", href: b.social.tiktok, handle: b.handles.tiktok, Icon: TikTokIcon, hover: "hover:bg-white hover:text-black" },
+  ].filter((s): s is typeof s & { href: string; handle: string } => Boolean(s.href));
   return (
     <footer className="bg-ink text-white">
       <div className="container-x pt-[clamp(56px,6vw,96px)]">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div className="max-w-md">
             <p className="text-[12px] tracking-[0.06em] text-accent uppercase">
-              {site.name} · {t("brand.established")}
+              {b.name} · {t("brand.established")}
             </p>
-            <p className="mt-5 font-display text-[clamp(24px,2vw,32px)] leading-[1.1] tracking-[-0.02em]">{t("brand.tagline")}</p>
+            <p className="mt-5 font-display text-[clamp(24px,2vw,32px)] leading-[1.1] tracking-[-0.02em]">{b.tagline ?? t("brand.tagline")}</p>
+            {(b.email || b.phone) && (
+              <p className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[12px] tracking-[0.04em] text-white/80">
+                {b.email && <a href={`mailto:${b.email}`} className="underline-offset-4 hover:text-white hover:underline">{b.email}</a>}
+                {b.phone && <a href={`tel:${b.phone.replace(/[^\d+]/g, "")}`} className="underline-offset-4 hover:text-white hover:underline">{b.phone}</a>}
+              </p>
+            )}
             <div className="mt-8 max-w-sm">
               <NewsletterForm source="footer" dark cta={t("newsletter.join")} />
             </div>
@@ -64,7 +71,7 @@ export async function Footer() {
                 <ul className="mb-5 space-y-3">
                   {SOCIALS.map(({ name, href, handle, Icon, hover }) => (
                     <li key={name}>
-                      <a href={href} target="_blank" rel="noreferrer" aria-label={t("footer.socialAria", { brand: site.name, network: name, handle })} className="group/s flex items-center gap-3 text-[12px] tracking-[0.04em]">
+                      <a href={href} target="_blank" rel="noreferrer" aria-label={t("footer.socialAria", { brand: b.name, network: name, handle })} className="group/s flex items-center gap-3 text-[12px] tracking-[0.04em]">
                         <span className={`grid size-9 place-items-center rounded-full bg-white/10 transition-all duration-300 group-hover/s:scale-110 ${hover}`}>
                           <Icon className="size-[17px]" />
                         </span>
@@ -106,7 +113,7 @@ export async function Footer() {
 
         <div className="mt-[clamp(24px,3vw,40px)] flex flex-col gap-3 border-t border-white/15 py-6 text-[11px] tracking-[0.04em] text-white/60 uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {site.name}. {t("brand.motto")}.
+            © {new Date().getFullYear()} {b.name}. {t("brand.motto")}.
           </p>
           <nav aria-label={t("footer.legal")} className="flex flex-wrap gap-x-6 gap-y-2 normal-case">
             <Link href="/legal/terms" className="hover:text-white">{t("footer.terms")}</Link>

@@ -7,7 +7,6 @@ import { intlLocale } from "@/i18n/config";
 import { dictionaries } from "@/i18n/messages";
 import { getCurrency, getRates } from "@/lib/rates";
 import "./globals.css";
-import { site } from "@/lib/site";
 import { shippingConfig } from "@/lib/shipping";
 import { getSettings } from "@/lib/settings";
 import { Header } from "@/components/Header";
@@ -17,16 +16,17 @@ import { StoreOnly } from "@/components/StoreOnly";
 import { NewsletterPopup } from "@/components/Newsletter";
 import { AccountSync } from "@/components/auth/AccountSync";
 import { siteUrl } from "@/lib/site-url";
+import { getBusiness } from "@/lib/business";
 
 const SITE_URL = siteUrl();
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t, locale } = await getT();
+  const [{ t, locale }, b] = await Promise.all([getT(), getBusiness()]);
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: t("meta.default", { name: site.name }), template: `%s | ${site.name}` },
-    description: t("brand.description"),
-    openGraph: { siteName: site.name, type: "website", images: ["/images/brand/hero.jpg"], locale: intlLocale(locale).replace("-", "_") },
+    title: { default: t("meta.default", { name: b.name }), template: `%s | ${b.name}` },
+    description: b.description ?? t("brand.description"),
+    openGraph: { siteName: b.name, type: "website", images: ["/images/brand/hero.jpg"], locale: intlLocale(locale).replace("-", "_") },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: "/" },
   };
@@ -35,14 +35,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = { themeColor: "#060606", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [settings, locale, currency, rates] = await Promise.all([getSettings(), getLocale(), getCurrency(), getRates()]);
+  const [settings, locale, currency, rates, b] = await Promise.all([getSettings(), getLocale(), getCurrency(), getRates(), getBusiness()]);
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: site.name,
+    name: b.legalName || b.name,
     url: SITE_URL,
     logo: `${SITE_URL}/images/brand/logo.png`,
-    sameAs: Object.values(site.social),
+    sameAs: Object.values(b.social).filter(Boolean),
+    ...(b.email ? { email: b.email } : {}),
+    ...(b.phone ? { telephone: b.phone } : {}),
   };
   return (
     <html lang={locale}>
@@ -63,7 +65,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <AccountSync />
         <RevealObserver />
         <StoreOnly>
-          <CartDrawer freeShippingThreshold={shippingConfig().freeShippingThreshold} />
+          <CartDrawer freeShippingThreshold={(await shippingConfig()).freeShippingThreshold} />
           {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         </StoreOnly>
         </PrefsProvider>

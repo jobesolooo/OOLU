@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
-import { RETURN_WINDOW_DAYS } from "@/lib/returns";
+import { returnWindowDays } from "@/lib/returns";
 import { shippingConfig } from "@/lib/shipping";
 import { PageHeader } from "@/components/PageHeader";
 import { getT } from "@/i18n/server";
@@ -14,7 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const { freeShippingThreshold, flatRate } = shippingConfig();
+  const { freeShippingThreshold, flatRate } = await shippingConfig();
+  const returnDays = await returnWindowDays();
   const [{ t }, { money }] = await Promise.all([getT(), getMoney()]);
   return (
     <>
@@ -42,7 +43,7 @@ export default async function AboutPage() {
           </div>
           <div>
             <h2 className="label font-semibold">{t("about.returns")}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-black/75">{t("about.returnsBody", { days: RETURN_WINDOW_DAYS })}</p>
+            <p className="mt-3 text-sm leading-relaxed text-black/75">{t("about.returnsBody", { days: returnDays })}</p>
           </div>
           <div>
             <h2 className="label font-semibold">{t("about.payments")}</h2>
