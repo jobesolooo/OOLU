@@ -7,11 +7,11 @@ import { getSession } from "@/lib/session";
 import { adminUsername, checkStaffCredentials, isPasscodeConfigured } from "@/lib/admin-auth";
 import { clientIp, rateLimit, resetRateLimit } from "@/lib/rate-limit";
 import { KEY_DEFS, KEY_GROUPS } from "@/lib/keys-catalog";
-import { clearKey, getKey, saveKey, turnOffKey } from "@/lib/keys";
+import { clearKey, saveKey, turnOffKey } from "@/lib/keys";
 import { stripeClient } from "@/lib/stripe";
 import { invalidateCatalog } from "@/lib/catalog";
 import { sendEmail } from "@/lib/email";
-import { getBusiness } from "@/lib/business";
+import { getBusiness, staffInbox } from "@/lib/business";
 
 export type KeysResult = { ok?: string; error?: string; warn?: string; at?: number } | undefined;
 
@@ -114,9 +114,10 @@ export async function changeKeys(_: KeysResult, form: FormData): Promise<KeysRes
   revalidatePath("/", "layout");
 
   // A heads-up to the shop's inbox, so an unexpected change never goes unnoticed.
-  const to = await getKey("ORDER_NOTIFICATION_EMAIL");
+  const to = await staffInbox();
   if (to) {
     await sendEmail({
+      box: "studio",
       to,
       subject: `${(await getBusiness()).name}: account keys changed (${group.title})`,
       html: `<p>${by.replace(/[<>&"]/g, "")} changed account keys in the admin panel:</p><ul>${changed.map((c) => `<li>${group.title}: ${c}</li>`).join("")}</ul><p>${new Date().toUTCString()}</p><p>Not you? Sign in to the admin, check Settings → Account keys, and change the staff passcode.</p>`,

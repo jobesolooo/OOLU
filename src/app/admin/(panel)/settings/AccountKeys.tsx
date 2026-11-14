@@ -145,8 +145,7 @@ function KeyField({ def, st, locked, pending, host }: { def: KeyDef; st: KeyStat
         {def.multiline ? (
           <textarea {...common} rows={4} className={cx("input font-mono text-[13px]", def.secret && !show && "[-webkit-text-security:disc]")} />
         ) : (
-          {/* A text box with dots instead of type="password", so the browser never fills in a saved password here. */}
-          <input {...common} type="text" className={cx("input pr-12 font-mono text-[14px]", def.secret && !show && "[-webkit-text-security:disc]")} />
+          <input {...common} type={def.secret && !show ? "password" : "text"} className="input pr-12 font-mono text-[14px]" />
         )}
         {def.secret && (
           <button

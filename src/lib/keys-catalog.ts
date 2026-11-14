@@ -43,7 +43,7 @@ export const KEY_GROUPS: KeyGroup[] = [
   {
     id: "email",
     title: "Email (Resend)",
-    blurb: "Order confirmations, password resets, shipping updates and staff alerts.",
+    blurb: "Sends every email and receives mail for the shop's addresses. Create the API key with Full access (not Sending only), so the shop can also receive and forward mail. The addresses themselves are set under Business details → Email addresses.",
     link: { href: "https://resend.com/api-keys", label: "Resend → API Keys" },
     keys: [
       {
@@ -54,18 +54,11 @@ export const KEY_GROUPS: KeyGroup[] = [
         pattern: { re: "^re_[A-Za-z0-9_]{10,}$", message: "A Resend API key starts with re_." },
       },
       {
-        name: "EMAIL_FROM",
-        label: "Send emails from",
-        secret: false,
-        placeholder: "OOLU <hello@ooluclothing.shop>",
-        pattern: { re: "^([^<>]+<[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+>|[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+)$", message: "Use an address, or Name <address>." },
-      },
-      {
-        name: "ORDER_NOTIFICATION_EMAIL",
-        label: "Send new-order alerts to",
-        secret: false,
-        placeholder: "orders@ooluclothing.shop",
-        pattern: { re: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message: "That doesn't look like an email address." },
+        name: "RESEND_WEBHOOK_SECRET",
+        label: "Incoming mail signing secret",
+        secret: true,
+        placeholder: "Filled in for you by Set up email (Business details)",
+        pattern: { re: "^whsec_[A-Za-z0-9+/=]{10,}$", message: "A Resend signing secret starts with whsec_." },
       },
     ],
   },

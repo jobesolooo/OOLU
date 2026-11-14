@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import { site } from "./site";
 import type { BizKey } from "./business-catalog";
+import { getKey } from "./keys";
 
 /**
  * Business details (name, company info, contact, socials, shipping & returns),
@@ -42,6 +43,10 @@ export type Business = {
   countries: string[];
   returnDays: number;
   returnAddress: string;
+  /** e.g. "ooluclothing.shop": the shop's addresses are made on this domain */
+  emailDomain: string;
+  /** Staff inbox that receives forwarded mail and alerts ("" = not set) */
+  forwardTo: string;
 };
 
 const envNum = (name: string, fallback: number) => {
@@ -70,6 +75,8 @@ export function bizDefaults(): Record<BizKey, string> {
     countries: (process.env.SHIPPING_COUNTRIES || DEFAULT_COUNTRIES.join(", ")).replace(/\s*,\s*/g, ", "),
     returnDays: String(envNum("RETURN_WINDOW_DAYS", 30)),
     returnAddress: process.env.RETURN_ADDRESS ?? "",
+    emailDomain: "ooluclothing.shop",
+    forwardTo: process.env.ORDER_NOTIFICATION_EMAIL ?? "",
   };
 }
 
@@ -89,6 +96,7 @@ function resolve(saved: BizValues): Business {
     const n = Number(v(k).replace(",", "."));
     return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : fallback;
   };
+  const domain = v("emailDomain").toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "") || "ooluclothing.shop";
   const days = Number(v("returnDays"));
   const countries = v("countries")
     .split(/[\s,]+/)
@@ -103,7 +111,7 @@ function resolve(saved: BizValues): Business {
     address: v("address"),
     kvk: v("kvk"),
     vat: v("vat"),
-    email: v("email"),
+    email: v("email") || `hello@${domain}`,
     phone: v("phone"),
     city: v("city") || null,
     hours: v("hours") || null,
@@ -114,6 +122,8 @@ function resolve(saved: BizValues): Business {
     countries: countries.length ? countries : DEFAULT_COUNTRIES,
     returnDays: Number.isInteger(days) && days > 0 ? days : 30,
     returnAddress: v("returnAddress"),
+    emailDomain: domain,
+    forwardTo: v("forwardTo"),
   };
 }
 
@@ -168,4 +178,10 @@ export async function legalCompany() {
     email: b.email || COMPANY.email,
     phone: b.phone || COMPANY.phone,
   };
+}
+
+/** Where staff alerts and forwarded customer mail go: the inbox set in Business details. */
+export async function staffInbox() {
+  const b = await getBusiness();
+  return b.forwardTo || (await getKey("ORDER_NOTIFICATION_EMAIL")) || null;
 }

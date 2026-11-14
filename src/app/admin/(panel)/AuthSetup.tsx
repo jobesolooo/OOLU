@@ -3,6 +3,7 @@ import { callbackUrl, isProviderConfigured } from "@/lib/oauth";
 import { siteUrl, siteUrlNeedsFixing } from "@/lib/site-url";
 import { cx } from "@/lib/format";
 import { getKeys } from "@/lib/keys";
+import { getBusiness } from "@/lib/business";
 
 type Step = { state: "done" | "todo" | "warn"; title: string; body: React.ReactNode };
 
@@ -10,10 +11,9 @@ type Step = { state: "done" | "todo" | "warn"; title: string; body: React.ReactN
 export async function AuthSetup() {
   const site = siteUrl();
   const host = site.replace(/^https?:\/\//, "");
-  const k = await getKeys("RESEND_API_KEY", "EMAIL_FROM");
+  const [k, b] = await Promise.all([getKeys("RESEND_API_KEY"), getBusiness()]);
   const resend = Boolean(k.RESEND_API_KEY);
-  const from = k.EMAIL_FROM ?? "";
-  const fromOk = Boolean(from) && !/yourdomain|example\.com/i.test(from);
+  const fromOk = Boolean(b.forwardTo);
   const google = await isProviderConfigured("google");
   const apple = await isProviderConfigured("apple");
   const code = (s: string) => <code className="break-all">{s}</code>;
@@ -39,10 +39,11 @@ export async function AuthSetup() {
       title: "Emails: confirm address, password reset, invites",
       body: (
         <>
-          Sent with Resend. Add the API key (resend.com → API Keys) and a sender under <a href="#keys-email" className="underline">Account keys → Email</a>, e.g. {code("OOLU <hello@ooluclothing.shop>")}, after
-          verifying that domain in Resend (Domains → add the DNS records). Until then these emails aren&apos;t delivered, so password reset and email confirmation
-          can&apos;t be completed.
-          {resend && !fromOk && <span className="mt-1 block text-amber-700">API key found, but &ldquo;Send emails from&rdquo; still needs a real, verified sender.</span>}
+          Sent with Resend from the shop&apos;s own addresses ({code(`orders@${b.emailDomain}`)}, {code(`hello@${b.emailDomain}`)} …). Paste a Full access API key under{" "}
+          <a href="#keys-email" className="underline">Account keys → Email</a>, then press <strong>Set up email</strong> under{" "}
+          <a href="#biz-mail" className="underline">Business details → Email addresses</a> and add the DNS records it shows. Until the domain is verified these emails
+          aren&apos;t delivered.
+          {resend && !fromOk && <span className="mt-1 block text-amber-700">API key found. Add the inbox to forward mail to under Email addresses.</span>}
         </>
       ),
     },

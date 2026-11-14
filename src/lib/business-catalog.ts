@@ -31,11 +31,22 @@ export type BizKey =
   | "flatRate"
   | "countries"
   | "returnDays"
-  | "returnAddress";
+  | "returnAddress"
+  | "emailDomain"
+  | "forwardTo";
 
 export type BizGroup = { id: string; title: string; blurb: string; fields: BizField[] };
 
 export const BIZ_GROUPS: BizGroup[] = [
+  {
+    id: "mail",
+    title: "Email addresses",
+    blurb: "The shop's addresses (hello@, orders@, returns@ and more) are made on this domain. Mail sent to any of them is forwarded to the inbox below.",
+    fields: [
+      { name: "emailDomain", label: "Email domain", help: "Without www or https", shows: "Every email the shop sends, and the addresses customers write to", max: 80 },
+      { name: "forwardTo", label: "Forward all incoming mail to", kind: "email", help: "Your own inbox, e.g. Gmail", shows: "Only staff: customer mail and new-order alerts land here", max: 120 },
+    ],
+  },
   {
     id: "brand",
     title: "Brand",
@@ -55,7 +66,7 @@ export const BIZ_GROUPS: BizGroup[] = [
       { name: "address", label: "Business address", shows: "Legal pages", max: 200 },
       { name: "kvk", label: "KvK number", shows: "Legal pages", max: 20 },
       { name: "vat", label: "VAT (BTW) number", shows: "Legal pages", max: 30 },
-      { name: "email", label: "Customer service email", kind: "email", shows: "Contact page, footer, legal pages", max: 120 },
+      { name: "email", label: "Customer service email", kind: "email", help: "Leave empty to use hello@ on your email domain", shows: "Contact page, footer, legal pages", max: 120 },
       { name: "phone", label: "Phone number", kind: "tel", shows: "Contact page, legal pages", max: 40 },
       { name: "city", label: "Studio location", shows: "Contact page studio card (leave empty for the default)", max: 60 },
       { name: "hours", label: "Opening / reply hours", shows: "Contact page studio card (leave empty for the default)", max: 80 },
