@@ -21,8 +21,14 @@ export type CurrentUser = {
 /**
  * Staff access comes only from the account's role: the staff account (passcode or Google via
  * Settings → Staff access) and anyone given "Staff access" under Customers. ADMIN_EMAILS no longer
- * turns customer accounts into staff (see scripts/migrate.ts for the one-time clean-up).
+ * turns customer accounts into staff: accounts that got staff rights only through it are moved
+ * back to customers the next time they're used (see getCurrentUser).
  */
+const legacyAdminEmails = () =>
+  (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await getSession();
@@ -31,6 +37,11 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const [user] = await db.select().from(schema.users).where(eq(schema.users.id, session.userId)).limit(1);
   // Session was revoked (password changed, "sign out everywhere", account deleted).
   if (!user || (session.v ?? 1) !== user.sessionVersion) return null;
+  // Clean-up for the retired ADMIN_EMAILS rule: those accounts are customers (the staff account is never touched).
+  if (user.role === "admin" && !user.email.endsWith("@staff.oolu") && legacyAdminEmails().includes(user.email.toLowerCase())) {
+    await db.update(schema.users).set({ role: "customer" }).where(eq(schema.users.id, user.id));
+    user.role = "customer";
+  }
   return {
     id: user.id,
     email: user.email,
