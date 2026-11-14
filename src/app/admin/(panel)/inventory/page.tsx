@@ -23,7 +23,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
   const filter = FILTERS.find((f) => f.key === sp.filter)?.key ?? "all";
   const q = typeof sp.q === "string" ? sp.q.trim().toLowerCase() : "";
   const [products, stock] = await Promise.all([getProducts(), getStockMap()]);
-  const stripe = isStripeConfigured();
+  const stripe = (await isStripeConfigured());
 
   const rows = products.map((p) => {
     const keys = allVariantKeys(p);

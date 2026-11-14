@@ -12,7 +12,7 @@ export default async function GiftCardDetail({ params }: PageProps<"/admin/gift-
   const data = /^[0-9a-f-]{36}$/i.test(id) ? await getGiftCard(id) : null;
   if (!data) notFound();
   const { card, ledger } = data;
-  const pi = isStripeConfigured() ? await giftCardPaymentIntent(card.stripeSessionId) : null;
+  const pi = (await isStripeConfigured()) ? await giftCardPaymentIntent(card.stripeSessionId) : null;
   const usedOnOrders = ledger.some((l) => l.orderId);
   const spent = -ledger.filter((l) => l.amount < 0).reduce((s, l) => s + l.amount, 0);
 
@@ -32,7 +32,7 @@ export default async function GiftCardDetail({ params }: PageProps<"/admin/gift-
         actions={
           <>
             {pi && (
-              <a href={stripeDashboardUrl(`/payments/${pi}`)} target="_blank" rel="noreferrer" className={ghostBtn}>
+              <a href={(await stripeDashboardUrl(`/payments/${pi}`))} target="_blank" rel="noreferrer" className={ghostBtn}>
                 Payment in Stripe ↗
               </a>
             )}

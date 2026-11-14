@@ -17,7 +17,7 @@ const Body = z.object({
 });
 
 export async function POST(req: Request) {
-  if (!isStripeConfigured()) {
+  if (!(await isStripeConfigured())) {
     return NextResponse.json({ error: "Payments aren't connected yet." }, { status: 503 });
   }
   const parsed = Body.safeParse(await req.json().catch(() => null));
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL ? siteUrl() : new URL(req.url).origin;
   try {
-    const session = await getStripe().checkout.sessions.create({
+    const session = await (await getStripe()).checkout.sessions.create({
       mode: "payment",
       // Stripe's payment page in the shopper's language.
       locale: stripeLocale(await getLocale()),

@@ -93,12 +93,12 @@ export async function defaultAddress(userId: string) {
 
 /** Stripe Checkout fills in the customer's saved shipping address, so keep it on the default. */
 export async function syncShippingToStripe(userId: string, address: Address | null) {
-  if (!isStripeConfigured()) return;
+  if (!(await isStripeConfigured())) return;
   const db = await getDb();
   const [u] = await db.select({ customer: schema.users.stripeCustomerId }).from(schema.users).where(eq(schema.users.id, userId)).limit(1);
   if (!u?.customer) return;
   try {
-    await getStripe().customers.update(u.customer, {
+    await (await getStripe()).customers.update(u.customer, {
       shipping: address
         ? {
             name: address.name,

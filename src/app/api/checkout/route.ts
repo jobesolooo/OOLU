@@ -33,7 +33,7 @@ const Body = z.object({
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
-  if (!isStripeConfigured()) {
+  if (!(await isStripeConfigured())) {
     return fail("Payments aren't connected yet. Add STRIPE_SECRET_KEY to the environment.", 503);
   }
 
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
   const toAbsolute = (src: string) => (src.startsWith("http") ? src : null); // Stripe needs public https images
 
   try {
-    const stripe = getStripe();
+    const stripe = (await getStripe());
     const customerId = user ? await ensureStripeCustomer(user) : null;
     // Pre-fill Stripe's address form with the default address from the account.
     if (user && customerId) {

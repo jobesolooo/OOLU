@@ -23,9 +23,9 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
   let data = sessionId ? await getOrderBySession(sessionId) : null;
 
   // If the webhook hasn't landed yet, confirm with Stripe directly (idempotent).
-  if (sessionId && data?.order.status === "pending" && isStripeConfigured()) {
+  if (sessionId && data?.order.status === "pending" && (await isStripeConfigured())) {
     try {
-      const session = await getStripe().checkout.sessions.retrieve(sessionId);
+      const session = await (await getStripe()).checkout.sessions.retrieve(sessionId);
       const paid = await markOrderPaid(session);
       if (paid) data = paid;
     } catch (err) {

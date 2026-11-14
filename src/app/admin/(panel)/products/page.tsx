@@ -21,7 +21,7 @@ function Badge({ children, tone = "grey" }: { children: React.ReactNode; tone?: 
 export default async function ProductsAdmin({ searchParams }: PageProps<"/admin/products">) {
   const sp = await searchParams;
   const view = sp.view === "archived" ? "archived" : "live";
-  const stripe = isStripeConfigured();
+  const stripe = (await isStripeConfigured());
   const now = nowMs();
 
   let products: AdminProduct[] = [];
@@ -55,7 +55,7 @@ export default async function ProductsAdmin({ searchParams }: PageProps<"/admin/
         actions={
           stripe && (
             <>
-              <a href={stripeDashboardUrl("/products")} target="_blank" rel="noreferrer" className={ghostBtn}>
+              <a href={(await stripeDashboardUrl("/products"))} target="_blank" rel="noreferrer" className={ghostBtn}>
                 Stripe ↗
               </a>
               <Link href="/admin/products/new" className="btn-solid gap-2">

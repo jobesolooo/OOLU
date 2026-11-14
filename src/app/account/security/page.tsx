@@ -18,6 +18,7 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
   const user = await requireUser("/account/security");
   const sp = await searchParams;
   const linked = await getLinkedProviders(user.id);
+  const available = { google: await isProviderConfigured("google"), apple: await isProviderConfigured("apple") };
   const { t } = await getT();
   const err = one(sp.error);
   const notice = one(sp.connected)
@@ -61,7 +62,7 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
                     <input type="hidden" name="provider" value={id} />
                     <button className={btn}>{t("set.disconnect")}</button>
                   </form>
-                ) : isProviderConfigured(id) ? (
+                ) : available[id] ? (
                   <a href={`/api/auth/${id}?link=1`} className={btn}>
                     {t("set.connect")}
                   </a>

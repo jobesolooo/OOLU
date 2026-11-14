@@ -23,7 +23,7 @@ const euros = (c: number | null) => (c ? (c % 100 ? (c / 100).toFixed(2) : Strin
 export default async function ProductPage({ params, searchParams }: PageProps<"/admin/products/[id]">) {
   const { id } = await params;
   const sp = await searchParams;
-  if (!isStripeConfigured()) redirect("/admin/products");
+  if (!(await isStripeConfigured())) redirect("/admin/products");
   const isNew = id === "new";
   const [p, all] = await Promise.all([isNew ? null : getAdminProduct(id), listAdminProducts().catch(() => [])]);
   if (!isNew && !p) notFound();

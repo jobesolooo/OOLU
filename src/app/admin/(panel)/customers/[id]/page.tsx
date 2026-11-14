@@ -104,8 +104,8 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
         }
         actions={
           user.stripeCustomerId &&
-          isStripeConfigured() && (
-            <a href={stripeDashboardUrl(`/customers/${user.stripeCustomerId}`)} target="_blank" rel="noreferrer" className={ghostBtn}>
+          (await isStripeConfigured()) && (
+            <a href={(await stripeDashboardUrl(`/customers/${user.stripeCustomerId}`))} target="_blank" rel="noreferrer" className={ghostBtn}>
               Customer in Stripe ↗
             </a>
           )

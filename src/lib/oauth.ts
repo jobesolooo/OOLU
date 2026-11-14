@@ -6,27 +6,33 @@ import { getDb, schema } from "./db";
 import type { OAuthProvider } from "./db/schema";
 import { isAdminEmail, linkGuestOrders } from "./auth";
 import { siteUrl } from "@/lib/site-url";
+import { getKeys } from "./keys";
 
 export const callbackUrl = (p: OAuthProvider) => `${siteUrl()}/api/auth/${p}/callback`;
 
-export function isProviderConfigured(p: OAuthProvider) {
-  if (p === "google") return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
-  return Boolean(process.env.APPLE_CLIENT_ID && process.env.APPLE_TEAM_ID && process.env.APPLE_KEY_ID && process.env.APPLE_PRIVATE_KEY);
+const googleKeys = () => getKeys("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET");
+const appleKeys = () => getKeys("APPLE_CLIENT_ID", "APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY");
+
+export async function isProviderConfigured(p: OAuthProvider) {
+  const k = p === "google" ? await googleKeys() : await appleKeys();
+  return Object.values(k).every(Boolean);
 }
 
-export function google() {
-  return new Google(process.env.GOOGLE_CLIENT_ID!, process.env.GOOGLE_CLIENT_SECRET!, callbackUrl("google"));
+export async function google() {
+  const k = await googleKeys();
+  return new Google(k.GOOGLE_CLIENT_ID!, k.GOOGLE_CLIENT_SECRET!, callbackUrl("google"));
 }
 
 /** APPLE_PRIVATE_KEY is the contents of the .p8 file (PEM). "\n" escapes are accepted. */
-function applePkcs8() {
-  const pem = process.env.APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
+function applePkcs8(raw: string) {
+  const pem = raw.replace(/\\n/g, "\n");
   const b64 = pem.replace(/-----(BEGIN|END) PRIVATE KEY-----/g, "").replace(/\s+/g, "");
   return new Uint8Array(Buffer.from(b64, "base64"));
 }
 
-export function apple() {
-  return new Apple(process.env.APPLE_CLIENT_ID!, process.env.APPLE_TEAM_ID!, process.env.APPLE_KEY_ID!, applePkcs8(), callbackUrl("apple"));
+export async function apple() {
+  const k = await appleKeys();
+  return new Apple(k.APPLE_CLIENT_ID!, k.APPLE_TEAM_ID!, k.APPLE_KEY_ID!, applePkcs8(k.APPLE_PRIVATE_KEY!), callbackUrl("apple"));
 }
 
 /* ── Short-lived, encrypted cookie that carries the OAuth state across the redirect ── */

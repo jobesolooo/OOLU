@@ -136,7 +136,7 @@ function refresh(id?: string) {
 
 export async function saveProduct(_: ProductFormState, form: FormData): Promise<ProductFormState> {
   await requireAdmin();
-  if (!isStripeConfigured()) return { error: "Connect Stripe first (Settings → Stripe)." };
+  if (!(await isStripeConfigured())) return { error: "Connect Stripe first (Settings → Stripe)." };
   const id = String(form.get("id") ?? "");
   const { input, error, field } = parse(form);
   if (!input) return { error, field };
@@ -171,7 +171,7 @@ export async function removeProduct(form: FormData) {
 
 export async function uploadPhoto(form: FormData): Promise<{ url?: string; error?: string }> {
   await requireAdmin();
-  if (!isStripeConfigured()) return { error: "Connect Stripe first." };
+  if (!(await isStripeConfigured())) return { error: "Connect Stripe first." };
   const file = form.get("file");
   if (!(file instanceof File) || !file.size) return { error: "No file received." };
   if (!/^image\/(jpeg|png|webp|avif|heic|heif)$/.test(file.type)) return { error: "Use a JPG, PNG, WebP or HEIC photo." };
@@ -185,7 +185,7 @@ export async function uploadPhoto(form: FormData): Promise<{ url?: string; error
 
 export async function importCatalogue(): Promise<ProductFormState> {
   await requireAdmin();
-  if (!isStripeConfigured()) return { error: "Connect Stripe first." };
+  if (!(await isStripeConfigured())) return { error: "Connect Stripe first." };
   try {
     const { created, skipped } = await importDemoCatalogue();
     refresh();

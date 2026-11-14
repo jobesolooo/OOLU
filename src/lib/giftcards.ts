@@ -180,7 +180,7 @@ export async function resendGiftCard(id: string) {
 export async function giftCardPaymentIntent(sessionId: string | null) {
   if (!sessionId) return null;
   try {
-    const s = await getStripe().checkout.sessions.retrieve(sessionId);
+    const s = await (await getStripe()).checkout.sessions.retrieve(sessionId);
     return typeof s.payment_intent === "string" ? s.payment_intent : (s.payment_intent?.id ?? null);
   } catch {
     return null;
@@ -196,7 +196,7 @@ const REFUND_NOTE = "Refunded in Stripe";
 export async function syncGiftCardRefund(charge: Stripe.Charge) {
   let id = charge.metadata?.giftCardId;
   if (!id && typeof charge.payment_intent === "string") {
-    const pi = await getStripe().paymentIntents.retrieve(charge.payment_intent);
+    const pi = await (await getStripe()).paymentIntents.retrieve(charge.payment_intent);
     if (pi.metadata?.kind === "giftcard") id = pi.metadata.giftCardId;
   }
   if (!id) return false;

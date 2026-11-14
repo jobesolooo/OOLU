@@ -15,7 +15,7 @@ export function randomCode(prefix: string, length = 6) {
 }
 
 async function ensureWelcomeCoupon(percentOff: number) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const id = `${WELCOME_COUPON_PREFIX}${percentOff}`;
   try {
     return await stripe.coupons.retrieve(id);
@@ -26,9 +26,9 @@ async function ensureWelcomeCoupon(percentOff: number) {
 
 /** Single-use, first-order-only welcome code for a new subscriber. Returns null when Stripe isn't set up. */
 export async function createWelcomeCode(email: string, percentOff: number) {
-  if (!isStripeConfigured()) return null;
+  if (!(await isStripeConfigured())) return null;
   const coupon = await ensureWelcomeCoupon(percentOff);
-  const promo = await getStripe().promotionCodes.create({
+  const promo = await (await getStripe()).promotionCodes.create({
     promotion: { type: "coupon", coupon: coupon.id },
     code: randomCode("WELCOME-"),
     max_redemptions: 1,
@@ -50,7 +50,7 @@ export type PromoInput = {
 };
 
 export async function createPromotion(input: PromoInput, previousUses = 0) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const coupon = await stripe.coupons.create({
     duration: "once",
     name: input.code,
@@ -77,14 +77,14 @@ export async function createPromotion(input: PromoInput, previousUses = 0) {
 /** Every promotion code in Stripe (active and paused), except personal newsletter welcome codes. */
 export async function listPromotions(): Promise<Stripe.PromotionCode[]> {
   const out: Stripe.PromotionCode[] = [];
-  for await (const p of getStripe().promotionCodes.list({ limit: 100, expand: ["data.promotion.coupon"] })) {
+  for await (const p of (await getStripe()).promotionCodes.list({ limit: 100, expand: ["data.promotion.coupon"] })) {
     if (p.metadata?.source !== "newsletter" && p.metadata?.deleted !== "true") out.push(p);
   }
   return out;
 }
 
 export async function getPromotion(id: string) {
-  return getStripe().promotionCodes.retrieve(id, { expand: ["promotion.coupon"] });
+  return (await getStripe()).promotionCodes.retrieve(id, { expand: ["promotion.coupon"] });
 }
 
 /**
@@ -93,7 +93,7 @@ export async function getPromotion(id: string) {
  * If creating fails, the old code is switched back on.
  */
 export async function replacePromotion(id: string, input: PromoInput) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const old = await stripe.promotionCodes.retrieve(id);
   if (old.active) await stripe.promotionCodes.update(id, { active: false });
   try {
@@ -108,7 +108,7 @@ export async function replacePromotion(id: string, input: PromoInput) {
 
 /** Remove a code: switch it off for good and delete its discount (coupon) in Stripe. */
 export async function deletePromotion(id: string) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const promo = await stripe.promotionCodes.retrieve(id, { expand: ["promotion.coupon"] });
   await stripe.promotionCodes.update(id, { active: false, metadata: { deleted: "true" } });
   const coupon = promo.promotion?.coupon;
@@ -121,12 +121,12 @@ export async function deletePromotion(id: string) {
 }
 
 export async function setPromotionActive(id: string, active: boolean) {
-  await getStripe().promotionCodes.update(id, { active });
+  await (await getStripe()).promotionCodes.update(id, { active });
 }
 
 /** One-off coupon used to apply a gift card balance to a single checkout. */
 export async function createGiftCardCoupon(amountOff: number, currency: string, last4: string) {
-  return getStripe().coupons.create({
+  return (await getStripe()).coupons.create({
     amount_off: amountOff,
     currency,
     duration: "once",

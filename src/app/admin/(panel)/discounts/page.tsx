@@ -34,7 +34,7 @@ function rules(p: Stripe.PromotionCode) {
 const expired = (p: Stripe.PromotionCode) => p.expires_at != null && p.expires_at * 1000 < nowMs();
 
 export default async function DiscountsPage({ searchParams }: PageProps<"/admin/discounts">) {
-  if (!isStripeConfigured()) {
+  if (!(await isStripeConfigured())) {
     return (
       <>
         <AdminHeader eyebrow="Catalogue" title="Discounts" description="Discount codes live in Stripe. Connect Stripe to create and manage them here." />
@@ -60,7 +60,7 @@ export default async function DiscountsPage({ searchParams }: PageProps<"/admin/
         title="Discounts"
         description="Codes shoppers type at checkout. They're saved in Stripe, and codes you make in the Stripe dashboard show up here too."
         actions={
-          <a href={stripeDashboardUrl("/coupons")} target="_blank" rel="noreferrer" className={ghostBtn}>
+          <a href={(await stripeDashboardUrl("/coupons"))} target="_blank" rel="noreferrer" className={ghostBtn}>
             Stripe ↗
           </a>
         }

@@ -21,9 +21,9 @@ export default async function GiftCardSuccess({ searchParams }: PageProps<"/gift
   if (sessionId) {
     const db = await getDb();
     [card] = await db.select().from(schema.giftCards).where(eq(schema.giftCards.stripeSessionId, sessionId)).limit(1);
-    if (card?.status === "pending" && isStripeConfigured()) {
+    if (card?.status === "pending" && (await isStripeConfigured())) {
       try {
-        const session = await getStripe().checkout.sessions.retrieve(sessionId);
+        const session = await (await getStripe()).checkout.sessions.retrieve(sessionId);
         card = (await activatePurchasedGiftCard(session)) ?? card;
       } catch (err) {
         console.error("[gift-card success] verify failed", err);

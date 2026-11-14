@@ -176,10 +176,10 @@ export function invalidateCatalog() {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  if (!isStripeConfigured()) return demoProducts();
+  if (!(await isStripeConfigured())) return demoProducts();
   if (cache && Date.now() - cache.at < TTL_MS) return cache.products;
 
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const products: Product[] = [];
   for await (const p of stripe.products.list({ active: true, limit: 100, expand: ["data.default_price"] })) {
     if (p.metadata?.kind === "giftcard") continue;

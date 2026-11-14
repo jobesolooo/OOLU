@@ -109,9 +109,9 @@ export async function emailTaken(email: string, exceptId?: string) {
 }
 
 async function syncStripeCustomer(stripeCustomerId: string | null, d: { email: string; name: string | null }) {
-  if (!stripeCustomerId || !isStripeConfigured()) return;
+  if (!stripeCustomerId || !(await isStripeConfigured())) return;
   try {
-    await getStripe().customers.update(stripeCustomerId, { email: d.email, name: d.name ?? "" });
+    await (await getStripe()).customers.update(stripeCustomerId, { email: d.email, name: d.name ?? "" });
   } catch (err) {
     console.error("[admin-users] Stripe customer update failed", err);
   }

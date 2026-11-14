@@ -15,7 +15,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ provider: strin
   const back = (error: string) =>
     NextResponse.redirect(new URL(`/account/login?error=${encodeURIComponent(error)}&next=${encodeURIComponent(next)}`, url));
 
-  if (!isProviderConfigured(provider)) return back(`${provider}_not_configured`);
+  if (!(await isProviderConfigured(provider))) return back(`${provider}_not_configured`);
 
   let linkUserId: string | undefined;
   if (url.searchParams.get("link") === "1") {
@@ -29,10 +29,10 @@ export async function GET(req: Request, ctx: { params: Promise<{ provider: strin
   let verifier: string | undefined;
   if (provider === "google") {
     verifier = generateCodeVerifier();
-    authUrl = google().createAuthorizationURL(state, verifier, ["openid", "email", "profile"]);
+    authUrl = (await google()).createAuthorizationURL(state, verifier, ["openid", "email", "profile"]);
     authUrl.searchParams.set("prompt", "select_account");
   } else {
-    authUrl = apple().createAuthorizationURL(state, ["name", "email"]);
+    authUrl = (await apple()).createAuthorizationURL(state, ["name", "email"]);
     // Apple only returns name/email when the response is POSTed back.
     authUrl.searchParams.set("response_mode", "form_post");
   }

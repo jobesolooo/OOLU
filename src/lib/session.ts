@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import { getIronSession, type SessionOptions } from "iron-session";
 
 /** v = the user's sessionVersion when they signed in; bumping it signs out every device. */
-export type SessionData = { userId?: string; v?: number };
+/** keysUntil = until when this session may change account keys (after re-entering the staff passcode). */
+export type SessionData = { userId?: string; v?: number; keysUntil?: number };
 
 function options(): SessionOptions {
   const password = process.env.SESSION_SECRET;

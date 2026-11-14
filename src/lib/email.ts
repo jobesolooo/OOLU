@@ -5,18 +5,19 @@ import { formatMoney } from "./format";
 import { variantLabel } from "./variants";
 import type { Order, OrderItem, ShippingAddress } from "./db/schema";
 import { siteUrl } from "@/lib/site-url";
+import { getKey, getKeys } from "./keys";
 
 type Mail = { to: string; subject: string; html: string; replyTo?: string };
 
 export async function sendEmail(mail: Mail) {
-  const key = process.env.RESEND_API_KEY;
+  const { RESEND_API_KEY: key, EMAIL_FROM } = await getKeys("RESEND_API_KEY", "EMAIL_FROM");
   if (!key) {
     // Dev mode: print the email (and any links in it) to the terminal instead of sending.
     const links = [...mail.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((l) => !l.startsWith("mailto:"));
     console.info(`[email:dev] To: ${mail.to} | ${mail.subject}${links.length ? `\n  ${links.join("\n  ")}` : ""}`);
     return { skipped: true as const };
   }
-  const from = process.env.EMAIL_FROM || `${site.name} <onboarding@resend.dev>`;
+  const from = EMAIL_FROM || `${site.name} <onboarding@resend.dev>`;
   try {
     const resend = new Resend(key);
     const { error } = await resend.emails.send({ from, ...mail });
@@ -96,7 +97,7 @@ ${itemsTable(order, items)}${address(order.shippingAddress)}
 }
 
 export async function sendAdminNewOrder(order: Order, items: OrderItem[]) {
-  const to = process.env.ORDER_NOTIFICATION_EMAIL;
+  const to = await getKey("ORDER_NOTIFICATION_EMAIL");
   if (!to) return;
   await sendEmail({
     to,
@@ -262,7 +263,7 @@ export async function sendReturnUpdate(email: string | null, orderNumber: number
 }
 
 export async function sendContactNotification(msg: { name: string; email: string; topic: string; orderNumber: string | null; message: string }) {
-  const to = process.env.ORDER_NOTIFICATION_EMAIL;
+  const to = await getKey("ORDER_NOTIFICATION_EMAIL");
   if (!to) return;
   await sendEmail({
     to,
@@ -363,5 +364,5 @@ export async function sendAdminCode(email: string, code: string, ttlMinutes: num
     ),
   });
   // Dev convenience: show the code itself in the terminal (emails are only logged when Resend isn't set up).
-  if (!process.env.RESEND_API_KEY) console.info(`[email:dev] admin code for ${email}: ${code}`);
+  if (!(await getKey("RESEND_API_KEY"))) console.info(`[email:dev] admin code for ${email}: ${code}`);
 }

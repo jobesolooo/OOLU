@@ -79,7 +79,7 @@ export async function refundOrder(_: ActionResult, form: FormData): Promise<Acti
   if (amount > remaining) return { error: `You can refund at most ${(remaining / 100).toFixed(2)}.` };
 
   try {
-    const stripe = getStripe();
+    const stripe = (await getStripe());
     await stripe.refunds.create(
       { payment_intent: order.stripePaymentIntentId, amount, metadata: { orderId } },
       { idempotencyKey: `refund_${orderId}_${order.refundedAmount}_${amount}` },
@@ -187,7 +187,7 @@ export async function updateReturn(_: ActionResult, form: FormData): Promise<Act
     const amount = Math.min(ret.refundAmount, remaining);
     if (amount <= 0) return { error: "Nothing left to refund on this order." };
     try {
-      const stripe = getStripe();
+      const stripe = (await getStripe());
       await stripe.refunds.create(
         { payment_intent: order.stripePaymentIntentId, amount, metadata: { orderId: order.id, returnId: ret.id } },
         { idempotencyKey: `return_${ret.id}` },

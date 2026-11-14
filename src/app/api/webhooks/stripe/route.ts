@@ -5,6 +5,7 @@ import { getStripe } from "@/lib/stripe";
 import { invalidateCatalog } from "@/lib/catalog";
 import { activatePurchasedGiftCard, syncGiftCardRefund } from "@/lib/giftcards";
 import { claimEvent, markOrderCancelled, markOrderPaid, releaseEvent, syncRefund } from "@/lib/orders";
+import { getKey } from "@/lib/keys";
 
 /**
  * Stripe webhook. Subscribe the endpoint to:
@@ -14,14 +15,14 @@ import { claimEvent, markOrderCancelled, markOrderPaid, releaseEvent, syncRefund
  *   price.created, price.updated, price.deleted
  */
 export async function POST(req: Request) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = await getKey("STRIPE_WEBHOOK_SECRET");
   const signature = req.headers.get("stripe-signature");
   if (!secret || !signature) return new NextResponse("Webhook not configured", { status: 400 });
 
   const payload = await req.text();
   let event: Stripe.Event;
   try {
-    event = getStripe().webhooks.constructEvent(payload, signature, secret);
+    event = (await getStripe()).webhooks.constructEvent(payload, signature, secret);
   } catch (err) {
     console.error("[webhook] bad signature", err);
     return new NextResponse("Invalid signature", { status: 400 });

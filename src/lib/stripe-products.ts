@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type Stripe from "stripe";
 import sharp from "sharp";
-import { getStripe, stripeDashboardUrl } from "./stripe";
+import { getStripe, stripeDashboardUrlSync } from "./stripe";
 import { STORE_CURRENCY, demoProducts, fromStripe, invalidateCatalog, slugify, type Product } from "./catalog";
 
 /**
@@ -45,12 +45,12 @@ function toAdmin(p: Stripe.Product): AdminProduct {
       ...fromStripe({ ...p, default_price: { id: "", active: true, unit_amount: 0, currency: STORE_CURRENCY } as Stripe.Price })!,
       priceId: "",
     } as Product);
-  return { ...base, active: p.active, hasPrice: Boolean(price?.active && price.unit_amount != null), dashboardUrl: stripeDashboardUrl(`/products/${p.id}`) };
+  return { ...base, active: p.active, hasPrice: Boolean(price?.active && price.unit_amount != null), dashboardUrl: stripeDashboardUrlSync(`/products/${p.id}`) };
 }
 
 /** All shop products in Stripe, including archived ones (gift card products are skipped). */
 export async function listAdminProducts(): Promise<AdminProduct[]> {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const out: AdminProduct[] = [];
   for (const active of [true, false]) {
     for await (const p of stripe.products.list({ active, limit: 100, expand: ["data.default_price"] })) {
@@ -63,7 +63,7 @@ export async function listAdminProducts(): Promise<AdminProduct[]> {
 
 export async function getAdminProduct(id: string): Promise<AdminProduct | null> {
   try {
-    const p = await getStripe().products.retrieve(id, { expand: ["default_price"] });
+    const p = await (await getStripe()).products.retrieve(id, { expand: ["default_price"] });
     return p.deleted ? null : toAdmin(p);
   } catch {
     return null;
@@ -81,7 +81,7 @@ export type ProductInput = {
 
 /** Create a product with its price in one call. */
 export async function createStripeProduct(input: ProductInput) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const product = await stripe.products.create({
     name: input.name,
     description: input.description || undefined,
@@ -99,7 +99,7 @@ export async function createStripeProduct(input: ProductInput) {
  * old one (which is archived) when the amount changes.
  */
 export async function updateStripeProduct(id: string, input: ProductInput) {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   const current = await stripe.products.retrieve(id, { expand: ["default_price"] });
   const oldPrice = typeof current.default_price === "object" ? current.default_price : null;
 
@@ -123,7 +123,7 @@ export async function updateStripeProduct(id: string, input: ProductInput) {
 }
 
 export async function setStripeProductActive(id: string, active: boolean) {
-  await getStripe().products.update(id, { active });
+  await (await getStripe()).products.update(id, { active });
   invalidateCatalog();
 }
 
@@ -132,7 +132,7 @@ export async function setStripeProductActive(id: string, active: boolean) {
  * (no prices with payments), so anything else is archived instead.
  */
 export async function deleteStripeProduct(id: string): Promise<"deleted" | "archived"> {
-  const stripe = getStripe();
+  const stripe = (await getStripe());
   try {
     // A product with prices can't be deleted; prices themselves can't be deleted either.
     await stripe.products.update(id, { default_price: "" });
@@ -156,7 +156,7 @@ export async function uploadProductImage(data: Buffer, name: string) {
     if (out.length <= 480_000) break;
     out = await sharp(data).rotate().resize({ width: 1400, height: 1750, fit: "inside", withoutEnlargement: true }).jpeg({ quality: q, mozjpeg: true }).toBuffer();
   }
-  const file = await getStripe().files.create({
+  const file = await (await getStripe()).files.create({
     purpose: "business_logo",
     file: { data: out, name: `${slugify(name.replace(/\.[a-z0-9]+$/i, "")) || "photo"}.jpg`, type: "image/jpeg" },
     file_link_data: { create: true },

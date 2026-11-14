@@ -4,14 +4,21 @@ import { AdminForm } from "../FormMessage";
 import { AdminHeader } from "../ui";
 import { StripeSetup } from "../StripeSetup";
 import { AuthSetup } from "../AuthSetup";
+import { keyStates } from "@/lib/keys";
+import { KEY_GROUPS } from "@/lib/keys-catalog";
+import { getSession } from "@/lib/session";
+import { AccountKeys } from "./AccountKeys";
+
+export const dynamic = "force-dynamic";
 
 const toLocalInput = (iso: string | null) => (iso ? new Date(iso).toISOString().slice(0, 16) : "");
 
 export default async function SettingsAdmin() {
-  const s = await getSettings();
+  const [s, states, session] = await Promise.all([getSettings(), keyStates(), getSession()]);
+  const unlockedUntil = session.keysUntil ?? null; // the screen itself works out whether it has expired
   return (
     <>
-      <AdminHeader eyebrow="Setup" title="Store settings" description="Homepage promo strip, drop countdown and the newsletter popup. Changes show on the store straight away." />
+      <AdminHeader eyebrow="Setup" title="Store settings" description="Connections, account keys, the homepage promo strip, drop countdown and the newsletter popup. Every change shows on the store straight away." />
       <div className="mb-3 max-w-3xl space-y-3">
         <StripeSetup />
         <AuthSetup />
@@ -60,6 +67,9 @@ export default async function SettingsAdmin() {
           </div>
         </fieldset>
       </AdminForm>
+      <div className="max-w-3xl">
+        <AccountKeys groups={KEY_GROUPS} states={states} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />
+      </div>
     </>
   );
 }

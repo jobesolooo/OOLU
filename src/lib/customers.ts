@@ -10,7 +10,7 @@ export async function ensureStripeCustomer(user: CurrentUser) {
   const [row] = await db.select({ id: schema.users.stripeCustomerId }).from(schema.users).where(eq(schema.users.id, user.id)).limit(1);
   if (row?.id) return row.id;
   try {
-    const customer = await getStripe().customers.create({
+    const customer = await (await getStripe()).customers.create({
       email: user.email,
       name: user.name ?? undefined,
       metadata: { userId: user.id },

@@ -2,18 +2,20 @@ import { CheckCircle2, Circle, AlertTriangle } from "lucide-react";
 import { callbackUrl, isProviderConfigured } from "@/lib/oauth";
 import { siteUrl, siteUrlNeedsFixing } from "@/lib/site-url";
 import { cx } from "@/lib/format";
+import { getKeys } from "@/lib/keys";
 
 type Step = { state: "done" | "todo" | "warn"; title: string; body: React.ReactNode };
 
 /** What's needed for every way of signing in, and which parts are done. */
-export function AuthSetup() {
+export async function AuthSetup() {
   const site = siteUrl();
   const host = site.replace(/^https?:\/\//, "");
-  const resend = Boolean(process.env.RESEND_API_KEY);
-  const from = process.env.EMAIL_FROM ?? "";
+  const k = await getKeys("RESEND_API_KEY", "EMAIL_FROM");
+  const resend = Boolean(k.RESEND_API_KEY);
+  const from = k.EMAIL_FROM ?? "";
   const fromOk = Boolean(from) && !/yourdomain|example\.com/i.test(from);
-  const google = isProviderConfigured("google");
-  const apple = isProviderConfigured("apple");
+  const google = await isProviderConfigured("google");
+  const apple = await isProviderConfigured("apple");
   const code = (s: string) => <code className="break-all">{s}</code>;
 
   const steps: Step[] = [
@@ -37,10 +39,10 @@ export function AuthSetup() {
       title: "Emails: confirm address, password reset, invites",
       body: (
         <>
-          Sent with Resend. Add {code("RESEND_API_KEY")} (resend.com → API Keys) and {code("EMAIL_FROM")}, e.g. {code("OOLU <hello@ooluclothing.shop>")}, after
+          Sent with Resend. Add the API key (resend.com → API Keys) and a sender under <a href="#keys-email" className="underline">Account keys → Email</a>, e.g. {code("OOLU <hello@ooluclothing.shop>")}, after
           verifying that domain in Resend (Domains → add the DNS records). Until then these emails aren&apos;t delivered, so password reset and email confirmation
           can&apos;t be completed.
-          {resend && !fromOk && <span className="mt-1 block text-amber-700">API key found, but EMAIL_FROM still needs a real, verified sender.</span>}
+          {resend && !fromOk && <span className="mt-1 block text-amber-700">API key found, but &ldquo;Send emails from&rdquo; still needs a real, verified sender.</span>}
         </>
       ),
     },
@@ -49,8 +51,8 @@ export function AuthSetup() {
       title: "Continue with Google",
       body: (
         <>
-          Google Cloud Console → APIs &amp; Services → Credentials → OAuth client ID (Web application). Authorised redirect URI: {code(callbackUrl("google"))}. Copy
-          the ID and secret into {code("GOOGLE_CLIENT_ID")} and {code("GOOGLE_CLIENT_SECRET")}. The button appears on the sign-in page once both are set.
+          Google Cloud Console → APIs &amp; Services → Credentials → OAuth client ID (Web application). Authorised redirect URI: {code(callbackUrl("google"))}. Paste
+          the ID and secret under <a href="#keys-google" className="underline">Account keys → Google</a>. The button appears on the sign-in page once both are set.
         </>
       ),
     },
@@ -60,8 +62,8 @@ export function AuthSetup() {
       body: (
         <>
           Needs an Apple Developer account. Create a Services ID with Sign in with Apple, domain {code(host)} and return URL {code(callbackUrl("apple"))}, plus a
-          Sign in with Apple key (.p8). Set {code("APPLE_CLIENT_ID")} (the Services ID), {code("APPLE_TEAM_ID")}, {code("APPLE_KEY_ID")} and{" "}
-          {code("APPLE_PRIVATE_KEY")} (the .p8 file&apos;s contents).
+          Sign in with Apple key (.p8). Fill them in under{" "}
+          <a href="#keys-apple" className="underline">Account keys → Apple</a>.
         </>
       ),
     },
@@ -75,7 +77,7 @@ export function AuthSetup() {
   return (
     <section className="bg-white p-5 ring-1 ring-black/5 sm:p-6">
       <h2 className="mb-1 text-[11px] font-semibold tracking-[0.14em] uppercase">Sign-in &amp; email</h2>
-      <p className="mb-5 text-[12px] text-ash">Every way customers and staff sign in. Settings go in Vercel → Settings → Environment Variables; redeploy after changing them.</p>
+      <p className="mb-5 text-[12px] text-ash">Every way customers and staff sign in. Keys are added under Account keys below and work straight away. The site address and staff passcode stay in Vercel.</p>
       <ol className="space-y-4">
         {steps.map((s) => (
           <li key={s.title} className="flex gap-3">

@@ -49,8 +49,8 @@ export async function saveProfile(_: FormState, form: FormData): Promise<FormSta
   const db = await getDb();
   const [row] = await db.update(schema.users).set(parsed.data).where(eq(schema.users.id, user.id)).returning();
   // Keep the Stripe customer's name and phone in step.
-  if (row.stripeCustomerId && isStripeConfigured()) {
-    await getStripe()
+  if (row.stripeCustomerId && (await isStripeConfigured())) {
+    await (await getStripe())
       .customers.update(row.stripeCustomerId, { name: parsed.data.name, phone: parsed.data.phone ?? "" })
       .catch((e) => console.error("[account] Stripe customer update failed", e));
   }
@@ -111,8 +111,8 @@ export async function confirmEmailChange(token: string): Promise<{ ok: true; ema
   await markEmailVerified(userId); // the link proves the new inbox (and links guest orders placed with it)
   // Newsletter follows the account's email.
   await db.update(schema.subscribers).set({ email: next }).where(eq(schema.subscribers.email, old)).catch(() => {});
-  if (row.stripeCustomerId && isStripeConfigured()) {
-    await getStripe().customers.update(row.stripeCustomerId, { email: next }).catch((e) => console.error("[account] Stripe email update failed", e));
+  if (row.stripeCustomerId && (await isStripeConfigured())) {
+    await (await getStripe()).customers.update(row.stripeCustomerId, { email: next }).catch((e) => console.error("[account] Stripe email update failed", e));
   }
   await rotateSessions(userId, false);
   const [fresh] = await db.select().from(schema.users).where(eq(schema.users.id, userId)).limit(1);

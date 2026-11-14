@@ -25,7 +25,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
         description={<OrderStatusBadge status={order.status} />}
         actions={
           order.stripePaymentIntentId && (
-            <a href={stripeDashboardUrl(`/payments/${order.stripePaymentIntentId}`)} target="_blank" rel="noreferrer" className={ghostBtn}>
+            <a href={(await stripeDashboardUrl(`/payments/${order.stripePaymentIntentId}`))} target="_blank" rel="noreferrer" className={ghostBtn}>
               Payment in Stripe ↗
             </a>
           )

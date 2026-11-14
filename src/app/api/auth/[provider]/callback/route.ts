@@ -30,12 +30,12 @@ async function handle(req: Request, provider: OAuthProvider, params: URLSearchPa
   let profile: OAuthProfile;
   try {
     if (provider === "google") {
-      const tokens = await google().validateAuthorizationCode(code, flow.verifier!);
+      const tokens = await (await google()).validateAuthorizationCode(code, flow.verifier!);
       // The ID token comes straight from Google's token endpoint over TLS, so its claims can be trusted.
       const c = decodeIdToken(tokens.idToken()) as GoogleClaims;
       profile = { provider, sub: c.sub, email: c.email ?? null, emailVerified: c.email_verified === true, name: c.name ?? null, image: c.picture ?? null };
     } else {
-      const tokens = await apple().validateAuthorizationCode(code);
+      const tokens = await (await apple()).validateAuthorizationCode(code);
       const c = decodeIdToken(tokens.idToken()) as AppleClaims;
       // Apple sends the name only on the very first sign-in, as a JSON form field.
       let name: string | null = null;

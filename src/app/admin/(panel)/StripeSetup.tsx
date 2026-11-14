@@ -1,5 +1,5 @@
 import { CheckCircle2, Circle } from "lucide-react";
-import { isStripeConfigured } from "@/lib/stripe";
+import { getKeys } from "@/lib/keys";
 import { cx } from "@/lib/format";
 import { siteUrl } from "@/lib/site-url";
 
@@ -18,20 +18,22 @@ export const WEBHOOK_EVENTS = [
 ];
 
 /** Connection status + the exact steps to connect Stripe. */
-export function StripeSetup({ compact = false }: { compact?: boolean }) {
-  const key = process.env.STRIPE_SECRET_KEY ?? "";
+export async function StripeSetup({ compact = false }: { compact?: boolean }) {
+  const k = await getKeys("STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET");
+  const key = k.STRIPE_SECRET_KEY ?? "";
+  const connected = Boolean(key);
   const live = key.startsWith("sk_live") || key.startsWith("rk_live");
-  const hook = Boolean(process.env.STRIPE_WEBHOOK_SECRET);
+  const hook = Boolean(k.STRIPE_WEBHOOK_SECRET);
   const site = siteUrl();
   const steps = [
     {
-      done: isStripeConfigured(),
+      done: connected,
       title: "Add your Stripe secret key",
       body: (
         <>
-          In Stripe go to <strong>Developers → API keys</strong> (start in test mode) and copy the secret key into{" "}
-          <code>STRIPE_SECRET_KEY</code> in <code>.env.local</code> and on your host, then restart the site.
-          {isStripeConfigured() && <span className="mt-1 block text-emerald-700">Connected · {live ? "live mode" : "test mode"}</span>}
+          In Stripe go to <strong>Developers → API keys</strong> (start in test mode) and paste the secret key under{" "}
+          <a href="/admin/settings#keys-stripe" className="underline">Settings → Account keys → Stripe</a>. It works straight away, no redeploy needed.
+          {connected && <span className="mt-1 block text-emerald-700">Connected · {live ? "live mode" : "test mode"}</span>}
         </>
       ),
     },
@@ -40,8 +42,8 @@ export function StripeSetup({ compact = false }: { compact?: boolean }) {
       title: "Add the webhook (keeps Stripe → store in sync)",
       body: (
         <>
-          <strong>Developers → Webhooks → Add endpoint</strong>: <code className="break-all">{site}/api/webhooks/stripe</code>, choose the events below, then copy
-          the signing secret into <code>STRIPE_WEBHOOK_SECRET</code>. Testing on your computer? Run{" "}
+          <strong>Developers → Webhooks → Add endpoint</strong>: <code className="break-all">{site}/api/webhooks/stripe</code>, choose the events below, then paste
+          the signing secret under <a href="/admin/settings#keys-stripe" className="underline">Account keys → Stripe</a>. Testing on your computer? Run{" "}
           <code className="break-all">stripe listen --forward-to localhost:3000/api/webhooks/stripe</code> and use the secret it prints.
           {!compact && <span className="mt-2 block font-mono text-[11px] leading-relaxed text-ash">{WEBHOOK_EVENTS.join(" · ")}</span>}
         </>
