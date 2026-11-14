@@ -7,6 +7,7 @@ import { getDb, schema } from "@/lib/db";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/db/schema";
 import { cx, formatDate, formatMoney } from "@/lib/format";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { RowLink } from "../RowLink";
 
 const PAID: OrderStatus[] = ["paid", "fulfilled", "shipped", "delivered", "partially_refunded"];
 const FILTERS = [
@@ -91,9 +92,9 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
               />
             )}
             {orders.map((o) => (
-              <tr key={o.id} className="relative">
+              <RowLink key={o.id} href={`/admin/orders/${o.id}`}>
                 <td className="font-semibold">
-                  <Link href={`/admin/orders/${o.id}`} className="after:absolute after:inset-0 hover:underline">#{o.number}</Link>
+                  <Link href={`/admin/orders/${o.id}`} className="hover:underline">#{o.number}</Link>
                 </td>
                 <td className="text-ash">{formatDate(o.createdAt)}</td>
                 <td>
@@ -102,7 +103,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                 </td>
                 <td><OrderStatusBadge status={o.status} /></td>
                 <td className="text-right tabular-nums">{formatMoney(o.total, o.currency)}</td>
-              </tr>
+              </RowLink>
             ))}
           </tbody>
         </table>

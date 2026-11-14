@@ -4,6 +4,7 @@ import { accountCounts, isProtectedStaff, listAccounts, listGuests } from "@/lib
 import { cx, formatDate, formatMoney } from "@/lib/format";
 import { EmptyRow } from "../Empty";
 import { AdminHeader, Segmented, StatTile, table } from "../ui";
+import { RowLink } from "../RowLink";
 
 const VIEWS = ["accounts", "guests", "staff"] as const;
 type View = (typeof VIEWS)[number];
@@ -113,9 +114,9 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
                 />
               )}
               {accounts.map((u) => (
-                <tr key={u.id} className="relative">
+                <RowLink key={u.id} href={`/admin/customers/${u.id}`}>
                   <td>
-                    <Link href={`/admin/customers/${u.id}`} className="flex items-center gap-3 after:absolute after:inset-0">
+                    <Link href={`/admin/customers/${u.id}`} className="flex items-center gap-3">
                       <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent/25 font-semibold text-[#5a44cf] uppercase">{(u.name || u.email).charAt(0)}</span>
                       <span className="min-w-0">
                         <span className="block font-medium">{u.name ?? "—"}</span>
@@ -131,7 +132,7 @@ export default async function CustomersAdmin({ searchParams }: PageProps<"/admin
                   <td className="text-right tabular-nums">{u.orders}</td>
                   <td className="text-right tabular-nums">{formatMoney(u.spent)}</td>
                   <td className="text-ash">{u.lastOrder ? formatDate(u.lastOrder) : "—"}</td>
-                </tr>
+                </RowLink>
               ))}
             </tbody>
           </table>
