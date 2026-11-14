@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { getDb, schema } from "./db";
 import { getSession } from "./session";
 import type { OAuthProvider } from "./db/schema";
+import { isAllowedStaff } from "./admin-auth";
 
 export type CurrentUser = {
   id: string;
@@ -21,14 +22,10 @@ export type CurrentUser = {
 /**
  * Staff access comes only from the account's role: the staff account (passcode or Google via
  * Settings → Staff access) and anyone given "Staff access" under Customers. ADMIN_EMAILS no longer
- * turns customer accounts into staff: accounts that got staff rights only through it are moved
- * back to customers the next time they're used (see getCurrentUser).
+ * turns customer accounts into staff. Any other account marked admin is moved back to customer
+ * the moment it's used (see getCurrentUser) or when the admin panel opens (cleanUpStaffRoles).
  */
-const legacyAdminEmails = () =>
-  (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
+
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await getSession();
@@ -37,8 +34,8 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const [user] = await db.select().from(schema.users).where(eq(schema.users.id, session.userId)).limit(1);
   // Session was revoked (password changed, "sign out everywhere", account deleted).
   if (!user || (session.v ?? 1) !== user.sessionVersion) return null;
-  // Clean-up for the retired ADMIN_EMAILS rule: those accounts are customers (the staff account is never touched).
-  if (user.role === "admin" && !user.email.endsWith("@staff.oolu") && legacyAdminEmails().includes(user.email.toLowerCase())) {
+  // Staff = the staff account or someone granted "Staff access" under Customers; anyone else is a customer.
+  if (user.role === "admin" && !(await isAllowedStaff(user))) {
     await db.update(schema.users).set({ role: "customer" }).where(eq(schema.users.id, user.id));
     user.role = "customer";
   }

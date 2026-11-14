@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { eq, sql } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth";
-import { adminUsername } from "@/lib/admin-auth";
+import { adminUsername, cleanUpStaffRoles } from "@/lib/admin-auth";
 import { isStripeConfigured, stripeDashboardUrl } from "@/lib/stripe";
 import { getDb, schema } from "@/lib/db";
 import { AdminNav } from "./AdminNav";
@@ -24,6 +24,8 @@ async function counts() {
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const user = await requireAdmin();
+  // Accounts that are marked admin without being the staff account or granted under Customers become customers.
+  await cleanUpStaffRoles().catch(() => 0);
   const stripe = (await isStripeConfigured());
   const badges = await counts();
 

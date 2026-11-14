@@ -1,6 +1,6 @@
 import "server-only";
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { and, eq, ne, notInArray } from "drizzle-orm";
 import { getDb, schema } from "./db";
 
 /**
@@ -14,7 +14,8 @@ import { getDb, schema } from "./db";
 export const adminUsername = () => (process.env.ADMIN_USERNAME ?? "Janna").trim();
 
 const ROW = "staff-auth";
-type StaffAuth = { passcodeHash?: string; changedAt?: string; changedBy?: string; googleEmails?: string[] };
+/** grantedIds = accounts given "Staff access" under Admin → Customers. */
+type StaffAuth = { passcodeHash?: string; changedAt?: string; changedBy?: string; googleEmails?: string[]; grantedIds?: string[] };
 
 async function readStaffAuth(): Promise<StaffAuth> {
   try {
@@ -93,4 +94,37 @@ export async function staffUser() {
     [user] = await db.update(schema.users).set({ role: "admin" }).where(eq(schema.users.id, user.id)).returning();
   }
   return user;
+}
+
+/* ── Who counts as staff ─────────────────────────────────── */
+/**
+ * Only two kinds of account are staff: the shared staff account, and accounts an admin ticked
+ * "Staff access" for under Customers. Any other account marked admin (e.g. from the retired
+ * ADMIN_EMAILS rule) is turned back into a customer.
+ */
+export async function staffGrants() {
+  return (await readStaffAuth()).grantedIds ?? [];
+}
+
+export async function setStaffGrant(userId: string, on: boolean) {
+  const ids = new Set(await staffGrants());
+  if (on) ids.add(userId);
+  else ids.delete(userId);
+  await writeStaffAuth({ grantedIds: [...ids] });
+}
+
+export async function isAllowedStaff(user: { id: string; email: string }) {
+  return user.email.toLowerCase() === staffEmail().toLowerCase() || (await staffGrants()).includes(user.id);
+}
+
+/** Demote every admin account that isn't the staff account or explicitly granted. Returns how many. */
+export async function cleanUpStaffRoles() {
+  const db = await getDb();
+  const grants = await staffGrants();
+  const rows = await db
+    .update(schema.users)
+    .set({ role: "customer" })
+    .where(and(eq(schema.users.role, "admin"), ne(schema.users.email, staffEmail()), grants.length ? notInArray(schema.users.id, grants) : undefined))
+    .returning({ id: schema.users.id });
+  return rows.length;
 }

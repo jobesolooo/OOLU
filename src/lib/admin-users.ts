@@ -4,7 +4,7 @@ import { getDb, schema } from "./db";
 import { createAuthToken, linkGuestOrders } from "./auth";
 import { sendAccountInvite, sendPasswordReset, sendVerifyEmail } from "./email";
 import { getStripe, isStripeConfigured } from "./stripe";
-import { staffEmail } from "./admin-auth";
+import { setStaffGrant, staffEmail } from "./admin-auth";
 
 /**
  * Staff tools for customer accounts. Accounts live in the store database;
@@ -128,6 +128,7 @@ export async function createAccount(d: { email: string; name: string | null; ver
       emailVerifiedAt: d.verified ? new Date() : null,
     })
     .returning();
+  if (d.staff) await setStaffGrant(user.id, true);
   if (d.verified) await linkGuestOrders(user.id, user.email);
   let invited = false;
   if (d.invite) {
@@ -160,6 +161,7 @@ export async function updateAccount(id: string, d: { email: string; name: string
     .where(eq(schema.users.id, id))
     .returning();
   if (d.verified && !before.emailVerifiedAt) await linkGuestOrders(user.id, user.email);
+  if (!isProtectedStaff(before.email)) await setStaffGrant(user.id, d.staff);
   await syncStripeCustomer(user.stripeCustomerId, user);
   return user;
 }
