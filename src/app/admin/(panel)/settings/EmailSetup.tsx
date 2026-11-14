@@ -113,7 +113,7 @@ export async function EmailSetup() {
                     <tr key={i} className="align-top">
                       <td className="px-3 py-2 font-sans">{r.kind === "Receiving" ? "Receiving" : r.kind === "DKIM" ? "Sending (signature)" : r.kind === "SPF" ? "Sending" : r.kind}</td>
                       <td className="px-3 py-2">{r.type}</td>
-                      <td className="px-3 py-2 break-all select-all">{r.name}</td>
+                      <td className="px-3 py-2 break-all select-all">{!r.name || r.name === b.emailDomain ? "@" : r.name.replace(new RegExp(`\\.${b.emailDomain.replace(/\./g, "\\.")}$`), "")}</td>
                       <td className="max-w-[320px] px-3 py-2 break-all select-all">{r.value}</td>
                       <td className="px-3 py-2">{r.priority ?? ""}</td>
                       <td className="px-3 py-2 font-sans">
