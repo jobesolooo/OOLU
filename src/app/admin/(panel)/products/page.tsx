@@ -41,7 +41,7 @@ export default async function ProductsAdmin({ searchParams }: PageProps<"/admin/
   const stockSummary = (p: AdminProduct) => {
     const keys = allVariantKeys(p);
     const tracked = keys.map((k) => stock.get(stockKey(p.id, k))).filter((v): v is number => v !== undefined);
-    if (!tracked.length) return "Stock not tracked";
+    if (!tracked.length) return "Unlimited stock (∞)";
     const out = tracked.filter((v) => v === 0).length;
     return `${tracked.reduce((a, b) => a + b, 0)} in stock${out ? ` · ${out} sold out` : ""}`;
   };

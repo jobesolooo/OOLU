@@ -15,7 +15,7 @@ const FILTERS = [
   { key: "all", label: "All" },
   { key: "low", label: "Low" },
   { key: "out", label: "Sold out" },
-  { key: "untracked", label: "Not tracked" },
+  { key: "untracked", label: "Unlimited" },
 ] as const;
 
 export default async function InventoryPage({ searchParams }: PageProps<"/admin/inventory">) {
@@ -58,7 +58,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
       <AdminHeader
         eyebrow="Catalogue"
         title="Stock"
-        description="Set how many of each size you have. Leave a box empty (∞) to not track it. Stock drops automatically when an order is paid, and waiting customers are emailed when a sold-out size comes back."
+        description="Set how many of each size you have. New sizes start at 0 (sold out); switch a size to Unlimited (∞) if it should never sell out. Stock drops automatically when an order is paid, and waiting customers are emailed when a sold-out size comes back."
         actions={
           <>
             <form action={refreshCatalog}>
@@ -122,7 +122,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
                     {untracked < keys.length && <span className="rounded-full bg-black/5 px-2 py-0.5 text-[10px] tabular-nums">{units} units</span>}
                     {out > 0 && <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] text-rose-700">{out} sold out</span>}
                     {low > 0 && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">{low} low</span>}
-                    {untracked === keys.length && <span className="rounded-full bg-black/5 px-2 py-0.5 text-[10px] text-ash">Not tracked</span>}
+                    {untracked > 0 && <span className="rounded-full bg-black/5 px-2 py-0.5 text-[10px] text-ash">{untracked === keys.length ? "All unlimited (∞)" : `${untracked} unlimited`}</span>}
                   </p>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
       <p className="mt-4 flex flex-wrap items-center gap-4 text-[11px] text-ash">
         <span className="flex items-center gap-1.5"><span className={cx("size-3 border border-rose-300 bg-rose-50")} /> Sold out</span>
         <span className="flex items-center gap-1.5"><span className="size-3 border border-amber-300 bg-amber-50" /> {LOW} or fewer</span>
-        <span className="flex items-center gap-1.5"><span className="size-3 border border-black/10 bg-mist" /> Not tracked (∞)</span>
+        <span className="flex items-center gap-1.5"><span className="size-3 border border-black/10 bg-mist" /> Unlimited (∞)</span>
       </p>
     </>
   );

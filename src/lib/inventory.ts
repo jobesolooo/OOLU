@@ -1,23 +1,33 @@
 import "server-only";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb, schema, type DB } from "./db";
 
 export const stockKey = (productId: string, size: string | null | undefined) => `${productId}|${size ?? ""}`;
 
-/** Map of "productId|size" → quantity. Missing key = stock not tracked (unlimited). */
+/** Stored quantity meaning "unlimited (∞)". Sizes with no stored row have 0 in stock. */
+export const UNLIMITED = -1;
+
+/**
+ * "productId|size" → quantity in stock. A size that was never set counts as 0 (sold out);
+ * a size set to ∞ returns undefined, which every caller treats as "no limit".
+ */
+export class StockMap extends Map<string, number> {
+  override get(key: string): number | undefined {
+    if (!super.has(key)) return 0;
+    const v = super.get(key)!;
+    return v < 0 ? undefined : v;
+  }
+  override has(): boolean {
+    return true; // every size has a stock level now (0 by default)
+  }
+}
+
 export async function getStockMap(productIds?: string[]) {
   const db = await getDb();
   const rows = productIds?.length
     ? await db.select().from(schema.inventory).where(inArray(schema.inventory.productId, productIds))
     : await db.select().from(schema.inventory);
-  const map = new Map(rows.map((r) => [stockKey(r.productId, r.size), r.quantity]));
-  // Demo catalogue: variants sold out on the live OOLU shop start at 0 until stock is set in admin.
-  const { getProducts } = await import("./catalog");
-  for (const p of await getProducts()) {
-    if (!p.isDemo || (productIds?.length && !productIds.includes(p.id))) continue;
-    for (const key of p.soldOut) if (!map.has(stockKey(p.id, key))) map.set(stockKey(p.id, key), 0);
-  }
-  return map;
+  return new StockMap(rows.map((r) => [stockKey(r.productId, r.size), r.quantity]));
 }
 
 export async function setStock(productId: string, size: string, quantity: number) {
@@ -32,11 +42,16 @@ export async function setStock(productId: string, size: string, quantity: number
     });
 }
 
-export async function clearStockTracking(productId: string, size: string) {
+/** ∞: this size never runs out. */
+export async function setUnlimited(productId: string, size: string) {
   const db = await getDb();
   await db
-    .delete(schema.inventory)
-    .where(and(eq(schema.inventory.productId, productId), eq(schema.inventory.size, size)));
+    .insert(schema.inventory)
+    .values({ productId, size, quantity: UNLIMITED })
+    .onConflictDoUpdate({
+      target: [schema.inventory.productId, schema.inventory.size],
+      set: { quantity: UNLIMITED, updatedAt: new Date() },
+    });
 }
 
 export async function decrementStock(
@@ -50,6 +65,7 @@ export async function decrementStock(
         quantity: sql`GREATEST(${schema.inventory.quantity} - ${item.quantity}, 0)`,
         updatedAt: new Date(),
       })
-      .where(and(eq(schema.inventory.productId, item.productId), eq(schema.inventory.size, item.size ?? "")));
+      // ∞ sizes (stored as -1) are left alone.
+      .where(and(eq(schema.inventory.productId, item.productId), eq(schema.inventory.size, item.size ?? ""), gte(schema.inventory.quantity, 0)));
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Check, Loader2, Minus, Plus } from "lucide-react";
+import { Check, Infinity as InfinityIcon, Loader2, Minus, Plus } from "lucide-react";
 import { cx } from "@/lib/format";
 import { saveInventory } from "../actions";
 
@@ -28,7 +28,10 @@ function rows(keys: string[], colors: { name: string; hex: string }[]): Row[] {
   return [...out.values()].map((r) => ({ ...r, keys: r.keys.sort(bySize) }));
 }
 
-/** Per-size stock editor. Empty box = not tracked (∞). */
+const INF = "∞";
+const initial = (n: number | undefined) => (n === undefined ? INF : String(n));
+
+/** Per-size stock editor. Empty box = 0; the ∞ switch under a size means it never sells out. */
 export function StockForm({
   productId,
   sizes,
@@ -41,10 +44,14 @@ export function StockForm({
   stock: Record<string, number>;
 }) {
   const [state, action, pending] = useActionState(saveInventory, undefined);
-  const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(sizes.map((s) => [s, stock[s] === undefined ? "" : String(stock[s])])));
-  const dirty = sizes.some((s) => values[s] !== (stock[s] === undefined ? "" : String(stock[s])));
+  const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(sizes.map((s) => [s, initial(stock[s])])));
+  // Compare as numbers so "" and "0" count as the same (both mean 0).
+  const norm = (v: string) => (v === INF ? INF : String(Number(v) || 0));
+  const dirty = sizes.some((s) => norm(values[s]) !== initial(stock[s]));
   const step = (k: string, d: number) =>
-    setValues((v) => ({ ...v, [k]: String(Math.max(0, (Number(v[k]) || 0) + d)) }));
+    setValues((v) => ({ ...v, [k]: String(Math.max(0, (v[k] === INF ? 0 : Number(v[k]) || 0) + d)) }));
+  const toggleInf = (k: string) => setValues((v) => ({ ...v, [k]: v[k] === INF ? "0" : INF }));
+  const setAll = (val: string) => setValues(Object.fromEntries(sizes.map((s) => [s, val])));
 
   return (
     <form action={action} className="min-w-0">
@@ -60,8 +67,9 @@ export function StockForm({
             )}
             {row.keys.map(({ key, size }) => {
               const v = values[key];
-              const n = v === "" ? null : Number(v);
-              const tone = n === null ? "border-black/10 bg-mist/60" : n === 0 ? "border-rose-300 bg-rose-50" : n <= LOW ? "border-amber-300 bg-amber-50" : "border-black/15 bg-white";
+              const inf = v === INF;
+              const n = inf ? null : Number(v) || 0;
+              const tone = inf ? "border-black/10 bg-mist/60" : n === 0 ? "border-rose-300 bg-rose-50" : n! <= LOW ? "border-amber-300 bg-amber-50" : "border-black/15 bg-white";
               return (
                 <label key={key} className="w-[92px]">
                   <span className="mb-1 block truncate text-center text-[10px] font-semibold tracking-[0.1em] text-ash uppercase" title={key}>
@@ -75,7 +83,8 @@ export function StockForm({
                       name={`size:${key}`}
                       value={v}
                       onChange={(e) => setValues((s) => ({ ...s, [key]: e.target.value.replace(/[^\d]/g, "") }))}
-                      placeholder="∞"
+                      onFocus={(e) => inf && e.target.select()}
+                      placeholder="0"
                       inputMode="numeric"
                       aria-label={`Stock for ${key}`}
                       className="w-full min-w-0 bg-transparent text-center text-[13px] tabular-nums focus:outline-none"
@@ -84,6 +93,18 @@ export function StockForm({
                       <Plus className="size-3" />
                     </button>
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleInf(key)}
+                    aria-pressed={inf}
+                    title={inf ? "Unlimited: never sells out. Click to count stock instead." : "Make this size unlimited"}
+                    className={cx(
+                      "mt-1 flex w-full items-center justify-center gap-1 py-0.5 text-[10px] font-semibold tracking-[0.08em] uppercase transition-colors",
+                      inf ? "bg-ink text-white" : "text-ash hover:text-ink",
+                    )}
+                  >
+                    <InfinityIcon className="size-3" /> {inf ? "Unlimited" : "Unlimited?"}
+                  </button>
                 </label>
               );
             })}
@@ -95,10 +116,19 @@ export function StockForm({
           {pending && <Loader2 className="size-3.5 animate-spin" />}
           {pending ? "Saving" : "Save"}
         </button>
+        <span className="flex gap-2 text-[11px] text-ash">
+          All sizes:
+          <button type="button" onClick={() => setAll("0")} className="underline hover:text-ink">
+            0
+          </button>
+          <button type="button" onClick={() => setAll(INF)} className="underline hover:text-ink">
+            ∞
+          </button>
+        </span>
         {dirty && !pending && (
           <button
             type="button"
-            onClick={() => setValues(Object.fromEntries(sizes.map((s) => [s, stock[s] === undefined ? "" : String(stock[s])])))}
+            onClick={() => setValues(Object.fromEntries(sizes.map((s) => [s, initial(stock[s])])))}
             className="text-[11px] text-ash underline hover:text-ink"
           >
             Undo

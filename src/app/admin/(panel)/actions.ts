@@ -13,7 +13,7 @@ import { adjustGiftCardBalance, deleteGiftCard, issueGiftCard, resendGiftCard, u
 import { getSettings, saveSettings, type StoreSettings } from "@/lib/settings";
 import { getStripe } from "@/lib/stripe";
 import { getOrder, syncRefund } from "@/lib/orders";
-import { clearStockTracking, getStockMap, setStock, stockKey } from "@/lib/inventory";
+import { getStockMap, setStock, setUnlimited, stockKey } from "@/lib/inventory";
 import { notifyRestock } from "@/lib/alerts";
 import { sendReturnUpdate, sendShippingUpdate } from "@/lib/email";
 import { invalidateCatalog } from "@/lib/catalog";
@@ -106,12 +106,12 @@ export async function saveInventory(_: ActionResult, form: FormData): Promise<Ac
     if (!key.startsWith("size:")) continue;
     const size = key.slice(5);
     const v = String(value).trim();
-    const was = before.get(stockKey(productId, size));
-    if (v === "") {
-      await clearStockTracking(productId, size);
+    const was = before.get(stockKey(productId, size)); // undefined = ∞
+    if (v === "∞" || v.toLowerCase() === "inf") {
+      await setUnlimited(productId, size);
       if (was === 0) notified += await notifyRestock(productId, size);
     } else {
-      const n = Number(v);
+      const n = v === "" ? 0 : Number(v); // empty box = 0
       if (!Number.isInteger(n) || n < 0) return { error: `Stock for ${size} must be a whole number.` };
       await setStock(productId, size, n);
       // Back in stock → email everyone waiting for this size.

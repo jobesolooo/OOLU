@@ -2,7 +2,9 @@ import "server-only";
 import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "./stripe";
 import { DEMO_PRODUCTS } from "./demo-catalog";
-import type { ColorOption } from "./variants";
+import { cache as perRequest } from "react";
+import { getStockMap, stockKey } from "./inventory";
+import { allVariantKeys, type ColorOption } from "./variants";
 
 export const STORE_CURRENCY = (process.env.STORE_CURRENCY ?? "eur").toLowerCase();
 
@@ -175,7 +177,16 @@ export function invalidateCatalog() {
   cache = null;
 }
 
-export async function getProducts(): Promise<Product[]> {
+/**
+ * The catalogue with live stock: soldOut lists every size with 0 left (sizes never given a stock
+ * level count as 0; ∞ sizes never sell out). Memoised per request.
+ */
+export const getProducts: () => Promise<Product[]> = perRequest(async (): Promise<Product[]> => {
+  const [list, stock] = await Promise.all([loadCatalog(), getStockMap()]);
+  return list.map((p) => ({ ...p, soldOut: allVariantKeys(p).filter((k) => stock.get(stockKey(p.id, k)) === 0) }));
+});
+
+async function loadCatalog(): Promise<Product[]> {
   if (!(await isStripeConfigured())) return demoProducts();
   if (cache && Date.now() - cache.at < TTL_MS) return cache.products;
 
