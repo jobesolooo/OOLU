@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requireUser, getLinkedProviders } from "@/lib/auth";
-import { isProviderConfigured } from "@/lib/oauth";
+import { customerProviders } from "@/lib/oauth";
 import { AccountCard, AccountSection, AccountShell } from "@/components/auth/AccountShell";
 import { AppleIcon, authErrorMessage, GoogleIcon } from "@/components/auth/SocialButtons";
 import { disconnectProvider, signOutEverywhere } from "../actions";
@@ -18,7 +18,8 @@ export default async function SecurityPage({ searchParams }: PageProps<"/account
   const user = await requireUser("/account/security");
   const sp = await searchParams;
   const linked = await getLinkedProviders(user.id);
-  const available = { google: await isProviderConfigured("google"), apple: await isProviderConfigured("apple") };
+  const visible = await customerProviders();
+  const available = { google: visible.includes("google"), apple: visible.includes("apple") };
   const { t } = await getT();
   const err = one(sp.error);
   const notice = one(sp.connected)

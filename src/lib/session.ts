@@ -4,7 +4,8 @@ import { getIronSession, type SessionOptions } from "iron-session";
 
 /** v = the user's sessionVersion when they signed in; bumping it signs out every device. */
 /** keysUntil = until when this session may change account keys (after re-entering the staff passcode). */
-export type SessionData = { userId?: string; v?: number; keysUntil?: number };
+/** googleStaffAt = when staff last signed in with Google (lets them set a new passcode if they forgot it). */
+export type SessionData = { userId?: string; v?: number; keysUntil?: number; googleStaffAt?: number };
 
 function options(): SessionOptions {
   const password = process.env.SESSION_SECRET;

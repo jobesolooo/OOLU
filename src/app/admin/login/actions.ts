@@ -1,10 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
-import { getDb, schema } from "@/lib/db";
 import { signIn } from "@/lib/auth";
-import { checkStaffCredentials, isPasscodeConfigured, staffEmail, adminUsername } from "@/lib/admin-auth";
+import { checkStaffCredentials, isPasscodeConfigured, staffUser, adminUsername } from "@/lib/admin-auth";
 import { clientIp, rateLimit, resetRateLimit } from "@/lib/rate-limit";
 
 export type StudioState =
@@ -26,7 +24,7 @@ export async function studioAction(prev: StudioState, form: FormData): Promise<S
 
   const code = String(form.get("code") ?? "").replace(/\D/g, "");
   if (code.length !== 6) return { step: "code", username, nonce: Date.now(), error: "Enter all 6 digits." };
-  if (!isPasscodeConfigured()) {
+  if (!(await isPasscodeConfigured())) {
     return { step: "code", username, nonce: Date.now(), error: "Staff sign-in isn't set up: add ADMIN_PASSCODE_HASH to the environment (npm run admin:passcode)." };
   }
 
@@ -40,22 +38,12 @@ export async function studioAction(prev: StudioState, form: FormData): Promise<S
     return { step: "code", username, nonce: Date.now(), error: `Too many attempts. Try again in ${minutes} minutes.` };
   }
 
-  if (!checkStaffCredentials(username, code)) {
+  if (!(await checkStaffCredentials(username, code))) {
     return { step: "code", username, nonce: Date.now(), error: "Username or passcode isn't right." };
   }
 
   // One staff account in the users table, marked admin.
-  const db = await getDb();
-  const email = staffEmail();
-  let [user] = await db.select().from(schema.users).where(eq(schema.users.email, email)).limit(1);
-  if (!user) {
-    [user] = await db
-      .insert(schema.users)
-      .values({ email, name: adminUsername(), passwordHash: null, role: "admin", emailVerifiedAt: new Date() })
-      .returning();
-  } else if (user.role !== "admin") {
-    [user] = await db.update(schema.users).set({ role: "admin" }).where(eq(schema.users.id, user.id)).returning();
-  }
+  const user = await staffUser();
   // Correct passcode: clear the counters so normal logins never lock anyone out.
   resetRateLimit(`studio-ip:${ip}`);
   resetRateLimit(`studio-user:${adminUsername().toLowerCase()}`);

@@ -9,6 +9,7 @@ import { KEY_GROUPS } from "@/lib/keys-catalog";
 import { getSession } from "@/lib/session";
 import { AccountKeys, SecurityLock } from "./AccountKeys";
 import { BusinessDetails } from "./BusinessDetails";
+import { SignInAccess } from "./SignInAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function SettingsAdmin() {
       <nav aria-label="Sections" className="no-scrollbar -mx-1 mb-6 flex max-w-3xl gap-1 overflow-x-auto px-1">
         {[
           ["#business", "Business details"],
+          ["#signin", "Sign-in & staff"],
           ["#keys", "Account keys"],
           ["#homepage", "Homepage"],
           ["#guides", "Setup guides"],
@@ -38,6 +40,7 @@ export default async function SettingsAdmin() {
       </nav>
       <div className="max-w-3xl space-y-12">
         <BusinessDetails />
+        <SignInAccess />
         <AccountKeys groups={KEY_GROUPS} states={states} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />
         <section id="homepage" className="scroll-mt-6">
           <h2 className="mb-3 text-[11px] font-semibold tracking-[0.14em] uppercase">Homepage</h2>

@@ -4,6 +4,7 @@ import { siteUrl, siteUrlNeedsFixing } from "@/lib/site-url";
 import { cx } from "@/lib/format";
 import { getKeys } from "@/lib/keys";
 import { getBusiness } from "@/lib/business";
+import { isPasscodeConfigured } from "@/lib/admin-auth";
 
 type Step = { state: "done" | "todo" | "warn"; title: string; body: React.ReactNode };
 
@@ -78,9 +79,9 @@ export async function AuthSetup() {
       ),
     },
     {
-      state: process.env.ADMIN_PASSCODE_HASH ? "done" : "warn",
+      state: (await isPasscodeConfigured()) ? "done" : "warn",
       title: "Staff sign-in (The Studio)",
-      body: <>Username {code(process.env.ADMIN_USERNAME ?? "—")} and a 6-digit passcode, stored only as a hash. Change it with {code("npm run admin:passcode")}.</>,
+      body: <>Username {code(process.env.ADMIN_USERNAME ?? "—")} and a 6-digit passcode, stored only as a hash. Change it under <a href="#staff" className="underline">Staff access</a> above, where you can also let staff sign in with Google.</>,
     },
   ];
 

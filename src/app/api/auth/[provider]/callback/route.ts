@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { OAUTH_PROVIDERS, type OAuthProvider } from "@/lib/db/schema";
 import { apple, google, OAUTH_COOKIE, resolveOAuthUser, unsealFlow, type OAuthProfile } from "@/lib/oauth";
 import { signIn } from "@/lib/auth";
+import { getSession } from "@/lib/session";
+import { staffGoogleEmails, staffUser } from "@/lib/admin-auth";
 import { sendWelcome } from "@/lib/email";
 
 type GoogleClaims = { sub: string; email?: string; email_verified?: boolean; name?: string; picture?: string };
@@ -16,7 +18,7 @@ async function handle(req: Request, provider: OAuthProvider, params: URLSearchPa
   const next = flow?.next ?? "/account";
 
   const fail = (error: string) => {
-    const target = flow?.linkUserId ? `/account/security?error=${encodeURIComponent(error)}` : `/account/login?error=${encodeURIComponent(error)}&next=${encodeURIComponent(next)}`;
+    const target = flow?.staff ? `/admin/login?error=${encodeURIComponent(error)}` : flow?.linkUserId ? `/account/security?error=${encodeURIComponent(error)}` : `/account/login?error=${encodeURIComponent(error)}&next=${encodeURIComponent(next)}`;
     const res = NextResponse.redirect(new URL(target, origin), 303);
     res.cookies.delete(OAUTH_COOKIE);
     return res;
@@ -55,6 +57,20 @@ async function handle(req: Request, provider: OAuthProvider, params: URLSearchPa
   } catch (err) {
     console.error(`[auth:${provider}] token exchange failed`, err instanceof OAuth2RequestError ? err.code : err);
     return fail("provider_error");
+  }
+
+  // Admin panel: only the Google accounts listed in Settings → Staff access, signed in as the staff account.
+  if (flow.staff) {
+    const email = profile.email?.toLowerCase();
+    const allowed = await staffGoogleEmails();
+    if (!email || !profile.emailVerified || !allowed.includes(email)) return fail("staff_google_denied");
+    await signIn(await staffUser());
+    const session = await getSession();
+    session.googleStaffAt = Date.now();
+    await session.save();
+    const res = NextResponse.redirect(new URL(next.startsWith("/admin") ? next : "/admin", origin), 303);
+    res.cookies.delete(OAUTH_COOKIE);
+    return res;
   }
 
   const result = await resolveOAuthUser(profile, flow.linkUserId);

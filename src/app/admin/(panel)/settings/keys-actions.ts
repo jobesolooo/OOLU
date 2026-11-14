@@ -22,7 +22,7 @@ export async function unlockKeys(_: KeysResult, form: FormData): Promise<KeysRes
   await requireAdmin();
   const code = String(form.get("code") ?? "").replace(/\D/g, "");
   if (code.length !== 6) return { error: "Enter all 6 digits." };
-  if (!isPasscodeConfigured()) return { error: "The staff passcode isn't set up (ADMIN_PASSCODE_HASH), so keys can't be unlocked." };
+  if (!(await isPasscodeConfigured())) return { error: "The staff passcode isn't set up (ADMIN_PASSCODE_HASH), so keys can't be unlocked." };
 
   const ip = await clientIp();
   const perIp = rateLimit(`studio-ip:${ip}`, 5, 15 * 60_000);
@@ -30,7 +30,7 @@ export async function unlockKeys(_: KeysResult, form: FormData): Promise<KeysRes
   if (!perIp.ok || !perAccount.ok) {
     return { error: `Too many attempts. Try again in ${Math.ceil(Math.max(perIp.retryAfter, perAccount.retryAfter) / 60)} minutes.` };
   }
-  if (!checkStaffCredentials(adminUsername(), code)) return { error: "That passcode isn't right." };
+  if (!(await checkStaffCredentials(adminUsername(), code))) return { error: "That passcode isn't right." };
   resetRateLimit(`studio-ip:${ip}`);
 
   const session = await getSession();

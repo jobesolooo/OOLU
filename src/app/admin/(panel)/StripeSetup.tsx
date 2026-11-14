@@ -1,5 +1,6 @@
 import { CheckCircle2, Circle } from "lucide-react";
 import { getKeys } from "@/lib/keys";
+import { getStripe } from "@/lib/stripe";
 import { cx } from "@/lib/format";
 import { siteUrl } from "@/lib/site-url";
 
@@ -24,6 +25,16 @@ export async function StripeSetup({ compact = false }: { compact?: boolean }) {
   const connected = Boolean(key);
   const live = key.startsWith("sk_live") || key.startsWith("rk_live");
   const hook = Boolean(k.STRIPE_WEBHOOK_SECRET);
+  // Step 3 is done once Stripe holds shop products (gift card products don't count).
+  let products = 0;
+  let more = false;
+  if (connected) {
+    try {
+      const list = await (await getStripe()).products.list({ limit: 20, active: true });
+      products = list.data.filter((p) => p.metadata?.kind !== "giftcard").length;
+      more = list.has_more;
+    } catch {}
+  }
   const site = siteUrl();
   const steps = [
     {
@@ -50,9 +61,20 @@ export async function StripeSetup({ compact = false }: { compact?: boolean }) {
       ),
     },
     {
-      done: false,
+      done: products > 0,
       title: "Move your products into Stripe",
-      body: <>Open Products and press <strong>Copy catalogue to Stripe</strong>. Photos, prices, sizes and colours are copied in one go. From then on you can edit in either place.</>,
+      body: (
+        <>
+          Open Products and press <strong>Copy catalogue to Stripe</strong>. Photos, prices, sizes and colours are copied in one go. From then on you can edit in either
+          place.
+          {products > 0 && (
+            <span className="mt-1 block text-emerald-700">
+              Done · {products}
+              {more ? "+" : ""} product{products === 1 && !more ? "" : "s"} in Stripe
+            </span>
+          )}
+        </>
+      ),
     },
   ];
   return (

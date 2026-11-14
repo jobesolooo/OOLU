@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
 import { studioAction, type StudioState } from "./actions";
 import { StaffMark } from "@/components/auth/StaffMark";
 import { StudioScene } from "./StudioScene";
+import { GoogleIcon } from "@/components/auth/GoogleIcon";
 
 /* ── Passcode boxes ──────────────────────────────────────── */
 /**
@@ -130,7 +131,7 @@ function Studio() {
   );
 }
 
-export function StudioLogin({ next, notice }: { next?: string; notice?: string | null }) {
+export function StudioLogin({ next, notice, google = false }: { next?: string; notice?: string | null; google?: boolean }) {
   const [state, action, pending] = useActionState<StudioState, FormData>(studioAction, { step: "username" });
   const formRef = useRef<HTMLFormElement>(null);
   const step = state?.step ?? "username";
@@ -216,6 +217,20 @@ export function StudioLogin({ next, notice }: { next?: string; notice?: string |
                 </>
               )}
             </form>
+
+            {google && step === "username" && (
+              <>
+                <div className="my-6 flex items-center gap-4 font-mono text-[10px] tracking-[0.3em] text-[#f4efe3]/40 uppercase">
+                  <span className="h-px flex-1 bg-[#e9e4d8]/15" /> or <span className="h-px flex-1 bg-[#e9e4d8]/15" />
+                </div>
+                <a
+                  href={`/api/auth/google?staff=1${next ? `&next=${encodeURIComponent(next)}` : ""}`}
+                  className="flex w-full items-center justify-center gap-3 border border-[#e9e4d8]/25 bg-black/40 py-4 text-[12px] font-bold tracking-[0.2em] text-[#f4efe3] uppercase transition hover:border-[#a592ff]"
+                >
+                  <GoogleIcon className="size-4" /> Continue with Google
+                </a>
+              </>
+            )}
 
             <p className="mt-10 text-center font-mono text-[10px] tracking-[0.2em] text-[#f4efe3]/30 uppercase">5 attempts per 15 minutes</p>
           </div>

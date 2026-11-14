@@ -16,6 +16,8 @@ export type StoreSettings = {
   popup: { enabled: boolean; percentOff: number; delaySeconds: number };
   /** Gift card amounts sold on /gift-cards, in cents */
   giftCardAmounts: number[];
+  /** Which "Continue with …" buttons customers see (they also need their keys in Account keys). */
+  signInButtons: { google: boolean; apple: boolean };
 };
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -30,6 +32,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   },
   popup: { enabled: true, percentOff: 10, delaySeconds: 12 },
   giftCardAmounts: [2500, 5000, 10000, 15000, 25000],
+  signInButtons: { google: true, apple: true },
 };
 
 export async function getSettings(): Promise<StoreSettings> {
@@ -45,6 +48,7 @@ export async function getSettings(): Promise<StoreSettings> {
       ...saved,
       dropBanner: { ...DEFAULT_SETTINGS.dropBanner, ...saved.dropBanner },
       popup: { ...DEFAULT_SETTINGS.popup, ...saved.popup },
+      signInButtons: { ...DEFAULT_SETTINGS.signInButtons, ...saved.signInButtons },
       giftCardAmounts: saved.giftCardAmounts?.length ? saved.giftCardAmounts : DEFAULT_SETTINGS.giftCardAmounts,
     };
   } catch (err) {

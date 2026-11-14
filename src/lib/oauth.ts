@@ -7,6 +7,7 @@ import type { OAuthProvider } from "./db/schema";
 import { isAdminEmail, linkGuestOrders } from "./auth";
 import { siteUrl } from "@/lib/site-url";
 import { getKeys } from "./keys";
+import { getSettings } from "./settings";
 
 export const callbackUrl = (p: OAuthProvider) => `${siteUrl()}/api/auth/${p}/callback`;
 
@@ -16,6 +17,12 @@ const appleKeys = () => getKeys("APPLE_CLIENT_ID", "APPLE_TEAM_ID", "APPLE_KEY_I
 export async function isProviderConfigured(p: OAuthProvider) {
   const k = p === "google" ? await googleKeys() : await appleKeys();
   return Object.values(k).every(Boolean);
+}
+
+/** Configured AND switched on in Admin → Settings → Sign-in: the buttons customers see. */
+export async function customerProviders(): Promise<OAuthProvider[]> {
+  const [{ signInButtons }, g, a] = await Promise.all([getSettings(), isProviderConfigured("google"), isProviderConfigured("apple")]);
+  return [...(g && signInButtons.google ? (["google"] as const) : []), ...(a && signInButtons.apple ? (["apple"] as const) : [])];
 }
 
 export async function google() {
@@ -37,7 +44,8 @@ export async function apple() {
 
 /* ── Short-lived, encrypted cookie that carries the OAuth state across the redirect ── */
 export const OAUTH_COOKIE = "wst_oauth";
-export type OAuthFlow = { provider: OAuthProvider; state: string; verifier?: string; next: string; linkUserId?: string };
+/** staff = signing in to the admin panel (only Google accounts listed in Settings → Staff access). */
+export type OAuthFlow = { provider: OAuthProvider; state: string; verifier?: string; next: string; linkUserId?: string; staff?: boolean };
 
 const secret = () => process.env.SESSION_SECRET!;
 export const sealFlow = (f: OAuthFlow) => sealData(f, { password: secret(), ttl: 600 });
