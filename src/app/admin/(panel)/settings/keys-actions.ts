@@ -70,7 +70,7 @@ async function stripeCheck(key: string): Promise<KeysResult> {
 export async function changeKeys(_: KeysResult, form: FormData): Promise<KeysResult> {
   const user = await requireAdmin();
   const session = await getSession();
-  if (!session.keysUntil || session.keysUntil < Date.now()) return { error: "Editing is locked. Enter the staff passcode first." };
+  if (!session.keysUntil || session.keysUntil < Date.now()) return { error: "Editing is locked. Enter the staff passcode in the security lock at the top of Settings." };
 
   const group = KEY_GROUPS.find((g) => g.id === form.get("group"));
   if (!group) return { error: "Unknown section." };

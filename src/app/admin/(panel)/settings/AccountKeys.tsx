@@ -30,8 +30,12 @@ function Message({ state }: { state: KeysResult }) {
   );
 }
 
-/* ── Passcode gate ───────────────────────────────────────── */
-function Unlock({ unlockedUntil }: { unlockedUntil: number | null }) {
+/* ── Security lock (top of the Settings page) ────────────── */
+/**
+ * One passcode gate for everything sensitive on this page: account keys and email setup.
+ * Sticks to the top while scrolling so it's always clear whether editing is open.
+ */
+export function SecurityLock({ unlockedUntil }: { unlockedUntil: number | null }) {
   const [state, run, pending] = useActionState(unlockKeys, undefined);
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -44,11 +48,15 @@ function Unlock({ unlockedUntil }: { unlockedUntil: number | null }) {
     const m = Math.floor(left / 60000);
     const s = Math.floor((left % 60000) / 1000);
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-emerald-50 px-5 py-3 text-[13px] text-emerald-900 ring-1 ring-emerald-600/15">
-        <span className="flex items-center gap-2">
-          <LockOpen className="size-4" /> Editing unlocked · locks again in <span className="tabular-nums">{m}:{String(s).padStart(2, "0")}</span>
+      <div id="security" className="flex items-center justify-between gap-3 bg-emerald-50 px-4 py-2.5 text-[13px] text-emerald-900 shadow-sm ring-1 ring-emerald-600/15 sm:px-5">
+        <span className="flex min-w-0 flex-wrap items-center gap-x-2">
+          <LockOpen className="size-4 shrink-0" /> <strong className="font-semibold">Unlocked</strong>
+          <span className="hidden sm:inline">· keys and email setup can be changed</span>· locks in{" "}
+          <span className="tabular-nums">
+            {m}:{String(s).padStart(2, "0")}
+          </span>
         </span>
-        <form action={lockKeys}>
+        <form action={lockKeys} className="shrink-0">
           <button className={ghostBtn}>
             <Lock className="size-3.5" /> Lock now
           </button>
@@ -58,15 +66,21 @@ function Unlock({ unlockedUntil }: { unlockedUntil: number | null }) {
   }
 
   return (
-    <form action={run} className="flex flex-wrap items-end gap-3 bg-ink px-5 py-4 text-white">
-      <div className="min-w-0 flex-1">
+    <form id="security" action={run} className="flex flex-col gap-3 bg-ink px-4 py-3 text-white shadow-lg sm:flex-row sm:items-end sm:px-5 sm:py-4">
+      <div className="min-w-0 sm:flex-1">
         <p className="flex items-center gap-2 text-[13px] font-medium">
-          <Lock className="size-4" /> Locked
+          <Lock className="size-4" /> Security lock
+          <span className="font-normal text-white/60 sm:hidden">· passcode needed for keys &amp; email setup</span>
         </p>
-        <p className="mt-1 text-[12px] text-white/60">Changing keys can move where payments go, so enter the staff passcode to unlock editing for 10 minutes.</p>
+        <p className="mt-1 hidden text-[12px] text-white/60 sm:block">
+          Account keys and email setup control where payments and customer mail go. Enter the staff passcode to unlock them for 10 minutes. Business details and homepage
+          settings can be edited without it.
+        </p>
       </div>
+      <div className="flex gap-2">
       <input
         name="code"
+        type="password"
         inputMode="numeric"
         autoComplete="one-time-code"
         pattern="[0-9]{6}"
@@ -74,11 +88,12 @@ function Unlock({ unlockedUntil }: { unlockedUntil: number | null }) {
         required
         aria-label="Staff passcode"
         placeholder="••••••"
-        className="w-[150px] border border-white/25 bg-white/5 px-4 py-3 text-center font-mono text-[18px] tracking-[0.4em] text-white placeholder:text-white/30 focus:border-white focus:outline-none"
+        className="min-w-0 flex-1 border border-white/25 bg-white/5 px-4 py-3 sm:w-[150px] sm:flex-none text-center font-mono text-[18px] tracking-[0.4em] text-white placeholder:text-white/30 focus:border-white focus:outline-none"
       />
       <button disabled={pending} className="bg-white px-5 py-3.5 text-[11px] font-semibold tracking-[0.14em] text-ink uppercase disabled:opacity-50">
         {pending ? "Checking…" : "Unlock"}
       </button>
+      </div>
       {state?.error && <p className="w-full text-xs text-red-300" role="alert">{state.error}</p>}
     </form>
   );
@@ -231,7 +246,15 @@ export function AccountKeys({ groups, states, unlockedUntil, host }: { groups: K
           </p>
         </div>
       </div>
-      <Unlock unlockedUntil={unlockedUntil} />
+      {locked && (
+        <p className="flex items-center gap-2 bg-black/[0.03] px-4 py-3 text-[12px] text-black/70 ring-1 ring-black/5">
+          <Lock className="size-3.5" /> Locked.{" "}
+          <a href="#security" className="underline">
+            Enter the staff passcode at the top of the page
+          </a>{" "}
+          to add, replace or remove keys.
+        </p>
+      )}
       {groups.map((g) => (
         <Group key={g.id} group={g} states={byName} locked={locked} host={host} />
       ))}

@@ -7,7 +7,7 @@ import { AuthSetup } from "../AuthSetup";
 import { keyStates } from "@/lib/keys";
 import { KEY_GROUPS } from "@/lib/keys-catalog";
 import { getSession } from "@/lib/session";
-import { AccountKeys } from "./AccountKeys";
+import { AccountKeys, SecurityLock } from "./AccountKeys";
 import { BusinessDetails } from "./BusinessDetails";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +20,10 @@ export default async function SettingsAdmin() {
   return (
     <>
       <AdminHeader eyebrow="Setup" title="Store settings" description="Business details, account keys and homepage options. Fill in a field, press save, and it's live on the store straight away." />
+      {/* Stays in view while scrolling; below the phone header bar, at the very top on desktop. */}
+      <div className="sticky top-[60px] z-30 mb-4 max-w-3xl scroll-mt-24 lg:top-0">
+        <SecurityLock unlockedUntil={unlockedUntil} />
+      </div>
       <nav aria-label="Sections" className="no-scrollbar -mx-1 mb-6 flex max-w-3xl gap-1 overflow-x-auto px-1">
         {[
           ["#business", "Business details"],

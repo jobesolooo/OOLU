@@ -69,7 +69,7 @@ export async function saveBusinessDetails(_: ActionResult, form: FormData): Prom
 export async function setUpEmailAction(_prev: ActionResult): Promise<ActionResult> { // eslint-disable-line @typescript-eslint/no-unused-vars
   const user = await requireAdmin();
   const session = await getSession();
-  if (!session.keysUntil || session.keysUntil < Date.now()) return { error: "Unlock editing under Account keys with the staff passcode first." };
+  if (!session.keysUntil || session.keysUntil < Date.now()) return { error: "Enter the staff passcode in the security lock at the top of Settings first." };
   const res = await setUpEmail(user.name || adminUsername());
   revalidatePath("/admin/settings");
   return res;

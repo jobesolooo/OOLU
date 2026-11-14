@@ -4,6 +4,7 @@ import { emailSetupStatus } from "@/lib/mail-setup";
 import { MAILBOXES } from "@/lib/mailboxes";
 import { cx } from "@/lib/format";
 import { SetUpEmailButton } from "./SetUpEmailButton";
+import { getSession } from "@/lib/session";
 
 const TONE: Record<string, string> = {
   verified: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
@@ -31,7 +32,7 @@ function Step({ done, warn, children }: { done: boolean; warn?: boolean; childre
 
 /** The shop's addresses, whether mail can be sent and received, and the DNS records still to add. */
 export async function EmailSetup() {
-  const [b, st] = await Promise.all([getBusiness(), emailSetupStatus()]);
+  const [b, st, session] = await Promise.all([getBusiness(), emailSetupStatus(), getSession()]);
   const ok = st.state === "ok" ? st : null;
   const allVerified = Boolean(ok?.found && ok.records.length && ok.records.every((r) => r.status === "verified"));
   const working = Boolean(allVerified && ok?.receiving && ok.webhook && ok.webhookSecret && b.forwardTo);
@@ -71,7 +72,7 @@ export async function EmailSetup() {
             </h3>
             <p className="mt-1 text-[12px] text-ash">Sending and receiving run through Resend. The status below is checked live each time this page opens.</p>
           </div>
-          <SetUpEmailButton again={Boolean(ok?.found)} />
+          <SetUpEmailButton again={Boolean(ok?.found)} unlockedUntil={session.keysUntil ?? null} />
         </div>
 
         {st.state === "error" && <p className="mb-4 bg-red-50 px-4 py-3 text-[12px] text-red-800 ring-1 ring-red-600/20">{st.message}</p>}
