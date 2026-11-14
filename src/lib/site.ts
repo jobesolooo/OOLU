@@ -1,6 +1,6 @@
 /**
  * Everything brand-related lives here so copy and imagery can be swapped
- * without touching components. Taken from ooluclothing.shop.
+ * without touching components. Taken from ooluclothing.com.
  */
 export const site = {
   name: "OOLU",

@@ -12,6 +12,7 @@ export async function AuthSetup() {
   const site = siteUrl();
   const host = site.replace(/^https?:\/\//, "");
   const [k, b] = await Promise.all([getKeys("RESEND_API_KEY"), getBusiness()]);
+  const onDomain = host === b.emailDomain || host === `www.${b.emailDomain}`;
   const resend = Boolean(k.RESEND_API_KEY);
   const fromOk = Boolean(b.forwardTo);
   const google = await isProviderConfigured("google");
@@ -20,12 +21,20 @@ export async function AuthSetup() {
 
   const steps: Step[] = [
     {
-      state: siteUrlNeedsFixing() ? "warn" : "done",
-      title: "Site address",
+      state: siteUrlNeedsFixing() ? "warn" : onDomain ? "done" : "todo",
+      title: onDomain ? "Site address" : `Connect ${b.emailDomain}`,
       body: (
         <>
-          Links in emails and the Google/Apple return addresses use {code(site)}.{" "}
-          {siteUrlNeedsFixing() && <>Set {code("NEXT_PUBLIC_SITE_URL")} to {code(site)} (or your own domain) in Vercel, then redeploy.</>}
+          Links in emails, Google/Apple sign-in and Stripe use {code(site)}.{" "}
+          {!onDomain && (
+            <>
+              To move the shop to {code(b.emailDomain)}: in Vercel → Project → Settings → Domains add {code(b.emailDomain)} and {code(`www.${b.emailDomain}`)}, then
+              at your domain provider set an {code("A")} record for {code("@")} to {code("76.76.21.21")} and a {code("CNAME")} for {code("www")} to{" "}
+              {code("cname.vercel-dns.com")} (or use the values Vercel shows). Redeploy once Vercel says the domain is valid: the site switches over by itself.
+              Then add the new sign-in return addresses in Google Cloud and move the Stripe webhook to the new address.
+            </>
+          )}
+          {siteUrlNeedsFixing() && <> Set {code("NEXT_PUBLIC_SITE_URL")} in Vercel to {code(`https://${b.emailDomain}`)}, then redeploy.</>}
         </>
       ),
     },

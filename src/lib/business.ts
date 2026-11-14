@@ -43,7 +43,7 @@ export type Business = {
   countries: string[];
   returnDays: number;
   returnAddress: string;
-  /** e.g. "ooluclothing.shop": the shop's addresses are made on this domain */
+  /** e.g. "ooluclothing.com": the shop's addresses are made on this domain */
   emailDomain: string;
   /** Staff inbox that receives forwarded mail and alerts ("" = not set) */
   forwardTo: string;
@@ -75,7 +75,7 @@ export function bizDefaults(): Record<BizKey, string> {
     countries: (process.env.SHIPPING_COUNTRIES || DEFAULT_COUNTRIES.join(", ")).replace(/\s*,\s*/g, ", "),
     returnDays: String(envNum("RETURN_WINDOW_DAYS", 30)),
     returnAddress: process.env.RETURN_ADDRESS ?? "",
-    emailDomain: "ooluclothing.shop",
+    emailDomain: "ooluclothing.com",
     forwardTo: process.env.ORDER_NOTIFICATION_EMAIL ?? "",
   };
 }
@@ -96,7 +96,7 @@ function resolve(saved: BizValues): Business {
     const n = Number(v(k).replace(",", "."));
     return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : fallback;
   };
-  const domain = v("emailDomain").toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "") || "ooluclothing.shop";
+  const domain = v("emailDomain").toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "") || "ooluclothing.com";
   const days = Number(v("returnDays"));
   const countries = v("countries")
     .split(/[\s,]+/)

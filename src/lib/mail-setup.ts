@@ -100,10 +100,11 @@ export async function setUpEmail(by: string): Promise<{ ok?: string; error?: str
   //    so if we don't have it saved, replace the webhook with a fresh one.
   const hooks = await resend.webhooks.list();
   if (hooks.error) return { error: explain(hooks.error) };
-  const mine = hooks.data.data.filter((h) => h.endpoint === inboundUrl());
+  // Ours = any webhook pointing at /api/webhooks/resend, also on an old address (e.g. the vercel.app one before the domain moved).
+  const mine = hooks.data.data.filter((h) => h.endpoint.endsWith("/api/webhooks/resend"));
   const haveSecret = Boolean(await getKey("RESEND_WEBHOOK_SECRET"));
-  const good = mine.find((h) => h.status === "enabled" && (h.events ?? []).includes("email.received"));
-  if (!good || !haveSecret) {
+  const good = mine.find((h) => h.endpoint === inboundUrl() && h.status === "enabled" && (h.events ?? []).includes("email.received"));
+  if (!good || !haveSecret || mine.length > 1) {
     for (const h of mine) await resend.webhooks.remove(h.id);
     const hook = await resend.webhooks.create({ endpoint: inboundUrl(), events: ["email.received"] });
     if (hook.error) return { error: explain(hook.error) };

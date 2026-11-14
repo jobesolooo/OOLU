@@ -1,5 +1,5 @@
 /**
- * OOLU catalogue, imported from ooluclothing.shop (prices in EUR cents).
+ * OOLU catalogue, imported from ooluclothing.com (prices in EUR cents).
  * Used to render the store before Stripe is connected, and by `npm run stripe:seed`
  * to create these products in Stripe. Once Stripe has products, they come from Stripe.
  */

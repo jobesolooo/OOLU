@@ -13,7 +13,7 @@ import type { ActionResult } from "../actions";
 const esc = (s: string) => s.replace(/[&<>"]/g, "");
 
 const checks: Partial<Record<BizKey, (v: string) => string | null>> = {
-  emailDomain: (v) => (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(v.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "")) ? null : "Email domain should look like ooluclothing.shop."),
+  emailDomain: (v) => (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(v.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "")) ? null : "Email domain should look like ooluclothing.com."),
   forwardTo: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Forward mail to: that doesn't look like an email address."),
   email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Customer service email doesn't look like an email address."),
   phone: (v) => (/^[+\d][\d\s()-]{5,}$/.test(v) ? null : "Phone number can only contain digits, spaces, +, - and brackets."),

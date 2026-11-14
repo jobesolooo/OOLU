@@ -6,8 +6,13 @@
 export function siteUrl() {
   const set = (process.env.NEXT_PUBLIC_SITE_URL ?? "").trim().replace(/\/$/, "");
   const local = !set || /\/\/(localhost|127\.0\.0\.1)(:|$)/.test(set);
+  // Vercel sets this to the shop's own domain (e.g. ooluclothing.com) once it's added under Domains.
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "";
+  const customDomain = Boolean(process.env.VERCEL) && production && !production.endsWith(".vercel.app");
+  // A *.vercel.app address left in NEXT_PUBLIC_SITE_URL gives way to the custom domain automatically.
+  if (customDomain && (local || /\.vercel\.app$/.test(set))) return `https://${production}`;
   if (!local) return set;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  const vercel = production || process.env.VERCEL_URL;
   if (process.env.VERCEL && vercel) return `https://${vercel}`;
   return set || "http://localhost:3000";
 }

@@ -94,8 +94,8 @@ export const KEY_GROUPS: KeyGroup[] = [
         name: "APPLE_CLIENT_ID",
         label: "Services ID",
         secret: false,
-        placeholder: "shop.ooluclothing.signin",
-        pattern: { re: "^[A-Za-z0-9.-]{3,}$", message: "The Services ID looks like shop.ooluclothing.signin." },
+        placeholder: "com.ooluclothing.signin",
+        pattern: { re: "^[A-Za-z0-9.-]{3,}$", message: "The Services ID looks like com.ooluclothing.signin." },
       },
       {
         name: "APPLE_TEAM_ID",

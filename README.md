@@ -1,6 +1,6 @@
 # OOLU storefront
 
-Next.js 16 + TypeScript e-commerce site for **OOLU** — *Rooted in Africa. Created in Amsterdam. Made for the world.* Branding, copy, photography and the catalogue come from [ooluclothing.shop](https://ooluclothing.shop). Stripe payments (EUR), customer accounts and an admin dashboard.
+Next.js 16 + TypeScript e-commerce site for **OOLU** — *Rooted in Africa. Created in Amsterdam. Made for the world.* Branding, copy, photography and the catalogue come from [ooluclothing.com](https://ooluclothing.com). Stripe payments (EUR), customer accounts and an admin dashboard.
 
 ## What's included
 

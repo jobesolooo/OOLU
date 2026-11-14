@@ -23,7 +23,7 @@ export async function sendEmail(mail: Mail) {
   }
   const b = biz();
   const { box = "hello", fromName, ...rest } = mail;
-  // e.g. "OOLU <orders@ooluclothing.shop>". The domain must be verified in Resend.
+  // e.g. "OOLU <orders@ooluclothing.com>". The domain must be verified in Resend.
   const from = `${(fromName ?? b.name).replace(/[<>"]/g, "")} <${box}@${b.emailDomain}>`;
   try {
     const resend = new Resend(key);

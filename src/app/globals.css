@@ -8,7 +8,7 @@
 @import "@fontsource/roboto-mono/700.css";
 @import "@fontsource/bebas-neue/400.css";
 
-/* OOLU brand system (from ooluclothing.shop): Newsreader serif headings,
+/* OOLU brand system (from ooluclothing.com): Newsreader serif headings,
    Roboto Mono UI text, Bebas Neue for the giant wordmark, lavender accent. */
 @theme {
   --font-sans: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;

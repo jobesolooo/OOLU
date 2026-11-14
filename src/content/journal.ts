@@ -1,5 +1,5 @@
 /**
- * Journal & lookbook posts, written in OOLU's voice from the brand copy on ooluclothing.shop.
+ * Journal & lookbook posts, written in OOLU's voice from the brand copy on ooluclothing.com.
  * Swap in real campaign stories and photography as they come.
  *
  * Block types: p (paragraph), h2 (heading), quote, image, products (shop-the-look, by product slug),
