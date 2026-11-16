@@ -1,6 +1,5 @@
 import "server-only";
 import { Resend } from "resend";
-import { site } from "./site";
 import { formatMoney } from "./format";
 import { variantLabel } from "./variants";
 import type { Order, OrderItem, ShippingAddress } from "./db/schema";
@@ -8,6 +7,7 @@ import { siteUrl } from "@/lib/site-url";
 import { getKey } from "./keys";
 import { biz, getBusiness, staffInbox } from "./business";
 import type { Mailbox } from "./mailboxes";
+import { esc, layout, newsletterHtml, welcomeHtml } from "./email-design";
 
 /** box = which of the shop's addresses it comes from (see mailboxes.ts). */
 type Mail = { to: string; subject: string; html: string; replyTo?: string | string[]; text?: string; box?: Mailbox; fromName?: string; attachments?: { filename: string; content: string }[] };
@@ -34,28 +34,6 @@ export async function sendEmail(mail: Mail) {
     console.error("[email] send failed", err);
   }
   return { skipped: false as const };
-}
-
-const esc = (s: string | null | undefined) =>
-  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-
-
-function layout(title: string, body: string) {
-  const base = siteUrl().replace(/\/$/, "");
-  // Images only load from a public https URL, so locally the header falls back to the wordmark.
-  const mark = base.startsWith("https://")
-    ? `<img src="${base}/images/brand/logo-mark.png" width="40" height="38" alt="" style="vertical-align:middle;margin-right:14px;border:0">`
-    : "";
-  return `<!doctype html><html><body style="margin:0;background:#f3f2ef;font-family:'Roboto Mono',Menlo,Consolas,monospace;color:#060606">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
-<table width="100%" style="max-width:560px;background:#fdfdfd" cellpadding="0" cellspacing="0">
-<tr><td align="center" style="padding:28px 32px;border-bottom:1px solid #eeedeb">${mark}<span style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:34px;letter-spacing:2px;vertical-align:middle">${esc(site.wordmark)}</span></td></tr>
-<tr><td style="padding:32px;font-size:13px;line-height:1.6">
-<h1 style="margin:0 0 16px;font-family:Newsreader,Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;letter-spacing:-0.5px">${esc(title)}</h1>
-${body}
-</td></tr>
-<tr><td style="padding:20px 32px;background:#060606;color:#fdfdfd;font-size:11px;letter-spacing:1px;text-transform:uppercase"><span style="color:#a592ff">${esc(biz().name)} · ${esc(site.established)}</span><br>${esc(biz().tagline ?? site.tagline)}</td></tr>
-</table></td></tr></table></body></html>`;
 }
 
 function itemsTable(order: Order, items: OrderItem[]) {
@@ -154,12 +132,8 @@ export async function sendWelcome(email: string, name?: string | null) {
   await sendEmail({
     box: "hello",
     to: email,
-    subject: `Welcome to ${biz().name}`,
-    html: layout(
-      `Welcome${name ? `, ${name}` : ""}`,
-      `<p style="font-size:14px;line-height:1.6">Your account is set up. Track orders and check out faster next time.</p>
-<p><a href="${siteUrl()}/shop" style="display:inline-block;background:#060606;color:#fff;padding:12px 22px;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase">Shop now</a></p>`,
-    ),
+    subject: `Welcome to ${biz().name}${name ? `, ${name.trim().split(/\s+/)[0]}` : ""}`,
+    html: await welcomeHtml(name),
   });
 }
 
@@ -172,16 +146,7 @@ export async function sendNewsletterWelcome(email: string, code: string | null, 
     box: "hello",
     to: email,
     subject: code ? `Your ${percentOff}% off code — ${biz().name}` : `You're on the list — ${biz().name}`,
-    html: layout(
-      "You're in.",
-      `<p style="font-size:14px;line-height:1.6">First access to drops, restocks and stories from Amsterdam.</p>${
-        code
-          ? `<p style="font-size:14px;line-height:1.6">Here's ${percentOff}% off your first order:</p>
-<p style="font-size:24px;letter-spacing:4px;font-weight:bold;border:1px dashed #111;padding:14px;text-align:center">${esc(code)}</p>
-<p style="font-size:12px;color:#777">One use, first order only. Enter it at checkout.</p>`
-          : ""
-      }${button(`${siteUrl()}/shop`, "Shop now")}`,
-    ),
+    html: await newsletterHtml(code, percentOff),
   });
 }
 
