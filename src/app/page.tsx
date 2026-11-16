@@ -14,8 +14,14 @@ import { RecentlyViewed } from "@/components/RecentlyViewed";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ t }, b] = await Promise.all([getT(), getBusiness()]);
-  return pageMeta({ path: "/", title: t("meta.default", { name: b.name }), absoluteTitle: true });
+  const b = await getBusiness();
+  // Brand searches ("oolu", "oolu clothing") match the start of the title best.
+  return pageMeta({
+    path: "/",
+    title: `${b.name} Clothing | Amsterdam Streetwear – T-shirts, Tanks & Tracksuits`,
+    absoluteTitle: true,
+    description: `${b.name} Clothing: streetwear rooted in Africa, created in Amsterdam. Shop the official ${b.name} T-shirts, tanks and tracksuits, with free shipping over €${Math.round(b.freeShippingThreshold / 100)}.`,
+  });
 }
 
 export default async function HomePage() {

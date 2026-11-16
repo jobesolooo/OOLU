@@ -83,7 +83,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         "@type": "WebSite",
         "@id": WEBSITE_ID(),
         name: b.name,
-        alternateName: [`${b.name} Clothing`, SITE_URL.replace(/^https?:\/\//, "")],
+        alternateName: [`${b.name} Clothing`, `${b.name.toLowerCase()}clothing`, SITE_URL.replace(/^https?:\/\//, "")],
         url: SITE_URL,
         inLanguage: ["en", "nl", "fr", "es", "it", "pt"],
         publisher: { "@id": ORG_ID() },

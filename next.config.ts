@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["@electric-sql/pglite"],
+  // The old Vercel address shows the same shop; send visitors and Google to the real domain so it's the only one in results.
+  // /api stays reachable there so webhooks still pointing at the old address keep working.
+  async redirects() {
+    return [
+      {
+        source: "/:path((?!api/).*)",
+        has: [{ type: "host", value: "oolu-delta.vercel.app" }],
+        destination: "https://ooluclothing.com/:path",
+        permanent: true,
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {
