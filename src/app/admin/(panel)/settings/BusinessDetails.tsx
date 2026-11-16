@@ -1,4 +1,3 @@
-import { Building2 } from "lucide-react";
 import { BIZ_GROUPS, type BizKey } from "@/lib/business-catalog";
 import { bizDefaults, getSavedBusiness } from "@/lib/business";
 import { AdminForm } from "../FormMessage";
@@ -9,7 +8,8 @@ import type { BizGroup } from "@/lib/business-catalog";
 const TYPE: Record<string, string> = { email: "email", tel: "tel", url: "url", money: "text", number: "number" };
 
 /** Every business detail the site shows, in one form. Empty = the default (shown greyed out). */
-export async function BusinessDetails() {
+/** part: "details" = brand, company, socials, shipping; "email" = email domain, forwarding and setup. */
+export async function BusinessDetails({ part = "details" }: { part?: "details" | "email" }) {
   const [saved, defaults] = await Promise.all([getSavedBusiness(true), Promise.resolve(bizDefaults())]);
   // Socials start filled with the current link, so saving never hides one by accident.
   const value = (k: BizKey) => (k === "instagram" || k === "tiktok" ? (k in saved ? saved[k] : defaults[k]) : saved[k]) ?? "";
@@ -57,26 +57,29 @@ export async function BusinessDetails() {
   );
   const missingLegal = (["legalName", "address", "kvk", "vat", "email"] as BizKey[]).filter((k) => !saved[k]);
 
-  return (
-    <section id="business" className="scroll-mt-6">
-      <h2 className="mb-1 flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
-        <Building2 className="size-4" /> Business details
-      </h2>
-      <p className="mb-3 max-w-2xl text-[12px] text-ash">
-        Change a detail here and it updates everywhere it appears: footer, contact page, legal pages, checkout, product pages and every email. Live as soon as you save.
-      </p>
-      {missingLegal.length > 0 && (
-        <p className="mb-3 bg-amber-50 px-4 py-3 text-[12px] text-amber-900 ring-1 ring-amber-600/20">
-          The legal pages still show placeholders until the company name, address, KvK, VAT number and customer service email are filled in.
-        </p>
-      )}
-      <div className="space-y-3">
+  if (part === "email") {
+    return (
+      <section id="email" className="space-y-3">
+        <p className="max-w-2xl text-[12px] text-ash">The shop&apos;s own addresses on your domain, where customer mail is forwarded, and whether sending and receiving work.</p>
         <AdminForm action={saveBusinessDetails} submitLabel="Save email settings" className="space-y-3">
           {mail && group(mail)}
         </AdminForm>
         <EmailSetup />
-      </div>
-      <AdminForm action={saveBusinessDetails} submitLabel="Save business details" className="mt-8 space-y-3">
+      </section>
+    );
+  }
+
+  return (
+    <section id="business" className="space-y-3">
+      <p className="max-w-2xl text-[12px] text-ash">
+        Change a detail here and it updates everywhere it appears: footer, contact page, legal pages, checkout, product pages and every email. Live as soon as you save.
+      </p>
+      {missingLegal.length > 0 && (
+        <p className="bg-amber-50 px-4 py-3 text-[12px] text-amber-900 ring-1 ring-amber-600/20">
+          The legal pages still show placeholders until the company name, address, KvK, VAT number and customer service email are filled in.
+        </p>
+      )}
+      <AdminForm action={saveBusinessDetails} submitLabel="Save business details" className="space-y-3">
         {rest.map(group)}
       </AdminForm>
     </section>

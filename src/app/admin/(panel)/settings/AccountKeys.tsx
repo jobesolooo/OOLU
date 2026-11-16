@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Eye, EyeOff, KeyRound, Lock, LockOpen } from "lucide-react";
+import { ArrowUpRight, Eye, EyeOff, Lock, LockOpen } from "lucide-react";
 import type { KeyDef, KeyGroup } from "@/lib/keys-catalog";
 import type { KeySource, KeyState } from "@/lib/keys";
 import { cx } from "@/lib/format";
@@ -235,12 +235,9 @@ export function AccountKeys({ groups, states, unlockedUntil, host }: { groups: K
 
   return (
     <section id="keys" className="scroll-mt-6 space-y-3">
-      <div className="flex items-end justify-between gap-3 pt-6">
+      <div className="flex items-end justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
-            <KeyRound className="size-4" /> Account keys
-          </h2>
-          <p className="mt-1 max-w-2xl text-[12px] text-ash">
+          <p className="max-w-2xl text-[12px] text-ash">
             Add, replace or remove the keys for Stripe, email and sign-in. Changes are live on the store within seconds, with no redeploy. Keys are encrypted
             before they&apos;re stored, and secrets are never shown again in full. A key saved here takes priority over the same one in {host}.
           </p>

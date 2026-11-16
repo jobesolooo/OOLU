@@ -37,7 +37,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           <div className="border-b border-amber-200 bg-amber-50 text-amber-900">
             <p className="px-[clamp(20px,3vw,48px)] py-3 text-xs">
               Stripe isn&apos;t connected — the store is showing demo products and checkout, discounts and gift card sales are off.{" "}
-              <a href="/admin/settings#keys-stripe" className="font-semibold underline underline-offset-2">Paste your Stripe key in Settings →</a>
+              <a href="/admin/settings?tab=keys#keys-stripe" className="font-semibold underline underline-offset-2">Paste your Stripe key in Settings →</a>
             </p>
           </div>
         )}

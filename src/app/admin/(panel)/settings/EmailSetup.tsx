@@ -79,7 +79,7 @@ export async function EmailSetup() {
 
         <ol className="space-y-2">
           <Step done={st.state !== "no-key"}>
-            Resend API key with Full access, under <a href="#keys-email" className="underline">Account keys → Email</a>
+            Resend API key with Full access, under <a href="/admin/settings?tab=keys#keys-email" className="underline">Account keys → Email</a>
           </Step>
           <Step done={Boolean(b.forwardTo)}>Inbox to forward mail to, in the form above</Step>
           <Step done={Boolean(ok?.found && ok.sending && ok.receiving)}>

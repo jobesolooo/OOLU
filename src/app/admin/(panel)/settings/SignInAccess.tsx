@@ -1,4 +1,4 @@
-import { KeyRound, ShieldCheck, Users } from "lucide-react";
+import { KeyRound, ShieldCheck } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { callbackUrl, isProviderConfigured } from "@/lib/oauth";
 import { staffGoogleEmails, staffPasscodeInfo } from "@/lib/admin-auth";
@@ -29,9 +29,6 @@ export async function SignInAccess() {
 
   return (
     <section id="signin" className="scroll-mt-28 space-y-3">
-      <h2 className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
-        <Users className="size-4" /> Sign-in &amp; staff access
-      </h2>
 
       {/* Customer buttons */}
       <div className="bg-white p-5 ring-1 ring-black/5 sm:p-6">
@@ -96,7 +93,7 @@ export async function SignInAccess() {
         </p>
         {!googleReady && (
           <p className="mb-4 bg-amber-50 px-4 py-3 text-[12px] text-amber-900 ring-1 ring-amber-600/20">
-            Add the Google keys under <a href="#keys-google" className="underline">Account keys → Google</a> first; the button appears once they&apos;re set.
+            Add the Google keys under <a href="/admin/settings?tab=keys#keys-google" className="underline">Account keys → Google</a> first; the button appears once they&apos;re set.
           </p>
         )}
         <AdminForm action={saveStaffGoogle} submitLabel="Save staff accounts" className="space-y-2">

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Building2, Home, KeyRound, ListChecks, Mail, Users } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { saveStoreSettings } from "../actions";
 import { AdminForm } from "../FormMessage";
@@ -7,43 +9,79 @@ import { AuthSetup } from "../AuthSetup";
 import { keyStates } from "@/lib/keys";
 import { KEY_GROUPS } from "@/lib/keys-catalog";
 import { getSession } from "@/lib/session";
+import { cx } from "@/lib/format";
 import { AccountKeys, SecurityLock } from "./AccountKeys";
 import { BusinessDetails } from "./BusinessDetails";
 import { SignInAccess } from "./SignInAccess";
+import { HashTab } from "./HashTab";
 
 export const dynamic = "force-dynamic";
 
 const toLocalInput = (iso: string | null) => (iso ? new Date(iso).toISOString().slice(0, 16) : "");
 
-export default async function SettingsAdmin() {
-  const [s, states, session] = await Promise.all([getSettings(), keyStates(), getSession()]);
+/** One tab per area; `lock` = needs the staff passcode for some changes, so the security lock shows there. */
+const TABS = [
+  { id: "business", label: "Business", Icon: Building2, blurb: "Name, company details, socials, shipping and returns.", lock: false },
+  { id: "email", label: "Email", Icon: Mail, blurb: "The shop's email addresses, forwarding, and sending/receiving setup.", lock: true },
+  { id: "keys", label: "Account keys", Icon: KeyRound, blurb: "Keys for Stripe, email, Google, Apple and scheduled drops.", lock: true },
+  { id: "signin", label: "Sign-in & staff", Icon: Users, blurb: "Customer sign-in buttons, staff passcode and Google sign-in for staff.", lock: true },
+  { id: "homepage", label: "Homepage", Icon: Home, blurb: "Promo strip, drop countdown and newsletter popup.", lock: false },
+  { id: "guides", label: "Setup guides", Icon: ListChecks, blurb: "What's connected, and where to find anything that's still missing.", lock: false },
+] as const;
+type TabId = (typeof TABS)[number]["id"];
+
+export default async function SettingsAdmin({ searchParams }: PageProps<"/admin/settings">) {
+  const sp = await searchParams;
+  const tab = TABS.find((t) => t.id === sp.tab) ?? TABS[0];
+  const [s, session] = await Promise.all([getSettings(), getSession()]);
   const unlockedUntil = session.keysUntil ?? null; // the screen itself works out whether it has expired
+
   return (
     <>
-      <AdminHeader eyebrow="Setup" title="Store settings" description="Business details, account keys and homepage options. Fill in a field, press save, and it's live on the store straight away." />
-      {/* Stays in view while scrolling; below the phone header bar, at the very top on desktop. */}
-      <div className="sticky top-[60px] z-30 mb-4 max-w-3xl scroll-mt-24 lg:top-0">
-        <SecurityLock unlockedUntil={unlockedUntil} />
-      </div>
-      <nav aria-label="Sections" className="no-scrollbar -mx-1 mb-6 flex max-w-3xl gap-1 overflow-x-auto px-1">
-        {[
-          ["#business", "Business details"],
-          ["#signin", "Sign-in & staff"],
-          ["#keys", "Account keys"],
-          ["#homepage", "Homepage"],
-          ["#guides", "Setup guides"],
-        ].map(([href, label]) => (
-          <a key={href} href={href} className="shrink-0 rounded-full bg-white px-4 py-2 text-[11px] font-medium tracking-[0.08em] whitespace-nowrap uppercase ring-1 ring-black/5 hover:bg-ink hover:text-white">
-            {label}
-          </a>
+      <HashTab current={tab.id} />
+      <AdminHeader eyebrow="Setup" title="Store settings" description="Fill in a field, press save, and it's live on the store straight away." />
+
+      <nav aria-label="Settings sections" className="no-scrollbar -mx-1 mb-6 flex max-w-4xl gap-1 overflow-x-auto border-b border-black/10 px-1">
+        {TABS.map((t) => (
+          <Link
+            key={t.id}
+            href={`/admin/settings?tab=${t.id}`}
+            scroll={false}
+            aria-current={t.id === tab.id ? "page" : undefined}
+            className={cx(
+              "-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-[12px] font-medium whitespace-nowrap transition-colors sm:px-4",
+              t.id === tab.id ? "border-ink text-ink" : "border-transparent text-ash hover:text-ink",
+            )}
+          >
+            <t.Icon className="size-4" strokeWidth={1.6} /> {t.label}
+          </Link>
         ))}
       </nav>
-      <div className="max-w-3xl space-y-12">
-        <BusinessDetails />
-        <SignInAccess />
-        <AccountKeys groups={KEY_GROUPS} states={states} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />
-        <section id="homepage" className="scroll-mt-6">
-          <h2 className="mb-3 text-[11px] font-semibold tracking-[0.14em] uppercase">Homepage</h2>
+
+      <div className="max-w-3xl">
+        <p className="mb-4 text-[12px] text-ash">{tab.blurb}</p>
+        {tab.lock && (
+          // Stays in view while scrolling; below the phone header bar, at the very top on desktop.
+          <div className="sticky top-[60px] z-30 mb-4 scroll-mt-24 lg:top-0">
+            <SecurityLock unlockedUntil={unlockedUntil} />
+          </div>
+        )}
+        <TabBody tab={tab.id} s={s} unlockedUntil={unlockedUntil} />
+      </div>
+    </>
+  );
+}
+
+async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<ReturnType<typeof getSettings>>; unlockedUntil: number | null }) {
+  switch (tab) {
+    case "email":
+      return <BusinessDetails part="email" />;
+    case "keys":
+      return <AccountKeys groups={KEY_GROUPS} states={await keyStates()} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />;
+    case "signin":
+      return <SignInAccess />;
+    case "homepage":
+      return (
       <AdminForm action={saveStoreSettings} submitLabel="Save homepage" className="space-y-3">
         <fieldset className="min-w-0 space-y-3 bg-white [&>legend~*]:clear-both p-6 ring-1 ring-black/5">
           <legend className="float-left mb-3 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">Promo strip (under the homepage hero)</legend>
@@ -88,14 +126,15 @@ export default async function SettingsAdmin() {
           </div>
         </fieldset>
       </AdminForm>
-        </section>
-        <section id="guides" className="scroll-mt-6 space-y-3">
-          <h2 className="text-[11px] font-semibold tracking-[0.14em] uppercase">Setup guides</h2>
-          <p className="text-[12px] text-ash">Where to find each key, and what&apos;s still missing. The ticks update as you save keys above.</p>
+      );
+    case "guides":
+      return (
+        <div className="space-y-3">
           <StripeSetup />
           <AuthSetup />
-        </section>
-      </div>
-    </>
-  );
+        </div>
+      );
+    default:
+      return <BusinessDetails part="details" />;
+  }
 }
