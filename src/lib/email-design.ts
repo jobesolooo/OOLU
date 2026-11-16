@@ -186,3 +186,253 @@ ${button(`${base()}/shop`, "Shop now", "white")}`,
     { preheader: code ? `Here's ${percentOff}% off your first order.` : "First access to every drop.", note: "You're getting this because you joined the newsletter. Unsubscribe any time by replying 'stop'.", bare: true },
   );
 }
+
+/* ═══ Campaign builder + versions for every customer email ═══════════════ */
+
+type CampaignOpts = {
+  hero: string;
+  heroAlt: string;
+  /** Colour the hero image's torn bottom edge runs into (the block below). */
+  eyebrow: string;
+  title: string;
+  body?: string;
+  /** Extra HTML inside the purple block (code boxes, amounts…). */
+  extra?: string;
+  cta?: [href: string, label: string];
+  /** Rows after the purple block. */
+  rows?: string;
+  perks?: [string, string][];
+  preheader: string;
+  note?: string;
+};
+
+export function campaign(o: CampaignOpts) {
+  return shell(
+    imageRow(o.hero, o.heroAlt, C.purple) +
+      row(
+        `${eyebrow(o.eyebrow, C.lilac)}${headline(o.title, C.white, 60)}${o.body ? para(o.body, C.white) : ""}${o.extra ?? ""}${o.cta ? button(o.cta[0], o.cta[1], "white") : ""}`,
+        C.purple,
+        "10px 40px 48px",
+      ) +
+      (o.rows ?? "") +
+      (o.perks ? row(perks(o.perks), C.ink, "34px 34px") : ""),
+    { preheader: o.preheader, note: o.note, bare: true },
+  );
+}
+
+const sectionTitle = (t: string) => `<p style="margin:0 0 16px;font-family:${DISPLAY};font-size:28px;line-height:1;letter-spacing:0.5px;text-transform:uppercase;color:${C.ink}">${t}</p>`;
+
+/** Progress like "Placed → Packed → Shipped → Delivered"; `done` steps are filled. */
+export function steps(labels: string[], done: number) {
+  const w = Math.floor(100 / labels.length);
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${labels
+    .map((l, i) => {
+      const on = i < done;
+      const now = i === done;
+      const dot = on ? `background:${C.purple};color:${C.white};border:3px solid ${C.purple}` : now ? `background:${C.white};color:${C.ink};border:3px solid ${C.ink}` : `background:${C.white};color:#b5b5b5;border:3px solid #d9d9d9`;
+      return `<td width="${w}%" align="center" valign="top" style="padding:0 2px">
+<div style="width:34px;height:34px;line-height:28px;border-radius:50%;font-family:${MONO};font-size:13px;font-weight:bold;${dot}">${on ? "&#10003;" : i + 1}</div>
+<p style="margin:8px 0 0;font-family:${MONO};font-size:10px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:${on || now ? C.ink : "#9a9a9a"}">${esc(l)}</p></td>`;
+    })
+    .join("")}</tr></table>`;
+}
+
+type LineItem = { name: string; size: string | null; quantity: number; unitAmount: number; image: string | null };
+export function itemCards(items: LineItem[], currency: string, sizeLabel: (s: string) => string) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${items
+    .map(
+      (i) => `<tr><td width="76" valign="top" style="padding:0 0 14px">${
+        i.image
+          ? `<img src="${abs(i.image)}" width="64" alt="" style="display:block;width:64px;height:auto;border:3px solid ${C.ink};background:${C.cream}">`
+          : `<div style="width:64px;height:80px;background:${C.cream};border:3px solid ${C.ink}"></div>`
+      }</td>
+<td valign="top" style="padding:4px 0 14px 4px;font-family:${MONO};font-size:13px;line-height:1.5;color:${C.ink}">
+<span style="font-family:${DISPLAY};font-size:20px;letter-spacing:0.5px;text-transform:uppercase">${esc(i.name.replace(/^OOLU\s+/i, ""))}</span><br>
+<span style="color:${C.grey}">${i.size && i.size !== "One Size" ? `${esc(sizeLabel(i.size))} · ` : ""}Qty ${i.quantity}</span></td>
+<td valign="top" align="right" style="padding:4px 0 14px;font-family:${MONO};font-size:13px;font-weight:bold;color:${C.ink};white-space:nowrap">${formatMoney(i.unitAmount * i.quantity, currency)}</td></tr>`,
+    )
+    .join("")}</table>`;
+}
+
+export function totals(lines: [string, number][], total: number, currency: string) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:3px solid ${C.ink};margin-top:4px">${lines
+    .filter(([, v]) => v !== 0)
+    .map(
+      ([l, v]) =>
+        `<tr><td style="padding:8px 0 0;font-family:${MONO};font-size:12px;letter-spacing:1px;text-transform:uppercase;color:${C.grey}">${l}</td><td align="right" style="padding:8px 0 0;font-family:${MONO};font-size:13px;color:${C.ink}">${v < 0 ? "−" : ""}${formatMoney(Math.abs(v), currency)}</td></tr>`,
+    )
+    .join("")}
+<tr><td style="padding:14px 0 0;font-family:${DISPLAY};font-size:26px;text-transform:uppercase;color:${C.ink}">Total</td><td align="right" style="padding:14px 0 0;font-family:${DISPLAY};font-size:26px;color:${C.purple}">${formatMoney(total, currency)}</td></tr></table>`;
+}
+
+const box = (html: string, bg: string = C.cream) =>
+  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="${bg}" style="background:${bg};border:3px solid ${C.ink};padding:20px 22px;font-family:${MONO};font-size:13px;line-height:1.7;color:${C.ink}">${html}</td></tr></table>`;
+
+/** Order confirmed. */
+export async function orderConfirmedHtml(o: {
+  number: number;
+  id: string;
+  name: string | null;
+  items: LineItem[];
+  currency: string;
+  lines: [string, number][];
+  total: number;
+  address: string | null;
+  sizeLabel: (s: string) => string;
+}) {
+  const first = o.name?.trim().split(/\s+/)[0];
+  const more = (await newArrivals(6)).filter((p) => !o.items.some((i) => i.name === p.name)).slice(0, 2);
+  return campaign({
+    hero: "/images/email/order-hero.jpg",
+    heroAlt: "Order confirmed",
+    eyebrow: `Order #${o.number}`,
+    title: `It's yours${first ? `,<br>${esc(first)}` : ""}.`,
+    body: "Thank you for backing OOLU. We're packing your order in the studio now, and you'll get an email with tracking the moment it ships.",
+    cta: [`${base()}/account/orders/${o.id}`, "Track your order"],
+    rows:
+      row(`${sectionTitle("Where it's at")}${steps(["Placed", "Packing", "Shipped", "Delivered"], 1)}`, C.white, "38px 32px 10px") +
+      row(`${sectionTitle("What you got")}${itemCards(o.items, o.currency, o.sizeLabel)}${totals(o.lines, o.total, o.currency)}`, C.white, "30px 40px 30px") +
+      (o.address ? row(box(`<strong style="font-family:${DISPLAY};font-size:20px;letter-spacing:0.5px">SHIPPING TO</strong><br>${o.address}`), C.white, "0 40px 40px") : "") +
+      (more.length ? row(`${eyebrow("Complete the look")}${headline("Goes well with", C.ink, 36)}<div style="height:20px;line-height:20px">&nbsp;</div>${productGrid(more)}`, C.cream, "40px 32px 26px") : ""),
+    perks: [[`${biz().returnDays} days`, "To return or exchange"], ["Track", "From your account"], ["Help", "Just reply to this email"]],
+    preheader: `Order #${o.number} is confirmed. We're packing it now.`,
+  });
+}
+
+/** Shipped. */
+export function shippedHtml(o: { number: number; id: string; items: LineItem[]; currency: string; carrier: string | null; tracking: string | null; trackUrl: string | null; sizeLabel: (s: string) => string }) {
+  const trackBox =
+    o.tracking &&
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0 0"><tr><td bgcolor="${C.white}" style="background:${C.white};border:3px solid ${C.ink};padding:16px 22px">
+<p style="margin:0;font-family:${MONO};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${C.purple}">${esc(o.carrier ?? "Tracking")} tracking</p>
+<p style="margin:6px 0 0;font-family:${MONO};font-size:20px;font-weight:bold;letter-spacing:2px;color:${C.ink}">${esc(o.tracking)}</p></td></tr></table>`;
+  return campaign({
+    hero: "/images/email/ship-hero.jpg",
+    heroAlt: "Your order is on its way",
+    eyebrow: `Order #${o.number} · Shipped`,
+    title: "On its way.",
+    body: "Your OOLU order just left the studio in Amsterdam. Keep an eye on the door.",
+    extra: trackBox || "",
+    cta: o.trackUrl ? [o.trackUrl, "Track your parcel"] : [`${base()}/account/orders/${o.id}`, "View your order"],
+    rows:
+      row(`${sectionTitle("Where it's at")}${steps(["Placed", "Packed", "Shipped", "Delivered"], 3)}`, C.white, "38px 32px 10px") +
+      (o.items.length ? row(`${sectionTitle("In the box")}${itemCards(o.items, o.currency, o.sizeLabel)}`, C.white, "30px 40px 30px") : ""),
+    perks: [["Wear it", biz().handles.instagram ? `Tag ${biz().handles.instagram}` : "Show us the fit"], ["Fits?", `${biz().returnDays}-day returns`], ["Help", "Just reply"]],
+    preheader: `Order #${o.number} has shipped${o.tracking ? ` · tracking ${o.tracking}` : ""}.`,
+  });
+}
+
+const amountBlock = (label: string, amount: string) =>
+  `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0 0"><tr><td bgcolor="${C.white}" style="background:${C.white};border:3px solid ${C.ink};padding:16px 26px">
+<p style="margin:0;font-family:${MONO};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${C.purple}">${esc(label)}</p>
+<p style="margin:4px 0 0;font-family:${DISPLAY};font-size:52px;line-height:1;color:${C.ink}">${amount}</p></td></tr></table>`;
+
+/** Refund issued. */
+export function refundHtml(o: { number: number; id: string; amount: string }) {
+  return campaign({
+    hero: "/images/email/account-banner.jpg",
+    heroAlt: OOLU_ALT,
+    eyebrow: `Order #${o.number} · Refund`,
+    title: "Money's<br>on its way.",
+    body: "We've sent your refund. It usually shows up on your statement within 5–10 business days, depending on your bank.",
+    extra: amountBlock("Refunded", o.amount),
+    cta: [`${base()}/account/orders/${o.id}`, "View your order"],
+    rows: row(para(`Something not right? Just reply to this email and we'll sort it out.`), C.white, "30px 40px 36px"),
+    preheader: `We've refunded ${o.amount} for order #${o.number}.`,
+  });
+}
+const OOLU_ALT = "OOLU";
+
+/** Back in stock / just dropped: the product itself is the hero. */
+export function stockHtml(o: { name: string; size: string; slug: string; image: string | null; price: string | null; launch: boolean }) {
+  const href = `${base()}/products/${o.slug}`;
+  const productHero = o.image
+    ? `<tr><td bgcolor="${C.cream}" align="center" style="background:${C.cream};padding:34px 40px 30px">
+<a href="${href}" style="text-decoration:none"><img src="${abs(o.image)}" width="420" alt="${esc(o.name)}" style="display:block;width:100%;max-width:420px;height:auto;border:4px solid ${C.ink};background:${C.white}"></a>
+</td></tr>`
+    : "";
+  return shell(
+    productHero +
+      row(
+        `${eyebrow(o.launch ? "Just dropped" : "Back in stock", C.lilac)}${headline(o.launch ? "It's live." : "It's back.", C.white, 72)}
+<p style="margin:18px 0 0;font-family:${DISPLAY};font-size:30px;line-height:1.05;text-transform:uppercase;color:${C.white}">${esc(o.name.replace(/^OOLU\s+/i, ""))}${o.size ? ` <span style="color:${C.lilac}">· ${esc(o.size)}</span>` : ""}</p>
+${o.price ? `<p style="margin:8px 0 0;font-family:${MONO};font-size:15px;font-weight:bold;color:${C.lilac}">${o.price}</p>` : ""}
+${para(o.launch ? "You asked to hear first. It's out now, in limited numbers." : "The size you were waiting for just landed. Stock is limited: first come, first served.", C.white)}
+${button(href, o.launch ? "Shop the drop" : "Get yours", "white")}`,
+        C.purple,
+        "40px 40px 48px",
+      ) +
+      row(perks([["Limited", "Small runs only"], ["Fast", "Ships from Amsterdam"], ["Easy", `${biz().returnDays}-day returns`]]), C.ink, "34px 34px"),
+    { preheader: o.launch ? `${o.name} just dropped.` : `${o.name}${o.size ? ` (${o.size})` : ""} is back in stock.`, note: "You're getting this because you asked to be told when this item is available." },
+  );
+}
+
+/** Gift card for the recipient. */
+export function giftCardHtml(o: { amount: string; code: string; to: string | null; from: string | null; message: string | null }) {
+  return campaign({
+    hero: "/images/email/gift-hero.jpg",
+    heroAlt: "OOLU gift card",
+    eyebrow: o.from ? `From ${o.from}` : "Gift card",
+    title: `${o.to ? `${esc(o.to)},<br>` : ""}this one's<br>for you.`,
+    body: `${o.from ? `${esc(o.from)} sent you` : "You've got"} an OOLU gift card. Pick something that feels like you.`,
+    extra:
+      (o.message ? `<p style="margin:24px 0 0;padding:0 0 0 16px;border-left:4px solid ${C.lilac};font-family:${MONO};font-size:15px;line-height:1.7;font-style:italic;color:${C.white}">“${esc(o.message)}”</p>` : "") +
+      `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0 0"><tr><td bgcolor="${C.ink}" style="background:${C.ink};border:3px solid ${C.lilac};padding:20px 26px">
+<p style="margin:0;font-family:${MONO};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${C.lilac}">Gift card · ${o.amount}</p>
+<p style="margin:8px 0 0;font-family:${MONO};font-size:24px;font-weight:bold;letter-spacing:3px;color:${C.white}">${esc(o.code)}</p></td></tr></table>`,
+    cta: [`${base()}/shop`, "Start shopping"],
+    rows: row(`${sectionTitle("How to use it")}${para("Add what you like to your bag, open the bag and enter the code before checkout. Anything left over stays on the card for next time.")}`, C.white, "36px 40px 40px"),
+    perks: [["Any", "Piece in the shop"], ["Keep", "Leftover balance"], ["Easy", "Enter it in your bag"]],
+    preheader: `${o.from ? `${o.from} sent you` : "You've got"} a ${o.amount} OOLU gift card.`,
+    note: "Keep this email: the code is your gift card.",
+  });
+}
+
+export function giftSentHtml(o: { amount: string; recipient: string }) {
+  return campaign({
+    hero: "/images/email/gift-hero.jpg",
+    heroAlt: "OOLU gift card",
+    eyebrow: "Gift card sent",
+    title: "Gift<br>delivered.",
+    body: `We emailed your ${o.amount} gift card to ${esc(o.recipient)}. Good taste.`,
+    cta: [`${base()}/shop`, "Treat yourself too"],
+    preheader: `Your ${o.amount} gift card was sent to ${o.recipient}.`,
+  });
+}
+
+/** Return status update. */
+export function returnHtml(o: { orderNumber: number; status: string; title: string; body: string; note: string | null; address: string | null }) {
+  const order = ["requested", "approved", "received", "refunded"];
+  const at = order.indexOf(o.status);
+  const titles: Record<string, string> = { requested: "Got it.", approved: "Approved.", received: "It's here.", refunded: "Refunded.", rejected: "About your return." };
+  return campaign({
+    hero: "/images/email/account-banner.jpg",
+    heroAlt: OOLU_ALT,
+    eyebrow: `Order #${o.orderNumber} · ${o.title}`,
+    title: titles[o.status] ?? esc(o.title),
+    body: esc(o.body),
+    extra: o.note ? `<p style="margin:18px 0 0;padding:0 0 0 16px;border-left:4px solid ${C.lilac};font-family:${MONO};font-size:14px;line-height:1.7;color:${C.white}">${esc(o.note)}</p>` : "",
+    cta: [`${base()}/account/orders`, "View your orders"],
+    rows:
+      (at >= 0 ? row(`${sectionTitle("Return progress")}${steps(["Requested", "Approved", "Received", "Refunded"], o.status === "refunded" ? 4 : at + 1)}`, C.white, "38px 32px 24px") : "") +
+      (o.status === "approved" && o.address
+        ? row(box(`<strong style="font-family:${DISPLAY};font-size:20px;letter-spacing:0.5px">SEND IT TO</strong><br>${esc(o.address).replace(/\|/g, "<br>")}<br><br><span style="color:${C.grey}">Put your order number #${o.orderNumber} inside the parcel.</span>`), C.white, "10px 40px 40px")
+        : ""),
+    preheader: `${o.title} for order #${o.orderNumber}.`,
+  });
+}
+
+/** Account emails: confirm email, reset password, invite, email change, security notice. */
+export function accountHtml(o: { eyebrow: string; title: string; body: string; cta?: [string, string]; note?: string; warn?: boolean; preheader: string }) {
+  return campaign({
+    hero: "/images/email/account-banner.jpg",
+    heroAlt: OOLU_ALT,
+    eyebrow: o.eyebrow,
+    title: o.title,
+    body: o.body,
+    extra: o.warn ? `<p style="margin:20px 0 0;padding:12px 16px;background:${C.ink};font-family:${MONO};font-size:12px;line-height:1.6;color:${C.white}"><strong style="color:${C.lilac}">Wasn't you?</strong> Reset your password straight away and reply to this email so we can help.</p>` : "",
+    cta: o.cta,
+    rows: o.note ? row(`<p style="margin:0;font-family:${MONO};font-size:12px;line-height:1.7;color:${C.grey}">${o.note}</p>`, C.white, "26px 40px 30px") : "",
+    preheader: o.preheader,
+  });
+}

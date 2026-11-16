@@ -7,7 +7,11 @@ import { siteUrl } from "@/lib/site-url";
 import { getKey } from "./keys";
 import { biz, getBusiness, staffInbox } from "./business";
 import type { Mailbox } from "./mailboxes";
-import { esc, layout, newsletterHtml, welcomeHtml } from "./email-design";
+import { accountHtml, esc, giftCardHtml, giftSentHtml, layout, newsletterHtml, orderConfirmedHtml, refundHtml, returnHtml, shippedHtml, stockHtml, welcomeHtml } from "./email-design";
+import { trackingUrl } from "./tracking";
+import { eq } from "drizzle-orm";
+import { getDb, schema } from "./db";
+import { getProductBySlug } from "./catalog";
 
 /** box = which of the shop's addresses it comes from (see mailboxes.ts). */
 type Mail = { to: string; subject: string; html: string; replyTo?: string | string[]; text?: string; box?: Mailbox; fromName?: string; attachments?: { filename: string; content: string }[] };
@@ -67,6 +71,16 @@ function address(a: ShippingAddress | null) {
   return `<p style="font-size:14px;line-height:1.6;color:#333"><strong>Shipping to</strong><br>${parts.join("<br>")}</p>`;
 }
 
+function addressHtml(a: ShippingAddress | null) {
+  if (!a) return null;
+  return [a.name, a.line1, a.line2, [a.postal_code, a.city].filter(Boolean).join(" "), a.state, a.country].filter(Boolean).map(esc).join("<br>");
+}
+
+async function orderItems(orderId: string) {
+  const db = await getDb();
+  return db.select().from(schema.orderItems).where(eq(schema.orderItems.orderId, orderId));
+}
+
 export async function sendOrderConfirmation(order: Order, items: OrderItem[]) {
   await getBusiness(); // store name, tagline and return address from Admin → Settings
   if (!order.email) return;
@@ -74,12 +88,23 @@ export async function sendOrderConfirmation(order: Order, items: OrderItem[]) {
     box: "orders",
     to: order.email,
     subject: `Order #${order.number} confirmed — ${biz().name}`,
-    html: layout(
-      "Thanks for your order",
-      `<p style="font-size:14px;line-height:1.6">We've got your order <strong>#${order.number}</strong> and we're getting it ready. You'll get another email when it ships.</p>
-${itemsTable(order, items)}${address(order.shippingAddress)}
-<p><a href="${siteUrl()}/account" style="display:inline-block;background:#060606;color:#fff;padding:12px 22px;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase">View your account</a></p>`,
-    ),
+    html: await orderConfirmedHtml({
+      number: order.number,
+      id: order.id,
+      name: order.shippingAddress?.name ?? null,
+      items,
+      currency: order.currency,
+      lines: [
+        ["Subtotal", order.subtotal],
+        ["Discount", -order.discount],
+        ["Gift card", -order.giftCardAmount],
+        ["Shipping", order.shipping],
+        ["Tax", order.tax ?? 0],
+      ],
+      total: order.total,
+      address: addressHtml(order.shippingAddress),
+      sizeLabel: variantLabel,
+    }),
   });
 }
 
@@ -102,14 +127,20 @@ export async function sendAdminNewOrder(order: Order, items: OrderItem[]) {
 export async function sendShippingUpdate(order: Order) {
   await getBusiness(); // store name, tagline and return address from Admin → Settings
   if (!order.email) return;
-  const tracking = order.trackingNumber
-    ? `<p style="font-size:14px">Tracking: <strong>${esc(order.trackingCarrier)} ${esc(order.trackingNumber)}</strong></p>`
-    : "";
   await sendEmail({
     box: "orders",
     to: order.email,
-    subject: `Order #${order.number} has shipped`,
-    html: layout("Your order is on the way", `<p style="font-size:14px;line-height:1.6">Good news — order <strong>#${order.number}</strong> just left us.</p>${tracking}`),
+    subject: `Order #${order.number} is on its way — ${biz().name}`,
+    html: shippedHtml({
+      number: order.number,
+      id: order.id,
+      items: await orderItems(order.id).catch(() => []),
+      currency: order.currency,
+      carrier: order.trackingCarrier,
+      tracking: order.trackingNumber,
+      trackUrl: trackingUrl(order.trackingCarrier, order.trackingNumber),
+      sizeLabel: variantLabel,
+    }),
   });
 }
 
@@ -119,11 +150,8 @@ export async function sendRefundNotice(order: Order, amount: number) {
   await sendEmail({
     box: "orders",
     to: order.email,
-    subject: `Refund for order #${order.number}`,
-    html: layout(
-      "Refund issued",
-      `<p style="font-size:14px;line-height:1.6">We've refunded <strong>${formatMoney(amount, order.currency)}</strong> for order #${order.number}. It can take 5–10 business days to show up on your statement.</p>`,
-    ),
+    subject: `Refund for order #${order.number} — ${biz().name}`,
+    html: refundHtml({ number: order.number, id: order.id, amount: formatMoney(amount, order.currency) }),
   });
 }
 
@@ -152,16 +180,19 @@ export async function sendNewsletterWelcome(email: string, code: string | null, 
 
 export async function sendStockAlert(email: string, productName: string, size: string, slug: string, launch = false) {
   await getBusiness(); // store name, tagline and return address from Admin → Settings
+  const product = await getProductBySlug(slug).catch(() => null);
   await sendEmail({
     box: "hello",
     to: email,
     subject: launch ? `${productName} just dropped` : `Back in stock: ${productName}${size ? ` (${size})` : ""}`,
-    html: layout(
-      launch ? "It's live." : "It's back.",
-      `<p style="font-size:14px;line-height:1.6"><strong>${esc(productName)}</strong>${
-        size ? ` in size ${esc(size)}` : ""
-      } is available now. Stock is limited — first come, first served.</p>${button(`${siteUrl()}/products/${slug}`, "Shop now")}`,
-    ),
+    html: stockHtml({
+      name: productName,
+      size: size ? variantLabel(size) : "",
+      slug,
+      image: product?.images[0] ?? null,
+      price: product ? formatMoney(product.unitAmount, product.currency) : null,
+      launch,
+    }),
   });
 }
 
@@ -178,31 +209,18 @@ export async function sendGiftCardEmail(card: {
   await getBusiness(); // store name, tagline and return address from Admin → Settings
   const to = card.recipientEmail || card.purchaserEmail;
   if (!to) return;
-  const from = card.senderName ? `${esc(card.senderName)} sent you` : "You've got";
   await sendEmail({
     box: "gifts",
     to,
     subject: `${card.senderName ? `${card.senderName} sent you` : "Your"} a ${biz().name} gift card`,
-    html: layout(
-      `${formatMoney(card.initialAmount, card.currency)} gift card`,
-      `<p style="font-size:14px;line-height:1.6">${card.recipientName ? `${esc(card.recipientName)}, ` : ""}${from} a ${biz().name} gift card.</p>
-${card.message ? `<p style="font-size:14px;line-height:1.6;font-style:italic;border-left:3px solid #111;padding-left:12px">“${esc(card.message)}”</p>` : ""}
-<p style="font-size:22px;letter-spacing:3px;font-weight:bold;border:1px dashed #111;padding:14px;text-align:center">${esc(card.code)}</p>
-<p style="font-size:12px;color:#777">Enter the code in your bag before checkout. Any remaining balance stays on the card.</p>
-${button(`${siteUrl()}/shop`, "Start shopping")}`,
-    ),
+    html: giftCardHtml({ amount: formatMoney(card.initialAmount, card.currency), code: card.code, to: card.recipientName, from: card.senderName, message: card.message }),
   });
   if (card.recipientEmail && card.purchaserEmail && card.recipientEmail !== card.purchaserEmail) {
     await sendEmail({
     box: "gifts",
       to: card.purchaserEmail,
       subject: `Your gift card was sent`,
-      html: layout(
-        "Gift card sent",
-        `<p style="font-size:14px;line-height:1.6">We emailed a ${formatMoney(card.initialAmount, card.currency)} gift card to ${esc(
-          card.recipientEmail,
-        )}.</p>`,
-      ),
+      html: giftSentHtml({ amount: formatMoney(card.initialAmount, card.currency), recipient: card.recipientEmail }),
     });
   }
 }
@@ -235,21 +253,11 @@ export async function sendReturnUpdate(email: string | null, orderNumber: number
   await getBusiness(); // store name, tagline and return address from Admin → Settings
   const copy = RETURN_COPY[status];
   if (!email || !copy) return;
-  const address = biz().returnAddress;
   await sendEmail({
     box: "returns",
     to: email,
     subject: `${copy.subject} (order #${orderNumber})`,
-    html: layout(
-      copy.title,
-      `<p style="font-size:14px;line-height:1.6">${copy.body}</p>${
-        note ? `<p style="font-size:14px;line-height:1.6">${esc(note)}</p>` : ""
-      }${
-        status === "approved" && address
-          ? `<p style="font-size:14px;line-height:1.6"><strong>Return address</strong><br>${esc(address).replace(/\|/g, "<br>")}</p>`
-          : ""
-      }`,
-    ),
+    html: returnHtml({ orderNumber, status, title: copy.title, body: copy.body, note: note ?? null, address: biz().returnAddress || null }),
   });
 }
 
@@ -280,13 +288,14 @@ export async function sendVerifyEmail(email: string, token: string) {
     box: "account",
     to: email,
     subject: `Confirm your email — ${biz().name}`,
-    html: layout(
-      "Confirm your email",
-      `<p style="font-size:14px;line-height:1.6">Tap the button to confirm this is your email. It also connects any orders you placed as a guest to your account.</p>${button(
-        `${siteUrl()}/account/verify?token=${encodeURIComponent(token)}`,
-        "Confirm email",
-      )}<p style="font-size:12px;color:#777">This link expires in 24 hours. If you didn't create an account, ignore this email.</p>`,
-    ),
+    html: accountHtml({
+      eyebrow: "One more step",
+      title: "Confirm<br>it's you.",
+      body: "Tap the button to confirm your email. It also links any orders you placed as a guest to your account.",
+      cta: [`${siteUrl()}/account/verify?token=${encodeURIComponent(token)}`, "Confirm email"],
+      note: "This link expires in 24 hours. If you didn't create an OOLU account, you can ignore this email.",
+      preheader: "Confirm your email to finish setting up your account.",
+    }),
   });
 }
 
@@ -296,13 +305,14 @@ export async function sendEmailChange(newEmail: string, token: string) {
     box: "account",
     to: newEmail,
     subject: `Confirm your new email — ${biz().name}`,
-    html: layout(
-      "Confirm your new email",
-      `<p style="font-size:14px;line-height:1.6">Tap the button to make this the email for your ${biz().name} account. You'll sign in with it from then on.</p>${button(
-        `${siteUrl()}/account/confirm-email?token=${encodeURIComponent(token)}`,
-        "Confirm new email",
-      )}<p style="font-size:12px;color:#777">This link expires in 24 hours. If you didn't ask for this, ignore this email; nothing changes.</p>`,
-    ),
+    html: accountHtml({
+      eyebrow: "New email",
+      title: "Confirm your<br>new email.",
+      body: `Tap the button to make this the email for your ${esc(biz().name)} account. You'll sign in with it from then on.`,
+      cta: [`${siteUrl()}/account/confirm-email?token=${encodeURIComponent(token)}`, "Confirm new email"],
+      note: "This link expires in 24 hours. If you didn't ask for this, ignore this email; nothing changes.",
+      preheader: "Confirm your new email address.",
+    }),
   });
 }
 
@@ -312,13 +322,14 @@ export async function sendPasswordReset(email: string, token: string) {
     box: "account",
     to: email,
     subject: `Reset your password — ${biz().name}`,
-    html: layout(
-      "Reset your password",
-      `<p style="font-size:14px;line-height:1.6">Someone (hopefully you) asked to reset the password for this account.</p>${button(
-        `${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`,
-        "Choose a new password",
-      )}<p style="font-size:12px;color:#777">This link expires in 1 hour and can be used once. If you didn't ask for this, you can ignore this email — your password won't change.</p>`,
-    ),
+    html: accountHtml({
+      eyebrow: "Password reset",
+      title: "New password,<br>coming up.",
+      body: "Someone (hopefully you) asked to reset the password for this account. Tap the button to choose a new one.",
+      cta: [`${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`, "Choose a new password"],
+      note: "This link expires in 1 hour and works once. Didn't ask for this? Ignore this email and your password stays the same.",
+      preheader: "Reset your password (link valid for 1 hour).",
+    }),
   });
 }
 
@@ -329,13 +340,14 @@ export async function sendAccountInvite(email: string, name: string | null, toke
     box: "account",
     to: email,
     subject: `Your ${biz().name} account is ready`,
-    html: layout(
-      name ? `Welcome, ${name}` : "Your account is ready",
-      `<p style="font-size:14px;line-height:1.6">We've set up a ${biz().name} account for you, so you can track orders, save favourites and check out faster. Choose a password to start using it.</p>${button(
-        `${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`,
-        "Choose a password",
-      )}<p style="font-size:12px;color:#777">This link works for 7 days. You can also sign in with Google or Apple using this email.</p>`,
-    ),
+    html: accountHtml({
+      eyebrow: "You're invited",
+      title: `${name ? `${esc(name.trim().split(/\s+/)[0])},<br>` : ""}your account<br>is ready.`,
+      body: `We've set up a ${esc(biz().name)} account for you: track orders, save favourites and check out faster. Choose a password to start.`,
+      cta: [`${siteUrl()}/account/reset?token=${encodeURIComponent(token)}`, "Choose a password"],
+      note: "This link works for 7 days. You can also sign in with Google or Apple using this email.",
+      preheader: `Your ${biz().name} account is ready. Choose a password to start.`,
+    }),
   });
 }
 
@@ -345,13 +357,14 @@ export async function sendSecurityNotice(email: string, what: string) {
     box: "account",
     to: email,
     subject: `Security update on your ${biz().name} account`,
-    html: layout(
-      "Account change",
-      `<p style="font-size:14px;line-height:1.6">${esc(what)}</p><p style="font-size:12px;color:#777">If this wasn't you, reset your password right away and contact us.</p>${button(
-        `${siteUrl()}/account/forgot`,
-        "Reset password",
-      )}`,
-    ),
+    html: accountHtml({
+      eyebrow: "Security",
+      title: "Heads up.",
+      body: esc(what),
+      warn: true,
+      cta: [`${siteUrl()}/account/forgot`, "Reset password"],
+      preheader: what,
+    }),
   });
 }
 
