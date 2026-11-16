@@ -27,7 +27,7 @@ export function PageHeader({
       {image && (
         <>
           <div className="parallax absolute inset-0 -z-20">
-            <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" style={{ objectPosition: imagePosition }} />
+            <Image src={image} alt={title} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: imagePosition }} />
           </div>
           <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.9),rgba(6,6,6,0.5)_55%,rgba(6,6,6,0.3)),linear-gradient(0deg,rgba(6,6,6,0.85),transparent_60%)]" />
         </>

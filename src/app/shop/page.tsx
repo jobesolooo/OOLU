@@ -10,11 +10,31 @@ import { cx } from "@/lib/format";
 import { getT } from "@/i18n/server";
 import type { MessageKey } from "@/i18n/messages";
 import { ProductCard } from "@/components/ProductCard";
+import { getBusiness } from "@/lib/business";
+import { abs, breadcrumbs, ldJson, pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getT();
-  return { title: t("meta.shop") };
+const one0 = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
+
+/** Category and collection pages each get their own title, description and canonical (sorting is dropped). */
+export async function generateMetadata({ searchParams }: PageProps<"/shop">): Promise<Metadata> {
+  const sp = await searchParams;
+  const [{ t }, b] = await Promise.all([getT(), getBusiness()]);
+  const filter = one0(sp.collection) ? "collection" : one0(sp.category) ? "category" : one0(sp.sale) === "1" ? "sale" : null;
+  const slug = filter === "collection" ? one0(sp.collection)! : filter === "category" ? one0(sp.category)! : null;
+  const known = CATEGORIES.some((c) => c.slug === slug);
+  if (slug && !known && !COLLECTIONS[slug]) return { title: t("meta.shop"), robots: { index: false, follow: true } };
+  const name = slug ? (known ? t(`cat.${slug}` as MessageKey) : COLLECTIONS[slug].title) : filter === "sale" ? t("shop.sale") : null;
+  const path = filter === "sale" ? "/shop?sale=1" : slug ? `/shop?${filter}=${slug}` : "/shop";
+  const blurb = slug ? COLLECTIONS[slug]?.blurb : null;
+  return pageMeta({
+    path,
+    title: name ? `${name} · ${t("meta.shop")}` : t("shop.all"),
+    description: name
+      ? `Shop OOLU ${name.toLowerCase()} online. ${blurb ?? ""} Designed in Amsterdam, free shipping over €${Math.round(b.freeShippingThreshold / 100)}, ${b.returnDays}-day returns.`.replace(/\s+/g, " ")
+      : "Shop all OOLU: T-shirts, sleeveless tanks and tracksuits. Streetwear designed in Amsterdam with West African roots.",
+    image: (HERO[slug ?? ""] ?? HERO.default).src,
+  });
 }
 
 const SORTS = [
@@ -90,12 +110,30 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   // An editorial tile breaks up the grid after the first two rows.
   const promoAt = products.length > 8 && !category && !sale ? 8 : -1;
 
+  const listJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      breadcrumbs([[t("common.home"), "/"], [t("common.shop"), "/shop"], ...(category || collection ? [[title, href({ sort: undefined })] as [string, string]] : [])]),
+      {
+        "@type": "CollectionPage",
+        name: title,
+        url: abs(href({ sort: undefined })),
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: products.length,
+          itemListElement: products.slice(0, 30).map((p, i) => ({ "@type": "ListItem", position: i + 1, url: abs(`/products/${p.slug}`), name: p.name })),
+        },
+      },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={ldJson(listJsonLd)} />
       {/* Hero */}
       <section className="relative isolate -mt-[var(--nav-h)] overflow-hidden bg-ink text-white">
         <div className="parallax absolute inset-0 -z-20">
-          <Image src={hero.src} alt="" fill priority sizes="100vw" className="object-cover" style={{ objectPosition: hero.position }} />
+          <Image src={hero.src} alt={`OOLU ${title}`} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: hero.position }} />
         </div>
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.88),rgba(6,6,6,0.45)_55%,rgba(6,6,6,0.25)),linear-gradient(0deg,rgba(6,6,6,0.85),transparent_60%)]" />
         <p

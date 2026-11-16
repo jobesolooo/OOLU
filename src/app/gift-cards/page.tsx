@@ -3,10 +3,11 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/PageHeader";
 import { GiftCardForm } from "./GiftCardForm";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("gift.meta"), description: t("gift.metaDesc") };
+  return pageMeta({ path: "/gift-cards", title: t("gift.meta"), description: t("gift.metaDesc") });
 }
 
 export default async function GiftCardsPage() {

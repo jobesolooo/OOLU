@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Leaf, Plus, RefreshCw, ShieldCheck, Truck } from "lucide-react";
-import { getProductBySlug, getProducts, getVariants, isUpcoming } from "@/lib/catalog";
+import { getProductBySlug, getProducts, getVariants, isOnSale, isUpcoming } from "@/lib/catalog";
 import { getStockMap, stockKey } from "@/lib/inventory";
 import { getApprovedReviews, getRatingsMap, getUserReview, summarize } from "@/lib/reviews";
 import { getCurrentUser } from "@/lib/auth";
@@ -24,21 +24,25 @@ import { RecentlyViewed, RecordView } from "@/components/RecentlyViewed";
 import { Scroller } from "@/components/Scroller";
 import { MobileBuyBar } from "@/components/product/MobileBuyBar";
 import { allVariantKeys } from "@/lib/variants";
-import { siteUrl } from "@/lib/site-url";
+import { getBusiness } from "@/lib/business";
+import { nowMs } from "@/lib/time";
+import { ORG_ID, abs, breadcrumbs, ldJson, pageMeta, returnPolicy, shippingDetails } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL = siteUrl();
-
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
   const product = await getProductBySlug((await params).slug);
-  if (!product) return { title: "Not found" };
-  return {
-    title: product.name,
-    description: product.description,
-    alternates: { canonical: `/products/${product.slug}` },
-    openGraph: { title: product.name, description: product.description, images: product.images.slice(0, 1) },
-  };
+  if (!product) return { title: "Not found", robots: { index: false } };
+  const b = await getBusiness();
+  const desc = product.description?.trim().replace(/\s+/g, " ") ?? "";
+  const price = new Intl.NumberFormat("en-IE", { style: "currency", currency: product.currency.toUpperCase() }).format(product.unitAmount / 100);
+  const tail = `${price}. Designed in Amsterdam, free shipping over €${Math.round(b.freeShippingThreshold / 100)} and ${b.returnDays}-day returns.`;
+  return pageMeta({
+    path: `/products/${product.slug}`,
+    title: product.color && !product.name.toLowerCase().includes(product.color.toLowerCase()) ? `${product.name} – ${product.color}` : product.name,
+    description: desc.length > 150 ? `${desc.slice(0, 150).replace(/\s\S*$/, "")}… ${tail}` : `${desc ? `${desc} ` : `Shop the ${product.name} by OOLU. `}${tail}`,
+    image: product.images[0] ?? null,
+  });
 }
 
 export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
@@ -77,34 +81,68 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const saved = toSaved(product);
   const allSoldOut = keys.every((s) => stock[s] !== undefined && stock[s] <= 0);
 
+  const b = await getBusiness();
+  const url = abs(`/products/${product.slug}`);
+  const currency = product.currency.toUpperCase();
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.description,
-    image: product.images.map((i) => (i.startsWith("http") ? i : `${SITE_URL}${i}`)),
-    sku: product.id,
-    brand: { "@type": "Brand", name: "OOLU" },
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/products/${product.slug}`,
-      priceCurrency: product.currency.toUpperCase(),
-      price: (product.unitAmount / 100).toFixed(2),
-      availability: upcoming
-        ? "https://schema.org/PreOrder"
-        : allSoldOut
-          ? "https://schema.org/OutOfStock"
-          : "https://schema.org/InStock",
-    },
-    ...(summary.count
-      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: summary.average.toFixed(1), reviewCount: summary.count } }
-      : {}),
+    "@graph": [
+      breadcrumbs([
+        [t("common.home"), "/"],
+        [t("common.shop"), "/shop"],
+        [t(`cat.${product.category}` as MessageKey), `/shop?category=${product.category}`],
+        [product.name, `/products/${product.slug}`],
+      ]),
+      {
+        "@type": "Product",
+        "@id": `${url}#product`,
+        name: product.name,
+        description: product.description || `${product.name} by OOLU`,
+        url,
+        image: product.images.map(abs),
+        sku: product.id,
+        mpn: product.id,
+        brand: { "@type": "Brand", name: b.name },
+        category: `Apparel & Accessories > Clothing > ${t(`cat.${product.category}` as MessageKey)}`,
+        ...(product.color ? { color: product.color } : {}),
+        ...(product.sizes.length ? { size: product.sizes.join(", ") } : {}),
+        ...(product.group ? { inProductGroupWithID: product.group } : {}),
+        ...(product.details.length ? { additionalProperty: product.details.slice(0, 8).map((d) => ({ "@type": "PropertyValue", name: "Detail", value: d })) } : {}),
+        offers: {
+          "@type": "Offer",
+          url,
+          priceCurrency: currency,
+          price: (product.unitAmount / 100).toFixed(2),
+          ...(isOnSale(product) ? { priceSpecification: { "@type": "UnitPriceSpecification", priceType: "https://schema.org/StrikethroughPrice", price: (product.compareAtAmount! / 100).toFixed(2), priceCurrency: currency } } : {}),
+          priceValidUntil: `${new Date(nowMs()).getFullYear() + 1}-12-31`,
+          itemCondition: "https://schema.org/NewCondition",
+          availability: upcoming ? "https://schema.org/PreOrder" : allSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+          ...(upcoming && product.releaseAt ? { availabilityStarts: new Date(product.releaseAt).toISOString() } : {}),
+          seller: { "@id": ORG_ID() },
+          shippingDetails: shippingDetails(b, product.unitAmount, currency),
+          hasMerchantReturnPolicy: returnPolicy(b),
+        },
+        ...(summary.count
+          ? {
+              aggregateRating: { "@type": "AggregateRating", ratingValue: summary.average.toFixed(1), reviewCount: summary.count, bestRating: 5, worstRating: 1 },
+              review: reviews.slice(0, 5).map((r) => ({
+                "@type": "Review",
+                author: { "@type": "Person", name: r.name.split(" ")[0] || "Customer" },
+                datePublished: new Date(r.createdAt).toISOString().slice(0, 10),
+                ...(r.title ? { name: r.title } : {}),
+                reviewBody: r.body,
+                reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+              })),
+            }
+          : {}),
+      },
+    ],
   };
 
   return (
     <>
       <RecordView product={saved} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={ldJson(jsonLd)} />
 
       <nav aria-label={t("pdp.breadcrumb")} className="container-x no-scrollbar overflow-x-auto py-4 text-[11px] tracking-[0.12em] whitespace-nowrap text-ash uppercase">
         <Link href="/" className="hover:text-ink">{t("common.home")}</Link> <span className="mx-2 text-black/25">/</span>

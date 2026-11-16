@@ -3,7 +3,7 @@ import { shippingConfig } from "@/lib/shipping";
 import { CartView } from "./CartView";
 import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Your bag" };
+export const metadata: Metadata = { title: "Your bag", robots: { index: false, follow: true } };
 
 export default async function CartPage() {
   const { t } = await getT();

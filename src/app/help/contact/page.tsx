@@ -6,10 +6,11 @@ import { getBusiness } from "@/lib/business";
 import { InstagramIcon, TikTokIcon } from "@/components/icons";
 import { ContactForm } from "./ContactForm";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("contact.meta") };
+  return pageMeta({ path: "/help/contact", title: t("contact.meta"), description: "Questions about an order, sizing or returns? Contact the OOLU team in Amsterdam. We reply within one business day." });
 }
 
 export default async function ContactPage() {

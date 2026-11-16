@@ -10,6 +10,7 @@ import { getProducts } from "@/lib/catalog";
 import { getRatingsMap } from "@/lib/reviews";
 import { ProductCard } from "@/components/ProductCard";
 import { getT } from "@/i18n/server";
+import { ORG_ID, abs, breadcrumbs, ldJson, pageMeta } from "@/lib/seo";
 import { intlLocale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
@@ -18,11 +19,8 @@ export async function generateMetadata({ params }: PageProps<"/journal/[slug]">)
   const { t, locale } = await getT();
   const post = getPost((await params).slug, locale);
   if (!post) return { title: t("legal.notFound") };
-  return {
-    title: post.title,
-    description: post.excerpt,
-    openGraph: { type: "article", title: post.title, description: post.excerpt, images: [post.cover] },
-  };
+  const meta = await pageMeta({ path: `/journal/${post.slug}`, title: post.title, description: post.excerpt, image: post.cover, type: "article" });
+  return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: post.date, section: post.category } };
 }
 
 export default async function JournalPost({ params }: PageProps<"/journal/[slug]">) {
@@ -34,12 +32,33 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
   const firstP = post.blocks.findIndex((b) => b.type === "p");
   const more = JOURNAL.filter((p) => p.slug !== post.slug).slice(0, 2).map((p) => localizePost(p, locale));
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      breadcrumbs([[t("common.home"), "/"], ["Journal", "/journal"], [post.title, `/journal/${post.slug}`]]),
+      {
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt,
+        image: [abs(post.cover)],
+        datePublished: post.date,
+        dateModified: post.date,
+        inLanguage: locale,
+        articleSection: post.category,
+        author: { "@type": "Organization", name: "OOLU", url: abs("/about") },
+        publisher: { "@id": ORG_ID() },
+        mainEntityOfPage: abs(`/journal/${post.slug}`),
+      },
+    ],
+  };
+
   return (
     <article>
+      <script type="application/ld+json" dangerouslySetInnerHTML={ldJson(articleJsonLd)} />
       <ReadingProgress label={t("journal.progress")} />
       <header className="relative isolate -mt-[var(--nav-h)] flex min-h-[min(92svh,860px)] items-end overflow-hidden bg-ink text-white">
         <div className="parallax absolute inset-0 -z-20">
-          <Image src={post.cover} alt="" fill priority sizes="100vw" className="object-cover" style={{ objectPosition: post.coverPosition ?? "center" }} />
+          <Image src={post.cover} alt={post.title} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: post.coverPosition ?? "center" }} />
         </div>
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(6,6,6,0.92),rgba(6,6,6,0.2)_60%,rgba(6,6,6,0.4))]" />
         <div className="container-x pt-28 pb-[clamp(48px,6vw,96px)]">

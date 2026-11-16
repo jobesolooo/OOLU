@@ -33,11 +33,22 @@ export type BizKey =
   | "returnDays"
   | "returnAddress"
   | "emailDomain"
-  | "forwardTo";
+  | "forwardTo"
+  | "googleVerify"
+  | "bingVerify";
 
 export type BizGroup = { id: string; title: string; blurb: string; fields: BizField[] };
 
 export const BIZ_GROUPS: BizGroup[] = [
+  {
+    id: "search",
+    title: "Search engine verification",
+    blurb: "Proves to Google and Bing that you own this site, so you can see search data and submit the sitemap. Paste the code or the whole <meta> tag they give you.",
+    fields: [
+      { name: "googleVerify", label: "Google Search Console code", help: "Search Console → Add property → URL prefix → HTML tag", shows: "Hidden tag in the page head (for Google only)", max: 300 },
+      { name: "bingVerify", label: "Bing Webmaster code", help: "Bing Webmaster Tools → Add site → HTML meta tag", shows: "Hidden tag in the page head (for Bing only)", max: 300 },
+    ],
+  },
   {
     id: "mail",
     title: "Email addresses",

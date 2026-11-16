@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { TrackView } from "./TrackView";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("track.meta") };
+  return pageMeta({ path: "/track", title: t("track.meta"), description: "Track your OOLU order with your order number and email address." });
 }
 
 export default async function TrackPage() {

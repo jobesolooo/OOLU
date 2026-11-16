@@ -5,6 +5,7 @@ import { LEGAL, legalPages } from "@/content/legal";
 import { legalCompany } from "@/lib/business";
 import { PageHeader } from "@/components/PageHeader";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { intlLocale } from "@/i18n/config";
 
 export function generateStaticParams() {
@@ -14,7 +15,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/legal/[slug]">): Promise<Metadata> {
   const page = LEGAL[(await params).slug];
   const { t } = await getT();
-  return page ? { title: page.title } : { title: t("legal.notFound") };
+  return page ? pageMeta({ path: `/legal/${(await params).slug}`, title: page.title }) : { title: t("legal.notFound") };
 }
 
 export default async function LegalPage({ params }: PageProps<"/legal/[slug]">) {

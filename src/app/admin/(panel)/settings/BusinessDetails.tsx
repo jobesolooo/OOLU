@@ -9,7 +9,7 @@ const TYPE: Record<string, string> = { email: "email", tel: "tel", url: "url", m
 
 /** Every business detail the site shows, in one form. Empty = the default (shown greyed out). */
 /** part: "details" = brand, company, socials, shipping; "email" = email domain, forwarding and setup. */
-export async function BusinessDetails({ part = "details" }: { part?: "details" | "email" }) {
+export async function BusinessDetails({ part = "details" }: { part?: "details" | "email" | "search" }) {
   const [saved, defaults] = await Promise.all([getSavedBusiness(true), Promise.resolve(bizDefaults())]);
   // Socials start filled with the current link, so saving never hides one by accident.
   const value = (k: BizKey) => (k === "instagram" || k === "tiktok" ? (k in saved ? saved[k] : defaults[k]) : saved[k]) ?? "";
@@ -20,11 +20,14 @@ export async function BusinessDetails({ part = "details" }: { part?: "details" |
     if (k === "hours") return "Default reply hours";
     if (k === "instagram" || k === "tiktok") return "Empty = hidden";
     if (k === "forwardTo") return "e.g. janna@gmail.com";
+    if (k === "googleVerify") return '<meta name="google-site-verification" content="…">';
+    if (k === "bingVerify") return '<meta name="msvalidate.01" content="…">';
     if (k === "email") return `hello@${saved.emailDomain || defaults.emailDomain}`;
     return defaults[k] || "Not filled in yet";
   };
   const mail = BIZ_GROUPS.find((g) => g.id === "mail");
-  const rest = BIZ_GROUPS.filter((g) => g.id !== "mail");
+  const search = BIZ_GROUPS.find((g) => g.id === "search");
+  const rest = BIZ_GROUPS.filter((g) => g.id !== "mail" && g.id !== "search");
   const group = (g: BizGroup) => (
     <fieldset key={g.id} id={`biz-${g.id}`} className="min-w-0 scroll-mt-6 bg-white p-5 ring-1 ring-black/5 sm:p-6">
       <legend className="float-left mb-1 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">{g.title}</legend>
@@ -56,6 +59,14 @@ export async function BusinessDetails({ part = "details" }: { part?: "details" |
     </fieldset>
   );
   const missingLegal = (["legalName", "address", "kvk", "vat", "email"] as BizKey[]).filter((k) => !saved[k]);
+
+  if (part === "search") {
+    return (
+      <AdminForm action={saveBusinessDetails} submitLabel="Save verification codes" className="space-y-3">
+        {search && group(search)}
+      </AdminForm>
+    );
+  }
 
   if (part === "email") {
     return (

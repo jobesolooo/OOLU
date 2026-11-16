@@ -47,6 +47,9 @@ export type Business = {
   emailDomain: string;
   /** Staff inbox that receives forwarded mail and alerts ("" = not set) */
   forwardTo: string;
+  /** Search Console / Bing verification tokens ("" = not set) */
+  googleVerify: string;
+  bingVerify: string;
 };
 
 const envNum = (name: string, fallback: number) => {
@@ -77,6 +80,8 @@ export function bizDefaults(): Record<BizKey, string> {
     returnAddress: process.env.RETURN_ADDRESS ?? "",
     emailDomain: "ooluclothing.com",
     forwardTo: process.env.ORDER_NOTIFICATION_EMAIL ?? "",
+    googleVerify: process.env.GOOGLE_SITE_VERIFICATION ?? "",
+    bingVerify: process.env.BING_SITE_VERIFICATION ?? "",
   };
 }
 
@@ -86,6 +91,9 @@ function handleOf(url: string | null) {
   const last = url.replace(/[?#].*$/, "").replace(/\/+$/, "").split("/").pop() ?? "";
   return last ? `@${last.replace(/^@/, "")}` : url;
 }
+
+/** Accepts the bare code or the whole <meta name=... content="..."> tag. */
+const token = (raw: string) => (raw.match(/content=["']([^"']+)["']/i)?.[1] ?? raw).replace(/[^\w.:=-]/g, "");
 
 function resolve(saved: BizValues): Business {
   const d = bizDefaults();
@@ -124,6 +132,8 @@ function resolve(saved: BizValues): Business {
     returnAddress: v("returnAddress"),
     emailDomain: domain,
     forwardTo: v("forwardTo"),
+    googleVerify: token(v("googleVerify")),
+    bingVerify: token(v("bingVerify")),
   };
 }
 

@@ -5,13 +5,14 @@ import { ArrowRight } from "lucide-react";
 import { getProducts } from "@/lib/catalog";
 import { COLLECTIONS } from "@/lib/demo-catalog";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { dictionaries, type MessageKey } from "@/i18n/messages";
 import { PageHeader } from "@/components/PageHeader";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("meta.collections") };
+  return pageMeta({ path: "/collections", title: t("meta.collections"), description: "Shop OOLU by collection: T-shirts, sleeveless tanks and tracksuits, designed in Amsterdam." });
 }
 
 export default async function CollectionsPage() {

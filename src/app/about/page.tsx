@@ -6,11 +6,12 @@ import { returnWindowDays } from "@/lib/returns";
 import { shippingConfig } from "@/lib/shipping";
 import { PageHeader } from "@/components/PageHeader";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { getMoney } from "@/lib/rates";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("meta.about") };
+  return pageMeta({ path: "/about", title: t("meta.about"), description: "OOLU means trust. An Amsterdam streetwear label with West African roots: T-shirts, tanks and tracksuits made to live in the present." });
 }
 
 export default async function AboutPage() {

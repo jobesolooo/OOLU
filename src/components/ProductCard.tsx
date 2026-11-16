@@ -47,7 +47,7 @@ export async function ProductCard({
           {back && (
             <Image
               src={back}
-              alt=""
+              alt={`${product.name}, second view`}
               fill
               sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover opacity-0 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"

@@ -8,13 +8,14 @@ import { Countdown } from "@/components/Countdown";
 import { NotifyMe } from "@/components/NotifyMe";
 import { NewsletterForm } from "@/components/Newsletter";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { intlLocale } from "@/i18n/config";
 import { Price } from "@/components/Price";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("meta.drops"), description: t("meta.dropsDesc") };
+  return pageMeta({ path: "/drops", title: t("meta.drops"), description: t("meta.dropsDesc") });
 }
 
 export default async function DropsPage() {

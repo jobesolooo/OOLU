@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Home, KeyRound, ListChecks, Mail, Users } from "lucide-react";
+import { Building2, Home, KeyRound, ListChecks, Mail, Search, Users } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { saveStoreSettings } from "../actions";
 import { AdminForm } from "../FormMessage";
@@ -14,6 +14,7 @@ import { AccountKeys, SecurityLock } from "./AccountKeys";
 import { BusinessDetails } from "./BusinessDetails";
 import { SignInAccess } from "./SignInAccess";
 import { HashTab } from "./HashTab";
+import { SearchVisibility } from "./SearchVisibility";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ const TABS = [
   { id: "email", label: "Email", Icon: Mail, blurb: "The shop's email addresses, forwarding, and sending/receiving setup.", lock: true },
   { id: "keys", label: "Account keys", Icon: KeyRound, blurb: "Keys for Stripe, email, Google, Apple and scheduled drops.", lock: true },
   { id: "signin", label: "Sign-in & staff", Icon: Users, blurb: "Customer sign-in buttons, staff passcode and Google sign-in for staff.", lock: true },
+  { id: "seo", label: "Google & SEO", Icon: Search, blurb: "How the shop shows up in Google: verification, sitemap, Shopping feed and what's left to do.", lock: false },
   { id: "homepage", label: "Homepage", Icon: Home, blurb: "Promo strip, drop countdown and newsletter popup.", lock: false },
   { id: "guides", label: "Setup guides", Icon: ListChecks, blurb: "What's connected, and where to find anything that's still missing.", lock: false },
 ] as const;
@@ -80,6 +82,8 @@ async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<Retur
       return <AccountKeys groups={KEY_GROUPS} states={await keyStates()} unlockedUntil={unlockedUntil} host={process.env.VERCEL ? "Vercel" : ".env.local"} />;
     case "signin":
       return <SignInAccess />;
+    case "seo":
+      return <SearchVisibility />;
     case "homepage":
       return (
       <AdminForm action={saveStoreSettings} submitLabel="Save homepage" className="space-y-3">

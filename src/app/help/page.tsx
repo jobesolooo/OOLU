@@ -8,12 +8,13 @@ import { SIZE_GUIDES } from "@/lib/demo-catalog";
 import { PageHeader } from "@/components/PageHeader";
 import { SizeGuideTable } from "@/components/product/SizeGuide";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { getMoney } from "@/lib/rates";
 import type { MessageKey } from "@/i18n/messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("help.meta"), description: t("help.metaDesc") };
+  return pageMeta({ path: "/help", title: t("help.meta"), description: t("help.metaDesc") });
 }
 
 export default async function HelpPage() {

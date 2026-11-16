@@ -2,6 +2,9 @@ import { getFeaturedProducts, getProducts, getUpcomingDrops, isOnSale } from "@/
 import { getRatingsMap } from "@/lib/reviews";
 import { DEFAULT_SETTINGS, getSettings } from "@/lib/settings";
 import { getT } from "@/i18n/server";
+import type { Metadata } from "next";
+import { getBusiness } from "@/lib/business";
+import { pageMeta } from "@/lib/seo";
 import { latestPosts } from "@/content/journal";
 import { nowMs } from "@/lib/time";
 import { Hero } from "@/components/home/Hero";
@@ -9,6 +12,11 @@ import { CategoryTiles, DropBanner, Features, JournalTeaser, NewsletterBand, Pro
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [{ t }, b] = await Promise.all([getT(), getBusiness()]);
+  return pageMeta({ path: "/", title: t("meta.default", { name: b.name }), absoluteTitle: true });
+}
 
 export default async function HomePage() {
   const { t, locale } = await getT();

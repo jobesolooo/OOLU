@@ -26,7 +26,7 @@ export async function CategoryTiles({ counts }: { counts: Record<string, number>
               <div className="relative aspect-[4/3] max-h-[calc(100svh-var(--nav-h)-180px)] w-full overflow-hidden bg-stone sm:aspect-[4/5]">
                 <Image
                   src={c.image}
-                  alt=""
+                  alt={`OOLU ${t(`cat.${c.slug}` as MessageKey)}`}
                   fill
                   sizes="(min-width:640px) 33vw, 100vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
@@ -159,7 +159,7 @@ export async function Features() {
       {/* 1 — Easy comfort always */}
       <section className="relative isolate overflow-hidden bg-ink text-white">
         <div className="parallax absolute inset-0 -z-20">
-          <Image src={comfort.image} alt="" fill sizes="100vw" className="object-cover object-[center_38%]" />
+          <Image src={comfort.image} alt="Friends wearing OOLU T-shirts in Amsterdam" fill sizes="100vw" className="object-cover object-[center_38%]" />
         </div>
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.82)_0%,rgba(6,6,6,0.35)_45%,rgba(6,6,6,0)_70%),linear-gradient(0deg,rgba(6,6,6,0.6),transparent_45%)]" />
         <div className="container-x grid min-h-[min(92svh,860px)] items-end gap-10 py-[clamp(56px,8vw,120px)] lg:grid-cols-[1.4fr_1fr]">
@@ -219,13 +219,13 @@ export async function Features() {
             <div className="relative">
               <span aria-hidden className="absolute inset-0 translate-x-4 translate-y-4 border border-accent/70 sm:translate-x-6 sm:translate-y-6" />
               <div className="group relative aspect-[4/3] overflow-hidden">
-                <Image src={move.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
+                <Image src={move.image} alt="OOLU tracksuit made to move" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
               </div>
             </div>
             {/* overlapping second photo */}
             <div className="float absolute right-0 bottom-0 sm:right-[-4%] w-[44%] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] ring-8 ring-[#0d0d0d]">
               <div className="relative aspect-[4/5] overflow-hidden">
-                <Image src="/images/brand/tracksuit-duo.jpg" alt="" fill sizes="(min-width:1024px) 20vw, 45vw" className="object-cover object-top" />
+                <Image src="/images/brand/tracksuit-duo.jpg" alt="Two people in matching OOLU tracksuits" fill sizes="(min-width:1024px) 20vw, 45vw" className="object-cover object-top" />
               </div>
             </div>
             {/* spinning badge */}
@@ -334,7 +334,7 @@ export async function JournalTeaser({ posts }: { posts: JournalPost[] }) {
           {posts.map((p) => (
             <Link key={p.slug} href={`/journal/${p.slug}`} className="group">
               <div className="relative aspect-[4/3] overflow-hidden bg-ink">
-                <Image src={p.cover} alt="" fill sizes={posts.length === 2 ? "(min-width:768px) 50vw, 100vw" : "(min-width:768px) 33vw, 100vw"} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
+                <Image src={p.cover} alt={p.title} fill sizes={posts.length === 2 ? "(min-width:768px) 50vw, 100vw" : "(min-width:768px) 33vw, 100vw"} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: p.coverPosition ?? "center" }} />
               </div>
               <p className="mt-4 text-[11px] tracking-[0.18em] text-ash uppercase">
                 {t(`journal.cat.${p.category}`)} · {new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(new Date(p.date))}

@@ -6,11 +6,12 @@ import { JOURNAL, localizePost, readingMinutes } from "@/content/journal";
 import { cx } from "@/lib/format";
 import { NewsletterForm } from "@/components/Newsletter";
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo";
 import { intlLocale } from "@/i18n/config";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("journal.meta"), description: t("journal.metaDesc") };
+  return pageMeta({ path: "/journal", title: t("journal.meta"), description: t("journal.metaDesc") });
 }
 
 const CATS = ["Lookbook", "Story", "Process"] as const;

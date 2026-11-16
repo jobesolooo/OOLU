@@ -7,7 +7,7 @@ import { getT } from "@/i18n/server";
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
-  return { title: t("meta.search") };
+  return { title: t("meta.search"), robots: { index: false, follow: true } };
 }
 
 export default async function SearchPage({ searchParams }: PageProps<"/search">) {
