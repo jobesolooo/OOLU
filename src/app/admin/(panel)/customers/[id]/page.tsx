@@ -9,6 +9,9 @@ import { Stars } from "@/components/Price";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { AdminForm } from "../../FormMessage";
 import { AdminHeader, Panel, StatTile, ghostBtn } from "../../ui";
+import { CustomerActivity } from "./Activity";
+import { ONLINE_MS } from "@/lib/analytics";
+import { nowMs } from "@/lib/time";
 import { createCustomer, customerTool, removeCustomer, saveCustomer } from "../actions";
 
 const check = "flex items-start gap-2.5 text-[13px] leading-snug";
@@ -76,6 +79,16 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
   const spent = paid.reduce((s, o) => s + o.total - o.refundedAmount, 0);
   const protectedStaff = isProtectedStaff(user.email);
   const isMe = user.id === me.id;
+  const now = nowMs();
+  const online = Boolean(user.lastSeenAt && now - new Date(user.lastSeenAt).getTime() < ONLINE_MS);
+  const lastActive = !user.lastSeenAt
+    ? "Not yet"
+    : online
+      ? "Online now"
+      : (() => {
+          const m = Math.round((now - new Date(user.lastSeenAt).getTime()) / 60_000);
+          return m < 60 ? `${m} min ago` : m < 24 * 60 ? `${Math.floor(m / 60)} h ago` : formatDate(user.lastSeenAt);
+        })();
   const methods = [user.passwordHash && "Email & password", ...logins.map((l) => (l.provider === "google" ? "Google" : "Apple"))].filter(Boolean);
 
   const tool = (name: string, label: string, extra?: React.ReactNode) => (
@@ -117,10 +130,11 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile dark index={0} label="Spent" value={formatMoney(spent)} />
         <StatTile index={1} label="Orders" value={String(paid.length)} />
         <StatTile index={2} label="Wishlist" value={String(wishlist)} sub="saved items" />
+        <StatTile index={3} label="Last active" value={online ? "Now" : lastActive === "Not yet" ? "—" : lastActive.replace(" ago", "")} sub={online ? "On the store right now" : user.lastSeenAt ? `${lastActive === formatDate(user.lastSeenAt) ? "" : "ago · "}while signed in` : "Hasn't browsed signed in yet"} />
       </div>
 
       <div className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -191,6 +205,8 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
               </ul>
             </Panel>
           )}
+
+          <CustomerActivity userId={user.id} products={products} now={now} />
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-3 lg:sticky lg:top-6 lg:self-start">

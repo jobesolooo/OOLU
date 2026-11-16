@@ -14,6 +14,7 @@ import { nowMs } from "@/lib/time";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { AdminEmpty } from "./Empty";
 import { AdminHeader, Panel, StatTile } from "./ui";
+import { onlineCount } from "@/lib/insights";
 
 const PAID: OrderStatus[] = ["paid", "fulfilled", "shipped", "delivered", "partially_refunded", "refunded"];
 const DAY = 86_400_000;
@@ -103,7 +104,7 @@ export default async function AdminOverview() {
     );
   const startOfToday = new Date(new Date(now).toISOString().slice(0, 10)).getTime();
 
-  const [[today], [cur], [prev], daily, recent, top, [toShip], [openReturns], [newMessages], [newReviews], products, stock] = await Promise.all([
+  const [[today], [cur], [prev], daily, recent, top, [toShip], [openReturns], [newMessages], [newReviews], products, stock, online] = await Promise.all([
     db.select({ revenue: net, orders: n }).from(schema.orders).where(paidSince(startOfToday)),
     db.select({ revenue: net, orders: n }).from(schema.orders).where(paidSince(now - 30 * DAY)),
     db.select({ revenue: net, orders: n }).from(schema.orders).where(paidSince(now - 60 * DAY, now - 30 * DAY)),
@@ -133,6 +134,7 @@ export default async function AdminOverview() {
     db.select({ n }).from(schema.reviews).where(gte(schema.reviews.createdAt, new Date(now - 7 * DAY))),
     getProducts(),
     getStockMap(),
+    onlineCount().catch(() => 0),
   ]);
 
   const change = (a: number, b: number) => (b ? Math.round(((a - b) / b) * 100) : null);
@@ -169,9 +171,18 @@ export default async function AdminOverview() {
             : "Nothing is waiting to ship. Here's how the store is doing."
         }
         actions={
-          <Link href="/admin/orders" className="btn-solid gap-2">
-            Open orders <ArrowRight className="size-4" strokeWidth={1.5} />
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/analytics?days=1" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-[12px] ring-1 ring-black/10 transition hover:ring-ink">
+              <span className="relative flex size-2">
+                {online > 0 && <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />}
+                <span className={`relative inline-flex size-2 rounded-full ${online > 0 ? "bg-emerald-500" : "bg-black/20"}`} />
+              </span>
+              <span className="tabular-nums">{online}</span> on the store now
+            </Link>
+            <Link href="/admin/orders" className="btn-solid gap-2">
+              Open orders <ArrowRight className="size-4" strokeWidth={1.5} />
+            </Link>
+          </div>
         }
       />
 

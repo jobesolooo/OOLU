@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/client/track";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -73,6 +74,13 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
 
   const term = q.trim();
   const shown = term.length >= 2 && data?.q === term ? data : null;
+
+  // Count a search once the shopper stops typing (with how many results it found).
+  useEffect(() => {
+    if (!shown) return;
+    const timer = setTimeout(() => track("search", { l: shown.q.toLowerCase().slice(0, 80), v: shown.total }), 1200);
+    return () => clearTimeout(timer);
+  }, [shown]);
   const goAll = () => {
     if (!term) return;
     onClose();

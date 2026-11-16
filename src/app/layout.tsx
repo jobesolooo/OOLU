@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { ViewTransition } from "react";
+import { Suspense, ViewTransition } from "react";
 import { RevealObserver } from "@/components/Reveal";
 import { PrefsProvider } from "@/components/Prefs";
 import { getLocale, getT } from "@/i18n/server";
@@ -13,6 +13,7 @@ import { Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
 import { StoreOnly } from "@/components/StoreOnly";
+import { Analytics } from "@/components/Analytics";
 import { NewsletterPopup } from "@/components/Newsletter";
 import { AccountSync } from "@/components/auth/AccountSync";
 import { siteUrl } from "@/lib/site-url";
@@ -63,6 +64,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Footer />
         </StoreOnly>
         <AccountSync />
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
         <RevealObserver />
         <StoreOnly>
           <CartDrawer freeShippingThreshold={(await shippingConfig()).freeShippingThreshold} />

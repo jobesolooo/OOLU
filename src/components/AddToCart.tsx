@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/client/track";
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { useCart, MAX_QTY } from "@/store/cart";
@@ -62,6 +63,7 @@ export function AddToCart({ product, stock, sizeChart, category }: Props) {
       size: key,
       quantity: Math.min(qty, maxQty),
     });
+    track("add_to_cart", { pid: product.id, l: variantLabel(key), v: product.unitAmount * Math.min(qty, maxQty) });
     setError(null);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);

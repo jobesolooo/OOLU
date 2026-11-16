@@ -22,7 +22,7 @@ export function legalPages(C: Company): Record<string, LegalPage> {
   return {
   privacy: {
     title: "Privacy policy",
-    updated: "2026-11-06",
+    updated: "2026-11-16",
     sections: [
       { h: "Who we are", p: [`${C.tradeName} is operated by ${C.name}, ${C.address} (KvK ${C.kvk}). We are the controller of your personal data under the GDPR. Contact: ${C.email}.`] },
       {
@@ -33,6 +33,7 @@ export function legalPages(C: Company): Record<string, LegalPage> {
           "Newsletter: your email address — to send drops and offers, only with your consent. You can unsubscribe at any time.",
           "Reviews, contact messages and stock alerts: the details you submit — to publish your review, answer your question or email you when an item is available (consent / legitimate interest).",
           "Payments are processed by Stripe. We never receive or store your full card details.",
+          "Store statistics: which pages and products are viewed, searches, clicks and items added to the bag, plus device type and country — to understand what shoppers like and improve the store (legitimate interest). This works without cookies: visitors are counted with an anonymous code that changes every day, and we never store IP addresses. When you're signed in, this activity is linked to your account so we can see when you were last active and help you better. Browsers that send Do Not Track or Global Privacy Control are not counted.",
         ],
       },
       {
@@ -42,7 +43,7 @@ export function legalPages(C: Company): Record<string, LegalPage> {
           "Some providers are based outside the EEA; transfers are covered by the EU Standard Contractual Clauses or an adequacy decision.",
         ],
       },
-      { h: "How long we keep it", p: ["Order and invoice data: 7 years (Dutch tax law). Account data: until you delete your account. Newsletter: until you unsubscribe."] },
+      { h: "How long we keep it", p: ["Order and invoice data: 7 years (Dutch tax law). Account data: until you delete your account. Newsletter: until you unsubscribe. Store statistics: about 13 months."] },
       { h: "Your rights", p: [`You can request access, correction, deletion, restriction, portability, or object to processing by emailing ${C.email}. You may also complain to the Autoriteit Persoonsgegevens.`] },
     ],
   },
@@ -62,7 +63,7 @@ export function legalPages(C: Company): Record<string, LegalPage> {
   },
   cookies: {
     title: "Cookie policy",
-    updated: "2026-11-06",
+    updated: "2026-11-16",
     sections: [
       {
         h: "What we use",
@@ -71,7 +72,12 @@ export function legalPages(C: Company): Record<string, LegalPage> {
           "These don't track you across sites and don't require consent under Dutch law. Stripe sets its own cookies on the checkout page to prevent fraud.",
         ],
       },
-      { h: "Analytics and marketing", p: ["We don't use analytics or advertising cookies. If that changes, we'll ask for your consent first and update this page."] },
+      {
+        h: "Analytics and marketing",
+        p: [
+          "We don't use analytics or advertising cookies. Our own store statistics work without cookies or browser storage: visitors are counted with an anonymous code that changes every day (see the privacy policy). If we ever add analytics or advertising cookies, we'll ask for your consent first and update this page.",
+        ],
+      },
     ],
   },
   returns: {

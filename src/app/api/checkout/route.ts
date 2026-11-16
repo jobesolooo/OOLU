@@ -15,6 +15,7 @@ import { MAX_QTY } from "@/lib/constants";
 import { allVariantKeys, variantLabel } from "@/lib/variants";
 import { getLocale, stripeLocale } from "@/i18n/server";
 import { siteUrl } from "@/lib/site-url";
+import { recordFromRequest } from "@/lib/analytics";
 
 const Body = z.object({
   items: z
@@ -168,6 +169,7 @@ export async function POST(req: Request) {
       cancel_url: `${origin}/cart`,
     });
     await attachCheckoutSession(order.id, session.id);
+    await recordFromRequest(req.headers, { type: "checkout_start", path: "/cart", userId: user?.id ?? null, value: subtotal, label: `${orderItems.length} item${orderItems.length === 1 ? "" : "s"}` });
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("[checkout] Stripe error", err);

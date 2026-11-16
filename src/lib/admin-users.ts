@@ -16,14 +16,15 @@ const PAID = ["paid", "fulfilled", "shipped", "delivered", "partially_refunded"]
 
 export type AccountFilter = "accounts" | "staff";
 
-export async function listAccounts(filter: AccountFilter, q: string) {
+/** sort "active" = most recently active on the store first. */
+export async function listAccounts(filter: AccountFilter, q: string, sort: "new" | "active" = "new") {
   const db = await getDb();
   const search = q ? or(ilike(schema.users.email, `%${q}%`), ilike(schema.users.name, `%${q}%`)) : undefined;
   const users = await db
     .select()
     .from(schema.users)
     .where(and(eq(schema.users.role, filter === "staff" ? "admin" : "customer"), search))
-    .orderBy(desc(schema.users.createdAt))
+    .orderBy(...(sort === "active" ? [sql`${schema.users.lastSeenAt} desc nulls last`, desc(schema.users.createdAt)] : [desc(schema.users.createdAt)]))
     .limit(300);
   const ids = users.map((u) => u.id);
   const [stats, logins] = ids.length

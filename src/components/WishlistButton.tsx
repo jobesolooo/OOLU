@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/client/track";
 import { Heart } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useWishlist, type SavedProduct } from "@/store/saved";
@@ -31,7 +32,10 @@ export function WishlistButton({ product, className, label = false }: { product:
         const session = useSession.getState();
         void (async () => {
           const user = session.loaded ? session.user : await session.refresh();
-          if (user) return toggle(product);
+          if (user) {
+            if (!useWishlist.getState().items.some((i) => i.id === product.id)) track("wishlist_add", { pid: product.id });
+            return toggle(product);
+          }
           try {
             sessionStorage.setItem(PENDING_WISH, JSON.stringify(product));
           } catch {}

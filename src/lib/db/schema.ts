@@ -29,6 +29,8 @@ export const users = pgTable("users", {
   sizeBottom: text("size_bottom"),
   // New email waiting for confirmation (see auth tokens "change_email").
   pendingEmail: text("pending_email"),
+  // Last time this customer was seen on the store (updated at most once a minute).
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -337,3 +339,35 @@ export type Review = typeof reviews.$inferSelect;
 export type GiftCard = typeof giftCards.$inferSelect;
 export type ReturnRequest = typeof returnRequests.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
+
+/* ── Store activity (privacy-friendly analytics) ─────────── */
+/**
+ * One row per thing a shopper does: a page view, a click, a product view, adding to the bag…
+ * No cookies: `visitor` is a hash of IP + browser + a salt that changes every day, so a visitor
+ * can be counted for a day but not followed across days. A page view of a product page carries
+ * its productId (that is a "product view"). `userId` is set only when a customer
+ * is signed in (that's how the admin can see when they're active).
+ */
+export const EVENT_TYPES = ["pageview", "click", "add_to_cart", "wishlist_add", "search", "checkout_start"] as const;
+export type EventType = (typeof EVENT_TYPES)[number];
+export const events = pgTable(
+  "events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+    type: text("type", { enum: EVENT_TYPES }).notNull(),
+    path: text("path").notNull(),
+    visitor: text("visitor").notNull(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    productId: text("product_id"),
+    /** click label, search query, size… (short text) */
+    label: text("label"),
+    /** money in cents, a result count… */
+    value: integer("value"),
+    referrer: text("referrer"),
+    source: text("source"),
+    device: text("device"),
+    country: text("country"),
+  },
+  (t) => [index("events_at_idx").on(t.at), index("events_type_at_idx").on(t.type, t.at), index("events_user_at_idx").on(t.userId, t.at)],
+);
