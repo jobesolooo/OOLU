@@ -55,10 +55,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero promo={promo} />
-      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
-      <CategoryTiles counts={counts} />
-      <Story />
-      <Features />
+      {/* Next drop sits right under the hero so the countdown is the first thing after it. */}
       {showBanner && (
         <DropBanner
           eyebrow={banner.eyebrow}
@@ -69,6 +66,10 @@ export default async function HomePage() {
           image="/images/brand/tracksuit-duo-2.jpg"
         />
       )}
+      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
+      <CategoryTiles counts={counts} />
+      <Story />
+      <Features />
       {onSale.length >= 4 && <ProductRow title={t("home.onSale")} products={onSale} href="/shop?sale=1" ratings={ratings} />}
       {/* The "OOLU means trust" story already has its own section above. */}
       <JournalTeaser posts={latestPosts(3, locale).filter((p) => p.slug !== "oolu-means-trust").slice(0, 2)} />
