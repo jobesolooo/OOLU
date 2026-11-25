@@ -19,7 +19,7 @@ export default async function RegisterPage({ searchParams }: PageProps<"/account
   const { t } = await getT();
   return (
     <AuthShell
-      image="/images/brand/made-to-move.jpg"
+      image="/images/brand/backs-roots-journey.jpg"
       eyebrow={t("auth.joinEyebrow")}
       title={t("auth.createAccount")}
       aside={

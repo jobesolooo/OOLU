@@ -18,19 +18,19 @@ export const site = {
   currency: "EUR",
 
   // Copy for these sections lives in the translation files (src/i18n): hero.*, marquee.*, story.*, feature.*
-  hero: { image: "/images/brand/hero.jpg", ctaHref: "/products/oolu-tracksuit" },
+  hero: { image: "/images/brand/hero-roots-journey.jpg", ctaHref: "/products/oolu-tracksuit" },
 
   categories: [
     { slug: "t-shirts", image: "/images/brand/tile-t-shirts.jpg" },
     { slug: "sleeveless-and-tanks", image: "/images/brand/tile-tanks.jpg" },
-    { slug: "tracksuits", image: "/images/brand/tile-tracksuits.jpg" },
+    { slug: "tracksuits", image: "/images/brand/backs-roots-journey.jpg" },
   ],
 
-  story: { image: "/images/brand/story-roots.jpg", ctaHref: "/shop" },
+  story: { image: "/images/brand/story-crowd.jpg", ctaHref: "/shop" },
 
   features: [
     { key: "comfort", href: "/shop?category=t-shirts", image: "/images/brand/look-friends.jpg", tone: "#dcdcda" },
-    { key: "move", href: "/shop?category=tracksuits", image: "/images/brand/made-to-move.jpg", tone: "#eeedeb" },
+    { key: "move", href: "/shop?category=tracksuits", image: "/images/brand/move-streaks.jpg", tone: "#eeedeb" },
   ],
 
   // Labels are translation keys (src/i18n).

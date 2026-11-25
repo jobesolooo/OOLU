@@ -29,7 +29,7 @@ export async function pageMeta({
 }): Promise<Metadata> {
   const [{ t, locale }, b] = await Promise.all([getT(), getBusiness()]);
   const desc = (description || b.description || t("brand.description")).replace(/\s+/g, " ").trim().slice(0, 300);
-  const img = image || "/images/brand/hero.jpg";
+  const img = image || "/images/brand/hero-roots-journey.jpg";
   const shareTitle = title ? (absoluteTitle ? title : `${title} | ${b.name}`) : undefined;
   return {
     ...(title ? { title: absoluteTitle ? { absolute: title } : title } : {}),

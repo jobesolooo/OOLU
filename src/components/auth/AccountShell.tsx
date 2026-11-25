@@ -50,7 +50,7 @@ export async function AccountShell({
         eyebrow={t("ac.eyebrow")}
         title={title ?? (first ? t("ac.hi", { name: first }) : t("ac.hiNoName"))}
         subtitle={user.email}
-        image="/images/brand/tracksuit-duo.jpg"
+        image="/images/brand/backs-roots-journey.jpg"
         imagePosition="center 30%"
         word="OOLU"
       >

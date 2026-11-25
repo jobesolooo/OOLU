@@ -48,9 +48,9 @@ const SORTS = [
 const HERO: Record<string, { src: string; position: string }> = {
   "t-shirts": { src: "/images/brand/look-friends.jpg", position: "center 35%" },
   "sleeveless-and-tanks": { src: "/images/brand/story-roots.jpg", position: "center 40%" },
-  tracksuits: { src: "/images/brand/hero.jpg", position: "center 30%" },
+  tracksuits: { src: "/images/brand/hero-roots-journey.jpg", position: "center 45%" },
   hoodies: { src: "/images/brand/tracksuit-duo.jpg", position: "center 20%" },
-  default: { src: "/images/brand/tracksuit-duo-2.jpg", position: "center 30%" },
+  default: { src: "/images/brand/story-crowd.jpg", position: "center 40%" },
 };
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;

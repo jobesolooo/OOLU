@@ -58,8 +58,8 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: b.name,
     publisher: b.legalName || b.name,
     category: "fashion",
-    openGraph: { siteName: b.name, type: "website", images: ["/images/brand/hero.jpg"], locale: intlLocale(locale).replace("-", "_"), description },
-    twitter: { card: "summary_large_image", images: ["/images/brand/hero.jpg"] },
+    openGraph: { siteName: b.name, type: "website", images: ["/images/brand/hero-roots-journey.jpg"], locale: intlLocale(locale).replace("-", "_"), description },
+    twitter: { card: "summary_large_image", images: ["/images/brand/hero-roots-journey.jpg"] },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
     verification: {
       ...(b.googleVerify ? { google: b.googleVerify } : {}),
@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         alternateName: [`${b.name} Clothing`, `${b.name} Amsterdam`],
         url: SITE_URL,
         logo: { "@type": "ImageObject", url: `${SITE_URL}/images/brand/logo.png` },
-        image: `${SITE_URL}/images/brand/hero.jpg`,
+        image: `${SITE_URL}/images/brand/hero-roots-journey.jpg`,
         description: b.description ?? dictionaries[locale]["brand.description"],
         ...(sameAs.length ? { sameAs } : {}),
         ...(b.address

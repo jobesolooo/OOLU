@@ -64,7 +64,7 @@ export default async function HomePage() {
           body={banner.body}
           launchAt={launchAt!}
           href={banner.launchAt || !nextDrop ? banner.href : `/products/${nextDrop.slug}`}
-          image="/images/brand/tracksuit-duo-2.jpg"
+          image="/images/brand/drop-portrait.jpg"
         />
       )}
       <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />

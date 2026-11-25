@@ -219,13 +219,13 @@ export async function Features() {
             <div className="relative">
               <span aria-hidden className="absolute inset-0 translate-x-4 translate-y-4 border border-accent/70 sm:translate-x-6 sm:translate-y-6" />
               <div className="group relative aspect-[4/3] overflow-hidden">
-                <Image src={move.image} alt="OOLU tracksuit made to move" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
+                <Image src={move.image} alt="OOLU tracksuit, crouching under city lights" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
               </div>
             </div>
             {/* overlapping second photo */}
             <div className="float absolute right-0 bottom-0 sm:right-[-4%] w-[44%] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] ring-8 ring-[#0d0d0d]">
               <div className="relative aspect-[4/5] overflow-hidden">
-                <Image src="/images/brand/tracksuit-duo.jpg" alt="Two people in matching OOLU tracksuits" fill sizes="(min-width:1024px) 20vw, 45vw" className="object-cover object-top" />
+                <Image src="/images/brand/move-painted.jpg" alt="OOLU Roots and Journey jacket in motion" fill sizes="(min-width:1024px) 20vw, 45vw" className="object-cover object-[center_20%]" />
               </div>
             </div>
             {/* spinning badge */}
@@ -298,7 +298,7 @@ export async function DropBanner({
   return (
     <section className="grain relative isolate overflow-hidden bg-ink text-white">
       {image && (
-        <Image src={image} alt="" fill sizes="100vw" className="-z-10 object-cover object-[60%_center] opacity-35" />
+        <Image src={image} alt="" fill sizes="100vw" className="-z-10 object-cover object-[center_72%] opacity-40" />
       )}
       <div className="container-x section-y grid items-center gap-10 md:grid-cols-[1.1fr_1fr]">
         <div>
