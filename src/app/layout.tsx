@@ -73,6 +73,7 @@ export const viewport: Viewport = { themeColor: "#060606", width: "device-width"
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [settings, locale, currency, rates, b] = await Promise.all([getSettings(), getLocale(), getCurrency(), getRates(), getBusiness()]);
+  const holiday = holidayActive(settings, nowMs());
   // Who the shop is (name + logo in Google, the knowledge panel) and the site itself (site name in results).
   const sameAs = Object.values(b.social).filter(Boolean);
   const siteJsonLd = {
@@ -126,12 +127,24 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {dictionaries[locale]["a11y.skip"]}
         </a>
         <StoreOnly>
-          <Header />
+          <Header holiday={holiday} />
         </StoreOnly>
-        <main id="main" className="flex-1">
+        <main id="main" className="relative flex-1">
           <ViewTransition>{children}</ViewTransition>
+          {holiday && (
+            <StoreOnly>
+              {/* Light strings down both edges, from the header to the footer */}
+              <div aria-hidden className="xmas-lights-y absolute inset-y-0 left-0 z-30 w-[34px]" />
+              <div aria-hidden className="xmas-lights-y flip absolute inset-y-0 right-0 z-30 w-[34px]" />
+            </StoreOnly>
+          )}
         </main>
         <StoreOnly>
+          {holiday && (
+            <div aria-hidden className="relative z-20 h-0">
+              <div className="xmas-snowcap absolute inset-x-0 top-0 h-[26px]" />
+            </div>
+          )}
           <Footer />
         </StoreOnly>
         <AccountSync />
@@ -141,7 +154,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <RevealObserver />
         <StoreOnly>
           {/* Christmas theme: snow over every shop page (not the admin). */}
-          {holidayActive(settings, nowMs()) && <Snow fixed />}
+          {holiday && <Snow fixed />}
           <CartDrawer freeShippingThreshold={(await shippingConfig()).freeShippingThreshold} />
           {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         </StoreOnly>

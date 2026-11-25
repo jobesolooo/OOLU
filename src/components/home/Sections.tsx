@@ -10,6 +10,9 @@ import { NewsletterForm } from "@/components/Newsletter";
 import { getT } from "@/i18n/server";
 import { intlLocale } from "@/i18n/config";
 import type { MessageKey } from "@/i18n/messages";
+import { getSocialFeed } from "@/lib/social";
+import { InstagramIcon, TikTokIcon } from "@/components/icons";
+import { Rail, TikTokTile } from "./SocialCarousel";
 
 export async function CategoryTiles({ counts }: { counts: Record<string, number> }) {
   const { t } = await getT();
@@ -401,6 +404,62 @@ export async function GiftBand() {
               </div>
               <p className="max-w-[64%] text-[11px] leading-relaxed tracking-[0.14em] uppercase text-white/85">{t("xmas.m2")}</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Instagram (left) and TikTok (right), each its own carousel. Posts come from Settings → Homepage → Social feed. */
+export async function SocialFeed() {
+  const feed = await getSocialFeed();
+  if (!feed) return null;
+  const { t } = await getT();
+  const head = (Icon: typeof InstagramIcon, name: string, handle: string | null, href: string) => (
+    <div className="mb-4 flex items-center justify-between gap-3">
+      <a href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2.5">
+        <span className="grid size-9 place-items-center rounded-full bg-ink text-white">
+          <Icon className="size-4" />
+        </span>
+        <span>
+          <span className="block text-[11px] tracking-[0.14em] uppercase">{name}</span>
+          {handle && <span className="block text-[12px] text-ash">{handle}</span>}
+        </span>
+      </a>
+      <a href={href} target="_blank" rel="noreferrer" className="text-[11px] tracking-[0.12em] uppercase underline-offset-4 hover:underline">
+        {t("social.follow")}
+      </a>
+    </div>
+  );
+  return (
+    <section className="section-y overflow-hidden bg-bone">
+      <div className="container-x">
+        <div className="mb-10 max-w-xl">
+          <p className="eyebrow">{t("social.eyebrow")}</p>
+          <h2 className="mt-3 font-display text-[clamp(28px,2.8vw,48px)] leading-none font-normal tracking-[-0.02em]">{t("social.title")}</h2>
+        </div>
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-10">
+          <div className="min-w-0">
+            {head(InstagramIcon, "Instagram", feed.igHandle, feed.igProfile)}
+            <Rail label="Instagram" prev={t("social.prev")} next={t("social.next")}>
+              {feed.instagram.map((p, i) => (
+                <a key={i} href={p.href} target="_blank" rel="noreferrer" className="group relative aspect-[4/5] w-[clamp(180px,48vw,230px)] shrink-0 snap-start overflow-hidden bg-stone">
+                  <Image src={p.image} alt={p.alt} fill sizes="230px" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                  <span className="absolute inset-0 grid place-items-center bg-black/0 text-white opacity-0 transition-[opacity,background-color] group-hover:bg-black/30 group-hover:opacity-100">
+                    <InstagramIcon className="size-7" />
+                  </span>
+                </a>
+              ))}
+            </Rail>
+          </div>
+          <div className="min-w-0">
+            {head(TikTokIcon, "TikTok", feed.ttHandle, feed.ttProfile)}
+            <Rail label="TikTok" prev={t("social.prev")} next={t("social.next")}>
+              {feed.tiktok.map((v, i) => (
+                <TikTokTile key={i} href={v.href} image={v.image} caption={v.caption} videoId={v.videoId} watch={t("social.watch")} close={t("social.close")} />
+              ))}
+            </Rail>
           </div>
         </div>
       </div>

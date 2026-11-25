@@ -848,4 +848,11 @@ export const nl: Record<keyof typeof en, string> = {
   "xmas.band.body": "Met een OOLU-cadeaukaart kiezen ze zelf hun fit. Per e-mail bezorgd, met een persoonlijk bericht van jou.",
   "xmas.band.cta": "Geef een cadeaukaart",
   "xmas.band.shop": "Shop de kersteditie",
+  "social.eyebrow": "Volg de reis",
+  "social.title": "OOLU op Instagram & TikTok",
+  "social.follow": "Volgen",
+  "social.watch": "Bekijk op TikTok",
+  "social.close": "Sluiten",
+  "social.prev": "Vorige",
+  "social.next": "Volgende",
 };

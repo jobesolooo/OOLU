@@ -18,7 +18,7 @@ import { SearchModal } from "./SearchModal";
 /** Pages that open with a full-bleed dark hero; the header is transparent over them until you scroll. */
 const HERO_PATHS = ["/", "/shop", "/help", "/journal", "/legal", "/wishlist", "/gift-cards", "/search", "/collections", "/drops", "/track", "/about"];
 
-export function Header() {
+export function Header({ holiday = false }: { holiday?: boolean }) {
   const pathname = usePathname();
   const t = useT();
   const lines = useCart((s) => s.lines);
@@ -214,6 +214,7 @@ export function Header() {
           </p>
         </nav>
       </div>
+      {holiday && <div aria-hidden className="xmas-lights-x absolute inset-x-0 top-full h-[34px]" />}
     </header>
   );
 }

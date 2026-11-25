@@ -848,4 +848,11 @@ export const it: Record<keyof typeof en, string> = {
   "xmas.band.body": "Con una carta regalo OOLU scelgono il proprio stile. Arriva via email, con un tuo messaggio.",
   "xmas.band.cta": "Regala una carta regalo",
   "xmas.band.shop": "Scopri l'edizione di Natale",
+  "social.eyebrow": "Segui il viaggio",
+  "social.title": "OOLU su Instagram e TikTok",
+  "social.follow": "Segui",
+  "social.watch": "Guarda su TikTok",
+  "social.close": "Chiudi",
+  "social.prev": "Precedente",
+  "social.next": "Successivo",
 };

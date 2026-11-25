@@ -371,3 +371,13 @@ export const events = pgTable(
   },
   (t) => [index("events_at_idx").on(t.at), index("events_type_at_idx").on(t.type, t.at), index("events_user_at_idx").on(t.userId, t.at)],
 );
+
+/** Small images uploaded from the admin (e.g. Instagram tiles for the homepage feed), stored as base64. */
+export const media = pgTable("media", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  mime: text("mime").notNull(),
+  data: text("data").notNull(),
+  width: integer("width"),
+  height: integer("height"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

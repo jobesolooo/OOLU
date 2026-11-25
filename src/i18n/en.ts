@@ -846,4 +846,11 @@ export const en = {
   "xmas.band.body": "An OOLU gift card lets them pick their own fit. Delivered by email, with a personal message from you.",
   "xmas.band.cta": "Give a gift card",
   "xmas.band.shop": "Shop the Christmas edit",
+  "social.eyebrow": "Follow the journey",
+  "social.title": "OOLU on Instagram & TikTok",
+  "social.follow": "Follow",
+  "social.watch": "Watch on TikTok",
+  "social.close": "Close",
+  "social.prev": "Previous",
+  "social.next": "Next",
 } as const;

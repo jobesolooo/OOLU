@@ -15,6 +15,7 @@ import { BusinessDetails } from "./BusinessDetails";
 import { SignInAccess } from "./SignInAccess";
 import { HashTab } from "./HashTab";
 import { SearchVisibility } from "./SearchVisibility";
+import { SocialFeedEditor } from "./SocialFeedEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +89,7 @@ async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<Retur
       return <SearchVisibility />;
     case "homepage":
       return (
+      <div className="space-y-6">
       <AdminForm action={saveStoreSettings} submitLabel="Save homepage" className="space-y-3">
         <fieldset className="min-w-0 space-y-3 bg-white [&>legend~*]:clear-both p-6 ring-1 ring-black/5">
           <legend className="float-left mb-1 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">Christmas theme</legend>
@@ -157,6 +159,8 @@ async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<Retur
           </div>
         </fieldset>
       </AdminForm>
+      <SocialFeedEditor enabled={s.social.enabled} instagram={s.social.instagram} tiktok={s.social.tiktok} />
+      </div>
       );
     case "guides":
       return (

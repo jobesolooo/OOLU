@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 import { latestPosts } from "@/content/journal";
 import { nowMs } from "@/lib/time";
 import { Hero } from "@/components/home/Hero";
-import { CategoryTiles, DropBanner, Features, GiftBand, JournalTeaser, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
+import { CategoryTiles, DropBanner, Features, GiftBand, JournalTeaser, SocialFeed, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
@@ -74,6 +74,7 @@ export default async function HomePage() {
       <Features />
       {onSale.length >= 4 && <ProductRow title={t("home.onSale")} products={onSale} href="/shop?sale=1" ratings={ratings} />}
       {/* The "OOLU means trust" story already has its own section above. */}
+      <SocialFeed />
       <JournalTeaser posts={latestPosts(3, locale).filter((p) => p.slug !== "oolu-means-trust").slice(0, 2)} />
       <RecentlyViewed />
       <NewsletterBand percentOff={settings.popup.percentOff} />
