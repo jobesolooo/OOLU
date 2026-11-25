@@ -42,8 +42,8 @@ export default async function HomePage() {
   const batch = live.filter((p) => p.createdAt && newest - p.createdAt < 3 * 86_400_000).sort((a, b) => b.createdAt - a.createdAt);
   const newCollection = batch.length <= 8 && batch.length < live.length / 2 ? batch : [];
   const shown = new Set(newCollection.map((p) => p.id));
-  // Featured = exactly what's ticked "Featured" in the admin (minus what the new collection already shows).
-  const featuredRow = live.filter((p) => p.featured && !shown.has(p.id)).slice(0, 8);
+  // Featured = exactly what's ticked "Featured" in the admin, newest first (even if it's also in the new collection).
+  const featuredRow = live.filter((p) => p.featured).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
   for (const p of featuredRow) shown.add(p.id);
   const newIn = live.filter((p) => p.isNew && !shown.has(p.id)).slice(0, 8);
   const onSale = all.filter(isOnSale).slice(0, 4);
