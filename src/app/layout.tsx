@@ -121,7 +121,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Before first paint, so night visitors never see a white flash. */}
         <script dangerouslySetInnerHTML={{ __html: NIGHT_SCRIPT }} />
       </head>
-      <body id="top" className="flex min-h-dvh flex-col">
+      <body id="top" className="relative flex min-h-dvh flex-col">
         <PrefsProvider locale={locale} messages={dictionaries[locale]} currency={currency} rates={rates}>
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">
           {dictionaries[locale]["a11y.skip"]}
@@ -129,15 +129,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <StoreOnly>
           <Header holiday={holiday} />
         </StoreOnly>
-        <main id="main" className="relative flex-1">
+        <main id="main" className="flex-1">
           <ViewTransition>{children}</ViewTransition>
-          {holiday && (
-            <StoreOnly>
-              {/* Light strings down both edges, from the header to the footer */}
-              <div aria-hidden className="xmas-lights-y absolute inset-y-0 left-0 z-30 w-[34px]" />
-              <div aria-hidden className="xmas-lights-y flip absolute inset-y-0 right-0 z-30 w-[34px]" />
-            </StoreOnly>
-          )}
         </main>
         <StoreOnly>
           {holiday && (
@@ -155,6 +148,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <StoreOnly>
           {/* Christmas theme: snow over every shop page (not the admin). */}
           {holiday && <Snow fixed />}
+          {holiday && (
+            // Garlands down both edges from the very top of the page to the bottom of the footer,
+            // big bows at the top corners and presents at the foot.
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-[45] overflow-hidden">
+              <div className="xmas-lights-y absolute inset-y-0 left-0" />
+              <div className="xmas-lights-y flip absolute inset-y-0 right-0" />
+              <span className="xmas-bow top-[calc(var(--nav-h)-26px)] -left-3 md:-left-4" />
+              <span className="xmas-bow top-[calc(var(--nav-h)-26px)] -right-3 -scale-x-100 md:-right-4" />
+              <span className="xmas-gifts left-2" />
+              <span className="xmas-gifts right-2 -scale-x-100" />
+            </div>
+          )}
           <CartDrawer freeShippingThreshold={(await shippingConfig()).freeShippingThreshold} />
           {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         </StoreOnly>

@@ -18,6 +18,18 @@ import { SearchModal } from "./SearchModal";
 /** Pages that open with a full-bleed dark hero; the header is transparent over them until you scroll. */
 const HERO_PATHS = ["/", "/shop", "/help", "/journal", "/legal", "/wishlist", "/gift-cards", "/search", "/collections", "/drops", "/track", "/about"];
 
+/** Ornaments hanging from the header garland (Christmas theme). Kept to the sides so they never cover the middle. */
+const HANGING = [
+  { left: "3%", len: "26px", size: "22px", img: "gold", delay: "0s", swing: "3.2s", mobile: true },
+  { left: "9%", len: "48px", size: "26px", img: "red", delay: "-1.1s", swing: "3.8s", mobile: false },
+  { left: "15.5%", len: "18px", size: "20px", img: "star", delay: "-2s", swing: "2.9s", mobile: false },
+  { left: "22%", len: "36px", size: "22px", img: "lilac", delay: "-0.6s", swing: "3.5s", mobile: false },
+  { left: "76%", len: "30px", size: "22px", img: "bell", delay: "-1.6s", swing: "3.1s", mobile: false },
+  { left: "83%", len: "52px", size: "26px", img: "green", delay: "-0.3s", swing: "3.9s", mobile: false },
+  { left: "90%", len: "22px", size: "20px", img: "star", delay: "-2.4s", swing: "2.8s", mobile: false },
+  { left: "95%", len: "40px", size: "24px", img: "lilac", delay: "-1.3s", swing: "3.6s", mobile: true },
+];
+
 export function Header({ holiday = false }: { holiday?: boolean }) {
   const pathname = usePathname();
   const t = useT();
@@ -214,7 +226,21 @@ export function Header({ holiday = false }: { holiday?: boolean }) {
           </p>
         </nav>
       </div>
-      {holiday && <div aria-hidden className="xmas-lights-x absolute inset-x-0 top-full h-[34px]" />}
+      {holiday && (
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full">
+          <div className="xmas-lights-x absolute inset-x-0 top-0" />
+          {HANGING.map((h, i) => (
+            <span
+              key={i}
+              className="xmas-hang"
+              data-desktop={h.mobile ? undefined : ""}
+              style={{ left: h.left, "--len": h.len, "--size": h.size, "--img": `url(/images/xmas/hang-${h.img}.svg)`, "--delay": h.delay, "--swing": h.swing } as React.CSSProperties}
+            >
+              <span />
+            </span>
+          ))}
+        </div>
+      )}
     </header>
   );
 }
