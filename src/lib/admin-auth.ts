@@ -2,6 +2,7 @@ import "server-only";
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { and, eq, ne, notInArray } from "drizzle-orm";
 import { getDb, schema } from "./db";
+import { devEmail, isDevAccount, isDevConfigured } from "./dev-auth";
 
 /**
  * Staff sign-in: one permanent username + a 6-digit passcode, or Google for the
@@ -114,7 +115,7 @@ export async function setStaffGrant(userId: string, on: boolean) {
 }
 
 export async function isAllowedStaff(user: { id: string; email: string }) {
-  return user.email.toLowerCase() === staffEmail().toLowerCase() || (await staffGrants()).includes(user.id);
+  return user.email.toLowerCase() === staffEmail().toLowerCase() || isDevAccount(user.email) || (await staffGrants()).includes(user.id);
 }
 
 /** Demote every admin account that isn't the staff account or explicitly granted. Returns how many. */
@@ -124,7 +125,14 @@ export async function cleanUpStaffRoles() {
   const rows = await db
     .update(schema.users)
     .set({ role: "customer" })
-    .where(and(eq(schema.users.role, "admin"), ne(schema.users.email, staffEmail()), grants.length ? notInArray(schema.users.id, grants) : undefined))
+    .where(
+      and(
+        eq(schema.users.role, "admin"),
+        ne(schema.users.email, staffEmail()),
+        isDevConfigured() ? ne(schema.users.email, devEmail()) : undefined,
+        grants.length ? notInArray(schema.users.id, grants) : undefined,
+      ),
+    )
     .returning({ id: schema.users.id });
   return rows.length;
 }

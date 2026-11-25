@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { signIn } from "@/lib/auth";
 import { checkStaffCredentials, isPasscodeConfigured, staffUser, adminUsername } from "@/lib/admin-auth";
 import { clientIp, rateLimit, resetRateLimit } from "@/lib/rate-limit";
+import { checkDevCode, devUser, devUsername, isDevUsername } from "@/lib/dev-auth";
 
 export type StudioState =
   | { step: "username"; error?: string }
@@ -24,7 +25,8 @@ export async function studioAction(prev: StudioState, form: FormData): Promise<S
 
   const code = String(form.get("code") ?? "").replace(/\D/g, "");
   if (code.length !== 6) return { step: "code", username, nonce: Date.now(), error: "Enter all 6 digits." };
-  if (!(await isPasscodeConfigured())) {
+  const dev = isDevUsername(username);
+  if (!dev && !(await isPasscodeConfigured())) {
     return { step: "code", username, nonce: Date.now(), error: "Staff sign-in isn't set up: add ADMIN_PASSCODE_HASH to the environment (npm run admin:passcode)." };
   }
 
@@ -32,21 +34,23 @@ export async function studioAction(prev: StudioState, form: FormData): Promise<S
   // 5 per 15 min per network, and 20 per hour for the staff account overall.
   const ip = await clientIp();
   const perIp = rateLimit(`studio-ip:${ip}`, 5, 15 * 60_000);
-  const perAccount = rateLimit(`studio-user:${adminUsername().toLowerCase()}`, 20, 60 * 60_000);
+  const accountKey = dev ? `studio-dev:${devUsername().toLowerCase()}` : `studio-user:${adminUsername().toLowerCase()}`;
+  const perAccount = rateLimit(accountKey, 20, 60 * 60_000);
   if (!perIp.ok || !perAccount.ok) {
     const minutes = Math.ceil(Math.max(perIp.retryAfter, perAccount.retryAfter) / 60);
     return { step: "code", username, nonce: Date.now(), error: `Too many attempts. Try again in ${minutes} minutes.` };
   }
 
-  if (!(await checkStaffCredentials(username, code))) {
+  const ok = dev ? checkDevCode(code) : await checkStaffCredentials(username, code);
+  if (!ok) {
     return { step: "code", username, nonce: Date.now(), error: "Username or passcode isn't right." };
   }
 
-  // One staff account in the users table, marked admin.
-  const user = await staffUser();
+  // The shared staff account, or the developer's own account; both marked admin.
+  const user = dev ? await devUser() : await staffUser();
   // Correct passcode: clear the counters so normal logins never lock anyone out.
   resetRateLimit(`studio-ip:${ip}`);
-  resetRateLimit(`studio-user:${adminUsername().toLowerCase()}`);
+  resetRateLimit(accountKey);
   await signIn(user);
   const next = String(form.get("next") ?? "");
   redirect(next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin");

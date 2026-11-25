@@ -3,6 +3,8 @@ import { getSettings } from "@/lib/settings";
 import { callbackUrl, isProviderConfigured } from "@/lib/oauth";
 import { staffGoogleEmails, staffPasscodeInfo } from "@/lib/admin-auth";
 import { getSession } from "@/lib/session";
+import { getCurrentUser } from "@/lib/auth";
+import { isDevAccount } from "@/lib/dev-auth";
 import { AdminForm } from "../FormMessage";
 import { SignInSwitches } from "./SignInSwitches";
 import { changeStaffPasscode, saveStaffGoogle } from "./staff-actions";
@@ -24,7 +26,8 @@ export async function SignInAccess() {
   ]);
   // eslint-disable-next-line react-hooks/purity -- server component, rendered per request
   const now = Date.now();
-  const viaGoogle = Boolean(session.googleStaffAt && now - session.googleStaffAt < 15 * 60_000);
+  const dev = isDevAccount((await getCurrentUser())?.email);
+  const viaGoogle = dev || Boolean(session.googleStaffAt && now - session.googleStaffAt < 15 * 60_000);
   const unlocked = Boolean(session.keysUntil && session.keysUntil > now);
 
   return (
@@ -58,7 +61,7 @@ export async function SignInAccess() {
         </p>
         {viaGoogle && (
           <p className="mb-4 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-900 ring-1 ring-emerald-600/20">
-            You signed in with Google, so you can set a new passcode without the current one for the next few minutes.
+            {dev ? "You're in developer mode, so you can set a new staff passcode without the current one." : "You signed in with Google, so you can set a new passcode without the current one for the next few minutes."}
           </p>
         )}
         <AdminForm action={changeStaffPasscode} submitLabel="Change passcode" className="space-y-3">

@@ -4,11 +4,12 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin, rotateSessions } from "@/lib/auth";
 import { getSession } from "@/lib/session";
 import { getSettings, saveSettings } from "@/lib/settings";
-import { adminUsername, checkStaffCredentials, isPasscodeConfigured, setStaffGoogleEmails, setStaffPasscode, staffGoogleEmails, weakPasscode } from "@/lib/admin-auth";
+import { adminUsername, checkStaffCredentials, isPasscodeConfigured, setStaffGoogleEmails, setStaffPasscode, staffGoogleEmails, staffUser, weakPasscode } from "@/lib/admin-auth";
 import { clientIp, rateLimit, resetRateLimit } from "@/lib/rate-limit";
 import { staffInbox } from "@/lib/business";
 import { sendEmail } from "@/lib/email";
 import type { ActionResult } from "../actions";
+import { isDevAccount } from "@/lib/dev-auth";
 
 const GOOGLE_RESET_MINUTES = 15;
 const clean = (s: string) => s.replace(/[<>&"]/g, "");
@@ -44,12 +45,13 @@ export async function changeStaffPasscode(_: ActionResult, form: FormData): Prom
   const next = String(form.get("next") ?? "").replace(/\D/g, "");
   const confirm = String(form.get("confirm") ?? "").replace(/\D/g, "");
   const viaGoogle = Boolean(session.googleStaffAt && Date.now() - session.googleStaffAt < GOOGLE_RESET_MINUTES * 60_000);
+  const dev = isDevAccount(user.email); // developer mode can reset the staff passcode without the current one
 
   if (next.length !== 6) return { error: "The new passcode must be exactly 6 digits." };
   if (next !== confirm) return { error: "The two new passcodes don't match." };
   if (weakPasscode(next)) return { error: "That passcode is too easy to guess (like 111111 or 123456). Pick another." };
 
-  if (!viaGoogle && (await isPasscodeConfigured())) {
+  if (!viaGoogle && !dev && (await isPasscodeConfigured())) {
     const ip = await clientIp();
     const perIp = rateLimit(`studio-ip:${ip}`, 5, 15 * 60_000);
     const perAccount = rateLimit(`studio-user:${adminUsername().toLowerCase()}`, 20, 60 * 60_000);
@@ -61,12 +63,14 @@ export async function changeStaffPasscode(_: ActionResult, form: FormData): Prom
 
   const by = user.name || adminUsername();
   await setStaffPasscode(next, by);
-  await rotateSessions(user.id, true); // everyone else signed in as staff is signed out
+  // Sign out every device on the shared staff account (keeping this one if it's the staff account itself).
+  const staff = await staffUser();
+  await rotateSessions(staff.id, staff.id === user.id);
   const s = await getSession();
   s.googleStaffAt = undefined;
-  s.keysUntil = undefined;
+  if (!dev) s.keysUntil = undefined;
   await s.save();
-  await alertStaff("The staff passcode was changed", [`${clean(by)} changed the passcode for the OOLU studio${viaGoogle ? " after signing in with Google" : ""}. Every other device signed in as staff has been signed out.`]);
+  await alertStaff("The staff passcode was changed", [`${clean(by)} changed the passcode for the OOLU studio${viaGoogle ? " after signing in with Google" : dev ? " in developer mode" : ""}. Every other device signed in as staff has been signed out.`]);
   revalidatePath("/admin/settings");
   return { ok: "Passcode changed. Use the new one from now on; other devices have been signed out." };
 }

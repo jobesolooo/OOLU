@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Home, KeyRound, ListChecks, Mail, Search, Users } from "lucide-react";
+import { Building2, Home, KeyRound, ListChecks, Mail, Search, Terminal, Users } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { saveStoreSettings } from "../actions";
 import { AdminForm } from "../FormMessage";
@@ -16,6 +16,9 @@ import { SignInAccess } from "./SignInAccess";
 import { HashTab } from "./HashTab";
 import { SearchVisibility } from "./SearchVisibility";
 import { SocialFeedEditor } from "./SocialFeedEditor";
+import { DeveloperPanel } from "./DeveloperPanel";
+import { getCurrentUser } from "@/lib/auth";
+import { isDevAccount } from "@/lib/dev-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -32,13 +35,16 @@ const TABS = [
   { id: "seo", label: "Google & SEO", Icon: Search, blurb: "How the shop shows up in Google: verification, sitemap, Shopping feed and what's left to do.", lock: false },
   { id: "homepage", label: "Homepage", Icon: Home, blurb: "Promo strip, drop countdown and newsletter popup.", lock: false },
   { id: "guides", label: "Setup guides", Icon: ListChecks, blurb: "What's connected, and where to find anything that's still missing.", lock: false },
+  { id: "developer", label: "Developer", Icon: Terminal, blurb: "Developer mode only: what's running and whether it's healthy. Key values are never shown.", lock: false },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
 
 export default async function SettingsAdmin({ searchParams }: PageProps<"/admin/settings">) {
   const sp = await searchParams;
-  const tab = TABS.find((t) => t.id === sp.tab) ?? TABS[0];
-  const [s, session] = await Promise.all([getSettings(), getSession()]);
+  const [s, session, me] = await Promise.all([getSettings(), getSession(), getCurrentUser()]);
+  const dev = isDevAccount(me?.email);
+  const tabs = TABS.filter((t) => t.id !== "developer" || dev);
+  const tab = tabs.find((t) => t.id === sp.tab) ?? tabs[0];
   const unlockedUntil = session.keysUntil ?? null; // the screen itself works out whether it has expired
 
   return (
@@ -47,7 +53,7 @@ export default async function SettingsAdmin({ searchParams }: PageProps<"/admin/
       <AdminHeader eyebrow="Setup" title="Store settings" description="Fill in a field, press save, and it's live on the store straight away." />
 
       <nav aria-label="Settings sections" className="no-scrollbar -mx-1 mb-6 flex max-w-4xl gap-1 overflow-x-auto border-b border-black/10 px-1">
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <Link
             key={t.id}
             href={`/admin/settings?tab=${t.id}`}
@@ -87,6 +93,8 @@ async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<Retur
       return <SignInAccess />;
     case "seo":
       return <SearchVisibility />;
+    case "developer":
+      return <DeveloperPanel />;
     case "homepage":
       return (
       <div className="space-y-6">

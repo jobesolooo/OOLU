@@ -77,7 +77,7 @@ function Brand() {
   );
 }
 
-function NavBody({ pathname, badges, name, stripeUrl }: { pathname: string; badges: Badges; name: string; stripeUrl: string | null }) {
+function NavBody({ pathname, badges, name, dev, stripeUrl }: { pathname: string; badges: Badges; name: string; dev: boolean; stripeUrl: string | null }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <nav className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-3 py-6" aria-label="Admin">
@@ -128,7 +128,11 @@ function NavBody({ pathname, badges, name, stripeUrl }: { pathname: string; badg
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent font-wordmark text-[18px] text-ink">{name.charAt(0).toUpperCase()}</span>
         <span className="min-w-0 flex-1 leading-tight">
           <span className="block truncate text-[13px] text-white">{name}</span>
-          <span className="block text-[10px] tracking-[0.12em] text-white/40 uppercase">Staff</span>
+          {dev ? (
+            <span className="mt-0.5 inline-block rounded-full bg-accent/20 px-2 py-px text-[10px] tracking-[0.12em] text-accent uppercase ring-1 ring-accent/40">Developer mode</span>
+          ) : (
+            <span className="block text-[10px] tracking-[0.12em] text-white/40 uppercase">Staff</span>
+          )}
         </span>
         <form action={adminSignOut}>
           <button aria-label="Sign out" title="Sign out" className="grid size-9 place-items-center rounded-full text-white/50 transition-colors hover:bg-white/10 hover:text-white">
@@ -141,7 +145,7 @@ function NavBody({ pathname, badges, name, stripeUrl }: { pathname: string; badg
 }
 
 /** Sidebar on desktop; top bar + slide-in drawer on phones (closes on navigation). */
-export function AdminNav({ badges, name, stripeUrl }: { badges: Badges; name: string; stripeUrl: string | null }) {
+export function AdminNav({ badges, name, dev = false, stripeUrl }: { badges: Badges; name: string; dev?: boolean; stripeUrl: string | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [prev, setPrev] = useState(pathname);
@@ -168,7 +172,7 @@ export function AdminNav({ badges, name, stripeUrl }: { badges: Badges; name: st
         <div className="border-b border-white/10 px-6 py-5">
           <Brand />
         </div>
-        <NavBody pathname={pathname} badges={badges} name={name} stripeUrl={stripeUrl} />
+        <NavBody pathname={pathname} badges={badges} name={name} dev={dev} stripeUrl={stripeUrl} />
       </aside>
 
       {/* Phone top bar */}
@@ -202,7 +206,7 @@ export function AdminNav({ badges, name, stripeUrl }: { badges: Badges; name: st
               <X className="size-5" strokeWidth={1.5} />
             </button>
           </div>
-          <NavBody pathname={pathname} badges={badges} name={name} stripeUrl={stripeUrl} />
+          <NavBody pathname={pathname} badges={badges} name={name} dev={dev} stripeUrl={stripeUrl} />
         </div>
       </div>
     </>

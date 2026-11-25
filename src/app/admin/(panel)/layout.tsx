@@ -5,6 +5,7 @@ import { adminUsername, cleanUpStaffRoles } from "@/lib/admin-auth";
 import { isStripeConfigured, stripeDashboardUrl } from "@/lib/stripe";
 import { getDb, schema } from "@/lib/db";
 import { AdminNav } from "./AdminNav";
+import { isDevAccount } from "@/lib/dev-auth";
 
 export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -31,7 +32,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <div className="min-h-svh bg-mist lg:flex">
-      <AdminNav badges={badges} name={user.name || adminUsername()} stripeUrl={stripe ? (await stripeDashboardUrl("/payments")) : null} />
+      <AdminNav badges={badges} name={user.name || adminUsername()} dev={isDevAccount(user.email)} stripeUrl={stripe ? (await stripeDashboardUrl("/payments")) : null} />
       <div className="min-w-0 flex-1">
         {!stripe && (
           <div className="border-b border-amber-200 bg-amber-50 text-amber-900">
