@@ -8,7 +8,9 @@ import { dictionaries } from "@/i18n/messages";
 import { getCurrency, getRates } from "@/lib/rates";
 import "./globals.css";
 import { shippingConfig } from "@/lib/shipping";
-import { getSettings } from "@/lib/settings";
+import { getSettings, holidayActive } from "@/lib/settings";
+import { nowMs } from "@/lib/time";
+import { Snow } from "@/components/home/Snow";
 import { Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
@@ -138,6 +140,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </Suspense>
         <RevealObserver />
         <StoreOnly>
+          {/* Christmas theme: snow over every shop page (not the admin). */}
+          {holidayActive(settings, nowMs()) && <Snow fixed />}
           <CartDrawer freeShippingThreshold={(await shippingConfig()).freeShippingThreshold} />
           {settings.popup.enabled && <NewsletterPopup percentOff={settings.popup.percentOff} delaySeconds={settings.popup.delaySeconds} />}
         </StoreOnly>

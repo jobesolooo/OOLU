@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { getT } from "@/i18n/server";
-import { Snow } from "./Snow";
 
 /**
  * Full-bleed hero + black promo strip + serif marquee. Together they fill exactly
@@ -22,7 +21,6 @@ export async function Hero({ promo, holiday = null }: { promo: string; holiday?:
       <section className="relative isolate flex h-[78svh] min-h-[480px] items-end overflow-hidden bg-[#10151a] text-white md:h-auto md:min-h-0 md:flex-1">
         <Image src={hero.image} alt={t("hero.alt")} fill priority sizes="100vw" className="hero-zoom -z-20 object-cover object-[62%_center] md:object-[center_30%]" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/55 via-black/10 to-black/30" />
-        {holiday && <Snow className="-z-[5]" />}
         <div className="container-x pb-[clamp(36px,5vh,72px)]">
           {/* The brand line is part of the heading so Google reads "OOLU Clothing" as what this page is about. */}
           {holiday && (
