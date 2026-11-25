@@ -42,10 +42,10 @@ export default async function HomePage() {
   const batch = live.filter((p) => p.createdAt && newest - p.createdAt < 3 * 86_400_000).sort((a, b) => b.createdAt - a.createdAt);
   const newCollection = batch.length <= 8 && batch.length < live.length / 2 ? batch : [];
   const shown = new Set(newCollection.map((p) => p.id));
-  // Featured = exactly what's ticked "Featured" in the admin, newest first (even if it's also in the new collection).
-  const featuredRow = live.filter((p) => p.featured).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
-  for (const p of featuredRow) shown.add(p.id);
-  const newIn = live.filter((p) => p.isNew && !shown.has(p.id)).slice(0, 8);
+  // Featured = what's ticked "Featured" in the admin, newest first, without repeating the new collection.
+  // With nothing new or featured, it falls back to the first products so the homepage is never empty.
+  const ticked = live.filter((p) => p.featured && !shown.has(p.id)).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
+  const featuredRow = ticked.length || newCollection.length ? ticked : featured;
   const onSale = all.filter(isOnSale).slice(0, 4);
   const counts: Record<string, number> = {};
   for (const p of all) counts[p.category] = (counts[p.category] ?? 0) + 1;
@@ -79,8 +79,6 @@ export default async function HomePage() {
       )}
       <NewCollection products={newCollection} ratings={ratings} />
       <ProductRow title={t("home.featured")} products={featuredRow} href="/shop" ratings={ratings} />
-      {/* Without any new or featured products the homepage still shows a row of products */}
-      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featuredRow.length || newCollection.length ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
       {holiday && <GiftBand />}
       <CategoryTiles counts={counts} />
       <Story />
