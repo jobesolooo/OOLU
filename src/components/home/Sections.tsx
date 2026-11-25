@@ -162,7 +162,7 @@ export async function Features() {
       {/* 1 — Easy comfort always */}
       <section className="relative isolate overflow-hidden bg-ink text-white">
         <div className="parallax absolute inset-0 -z-20">
-          <Image src={comfort.image} alt="Friends wearing OOLU T-shirts in Amsterdam" fill sizes="100vw" className="object-cover object-[center_38%]" />
+          <Image src={comfort.image} alt="OOLU zip hoodie set in warm studio light" fill sizes="100vw" className="object-cover object-[60%_22%]" />
         </div>
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.82)_0%,rgba(6,6,6,0.35)_45%,rgba(6,6,6,0)_70%),linear-gradient(0deg,rgba(6,6,6,0.6),transparent_45%)]" />
         <div className="container-x grid min-h-[min(92svh,860px)] items-end gap-10 py-[clamp(56px,8vw,120px)] lg:grid-cols-[1.4fr_1fr]">

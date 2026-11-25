@@ -165,7 +165,7 @@ export function NewsletterPopup({ percentOff, delaySeconds }: { percentOff: numb
       >
         <div
           className="hidden bg-cover bg-center sm:block"
-          style={{ backgroundImage: "url(/images/brand/tracksuit-duo.jpg)", backgroundPosition: "center" }}
+          style={{ backgroundImage: "url(/images/brand/drop-portrait.jpg)", backgroundPosition: "center 35%" }}
           aria-hidden
         />
         <div className="p-8 sm:p-10">

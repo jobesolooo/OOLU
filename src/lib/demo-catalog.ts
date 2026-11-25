@@ -767,8 +767,8 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
 export const COLLECTIONS: Record<string, { title: string; blurb: string; image?: string }> = {
   "t-shirts": { title: "T-Shirts", blurb: "Everyday, washed and cropped tees with the OOLU mark.", image: "/images/brand/tile-t-shirts.jpg" },
   "sleeveless-and-tanks": { title: "Sleeveless & Tanks", blurb: "Clean cuts for warm days and late nights.", image: "/images/brand/tile-tanks.jpg" },
-  tracksuits: { title: "Tracksuits", blurb: "The OOLU tracksuit, windbreaker and hoodie sets.", image: "/images/brand/tile-tracksuits.jpg" },
-  hoodies: { title: "Hoodies", blurb: "Zip hoodies with the OOLU logo." },
+  tracksuits: { title: "Tracksuits", blurb: "The OOLU tracksuit, windbreaker and hoodie sets.", image: "/images/brand/tracksuit-front-white.jpg" },
+  hoodies: { title: "Hoodies", blurb: "Zip hoodies with the OOLU logo.", image: "/images/brand/hoodie-set-glow.jpg" },
 };
 
 /** Size charts shown in the size guide, per category (cm). Indicative — update with the real spec sheets. */

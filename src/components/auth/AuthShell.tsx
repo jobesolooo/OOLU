@@ -15,7 +15,7 @@ export async function AuthShell({
   title,
   children,
   aside,
-  image = "/images/brand/hero.jpg",
+  image = "/images/brand/hoodie-set-glow.jpg",
 }: {
   eyebrow?: string;
   title: string;

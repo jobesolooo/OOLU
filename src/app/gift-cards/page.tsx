@@ -14,7 +14,7 @@ export default async function GiftCardsPage() {
   const { t } = await getT();
   return (
     <>
-      <PageHeader eyebrow={t("gift.eyebrow")} title={t("gift.title")} subtitle={t("gift.subtitle")} image="/images/brand/look-friends.jpg" imagePosition="center 35%" word="GIFT" />
+      <PageHeader eyebrow={t("gift.eyebrow")} title={t("gift.title")} subtitle={t("gift.subtitle")} image="/images/brand/hoodie-set-glow.jpg" imagePosition="center 20%" word="GIFT" />
       <div className="container-x py-[clamp(48px,6vw,96px)]">
         <GiftCardForm amounts={(await getSettings()).giftCardAmounts} />
       </div>

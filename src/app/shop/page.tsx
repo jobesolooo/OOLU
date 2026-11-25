@@ -49,7 +49,7 @@ const HERO: Record<string, { src: string; position: string }> = {
   "t-shirts": { src: "/images/brand/look-friends.jpg", position: "center 35%" },
   "sleeveless-and-tanks": { src: "/images/brand/story-roots.jpg", position: "center 40%" },
   tracksuits: { src: "/images/brand/hero-roots-journey.jpg", position: "center 45%" },
-  hoodies: { src: "/images/brand/tracksuit-duo.jpg", position: "center 20%" },
+  hoodies: { src: "/images/brand/hoodie-set-glow.jpg", position: "center 20%" },
   default: { src: "/images/brand/story-crowd.jpg", position: "center 40%" },
 };
 
@@ -230,7 +230,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
                     href="/products/oolu-tracksuit"
                     className="group relative isolate col-span-2 flex min-h-[420px] items-end overflow-hidden bg-ink text-white lg:row-span-1"
                   >
-                    <Image src="/images/brand/made-to-move.jpg" alt="" fill sizes="(min-width:1024px) 50vw, 100vw" className="-z-20 object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
+                    <Image src="/images/brand/hero-roots-journey.jpg" alt="" fill sizes="(min-width:1024px) 50vw, 100vw" className="-z-20 object-cover object-[55%_center] transition-transform duration-[1.6s] ease-out group-hover:scale-[1.05]" />
                     <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                     <span className="float absolute top-5 right-5 grid size-20 place-items-center rounded-full bg-accent text-ink">
                       <span className="font-wordmark text-[26px] leading-none">-25%</span>

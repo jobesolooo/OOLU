@@ -23,13 +23,13 @@ export const site = {
   categories: [
     { slug: "t-shirts", image: "/images/brand/tile-t-shirts.jpg" },
     { slug: "sleeveless-and-tanks", image: "/images/brand/tile-tanks.jpg" },
-    { slug: "tracksuits", image: "/images/brand/backs-roots-journey.jpg" },
+    { slug: "tracksuits", image: "/images/brand/tile-tracksuits-roots.jpg" },
   ],
 
   story: { image: "/images/brand/story-crowd.jpg", ctaHref: "/shop" },
 
   features: [
-    { key: "comfort", href: "/shop?category=t-shirts", image: "/images/brand/look-friends.jpg", tone: "#dcdcda" },
+    { key: "comfort", href: "/shop?category=hoodies", image: "/images/brand/hoodie-set-glow.jpg", tone: "#dcdcda" },
     { key: "move", href: "/shop?category=tracksuits", image: "/images/brand/move-streaks.jpg", tone: "#eeedeb" },
   ],
 

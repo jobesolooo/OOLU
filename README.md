@@ -135,10 +135,14 @@ All brand copy and image paths live in `src/lib/site.ts`; colours and fonts in `
 | --- | --- |
 | `public/images/brand/logo.png` | Header logo (mark + "live in the present") |
 | `public/images/brand/logo-mark.png` | Favicon, emails, gift card |
-| `public/images/brand/hero.jpg` | Homepage hero, social share image |
-| `public/images/brand/tile-*.jpg` | Shop by category tiles |
-| `public/images/brand/story-roots.jpg`, `look-friends.jpg`, `made-to-move.jpg` | Story + feature blocks, About, journal |
-| `public/images/brand/tracksuit-duo*.jpg` | Sign-in pages, newsletter popup, drop banner |
+| `public/images/brand/hero-roots-journey.jpg` | Homepage hero, social share image, Tracksuits header, lookbook |
+| `public/images/brand/story-crowd.jpg` | Story section, About, Shop + Help headers, journal |
+| `public/images/brand/hoodie-set-glow.jpg` | Comfort feature, Hoodies + Gift cards headers, sign-in |
+| `public/images/brand/move-streaks.jpg`, `move-painted.jpg` | Made to move feature, Contact header, lookbook |
+| `public/images/brand/drop-portrait.jpg` | Drop countdown, newsletter popup, "OOLU means trust" cover |
+| `public/images/brand/backs-roots-journey.jpg`, `tracksuit-front-white.jpg` | Tracksuits tile + collection, account pages, journal |
+| `public/images/brand/tile-t-shirts.jpg`, `tile-tanks.jpg`, `look-friends.jpg`, `story-roots.jpg` | T-shirt and tank tiles, headers and the T-shirt journal post |
+| `public/images/xmas/*` | Christmas theme decorations |
 | `public/images/products/*` | Demo catalogue photos (used until Stripe has products; `npm run stripe:seed` uploads them once the site is on https) |
 
 ## Deploying (Vercel recommended)

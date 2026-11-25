@@ -60,7 +60,7 @@ export default async function ContactPage() {
       {/* Hero: full-bleed photo, oversized headline */}
       <section className="relative isolate -mt-[var(--nav-h)] overflow-hidden bg-ink text-white">
         <div className="parallax absolute inset-0 -z-20">
-          <Image src="/images/brand/tracksuit-duo-2.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[center_30%]" />
+          <Image src="/images/brand/move-streaks.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[center_45%]" />
         </div>
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(6,6,6,0.85),rgba(6,6,6,0.4)_55%,rgba(6,6,6,0.15)),linear-gradient(0deg,rgba(6,6,6,0.9),transparent_55%)]" />
         <div className="container-x flex min-h-[min(72svh,680px)] flex-col justify-end pt-24 pb-[clamp(120px,14vw,220px)]">

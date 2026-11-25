@@ -8,7 +8,9 @@ export type TtTile = { href: string; image: string | null; caption: string; vide
 /** New shoot photos, used until real posts are added in Settings (they link to the profiles, not to made-up posts). */
 const SHOOT = [
   "/images/brand/hero-roots-journey.jpg",
+  "/images/brand/hoodie-set-glow.jpg",
   "/images/brand/story-crowd.jpg",
+  "/images/brand/tracksuit-front-white.jpg",
   "/images/brand/drop-portrait.jpg",
   "/images/brand/move-streaks.jpg",
   "/images/brand/move-painted.jpg",
@@ -47,6 +49,6 @@ export async function getSocialFeed() {
     : SHOOT.map((image) => ({ href: igProfile, image, alt: "OOLU Roots and Journey shoot", ours: false }));
   const tiktok: TtTile[] = s.social.tiktok.length
     ? await Promise.all(s.social.tiktok.map(tiktokTile))
-    : [SHOOT[2], SHOOT[4], SHOOT[5], SHOOT[3]].map((image) => ({ href: ttProfile, image, caption: "", videoId: null, ours: false }));
+    : [SHOOT[1], SHOOT[4], SHOOT[6], SHOOT[7], SHOOT[5]].map((image) => ({ href: ttProfile, image, caption: "", videoId: null, ours: false }));
   return { instagram, tiktok, igProfile, ttProfile, igHandle: b.handles.instagram, ttHandle: b.handles.tiktok };
 }

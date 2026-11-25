@@ -89,7 +89,7 @@ export default async function HelpPage() {
 
   return (
     <>
-      <PageHeader eyebrow={t("help.eyebrow")} title={t("help.title")} subtitle={t("help.subtitle")} image="/images/brand/look-friends.jpg" imagePosition="center 35%" word="HELP" />
+      <PageHeader eyebrow={t("help.eyebrow")} title={t("help.title")} subtitle={t("help.subtitle")} image="/images/brand/story-crowd.jpg" imagePosition="center 45%" word="HELP" />
 
       {/* Quick actions overlapping the hero */}
       <div className="relative z-10 container-x -mt-[clamp(28px,4vw,56px)] grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
