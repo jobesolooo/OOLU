@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
 import { cx } from "@/lib/format";
 import { TikTokIcon } from "@/components/icons";
+import { SOCIAL_BADGE, SOCIAL_TILE } from "./social-tile";
 
 /** Horizontal snap carousel with arrow buttons that hide at either end. */
 export function Rail({ children, label, prev, next }: { children: React.ReactNode; label: string; prev: string; next: string }) {
@@ -60,15 +61,22 @@ export function TikTokTile({ href, image, caption, videoId, watch, close }: { hr
       ) : (
         <span className="absolute inset-0 bg-ink" />
       )}
-      <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/10" />
-      <span className="absolute top-1/2 left-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/20 text-white ring-1 ring-white/50 backdrop-blur-sm transition-transform group-hover:scale-110">
-        {/* Play only for real videos; profile tiles get the TikTok mark */}
-        {videoId ? <Play className="size-5 translate-x-px fill-current" strokeWidth={0} /> : <TikTokIcon className="size-5" />}
+      <span className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+      <span className={SOCIAL_BADGE}>
+        <TikTokIcon className="size-4" />
       </span>
-      <span className="absolute inset-x-3 bottom-3 line-clamp-2 text-left text-[11px] leading-snug text-white">{caption || watch}</span>
+      {/* Real videos get a play button and their caption; profile tiles look exactly like the Instagram ones */}
+      {videoId && (
+        <span className="absolute top-1/2 left-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/20 text-white ring-1 ring-white/50 backdrop-blur-sm transition-transform group-hover:scale-110">
+          <Play className="size-5 translate-x-px fill-current" strokeWidth={0} />
+        </span>
+      )}
+      {videoId && caption && (
+        <span className="absolute inset-x-0 bottom-0 line-clamp-2 bg-gradient-to-t from-black/75 to-transparent px-3 pt-8 pb-3 text-left text-[11px] leading-snug text-white">{caption}</span>
+      )}
     </>
   );
-  const tile = "group relative aspect-[9/16] w-[clamp(150px,40vw,190px)] shrink-0 snap-start overflow-hidden bg-ink";
+  const tile = SOCIAL_TILE;
   if (!videoId)
     return (
       <a href={href} target="_blank" rel="noreferrer" className={tile}>

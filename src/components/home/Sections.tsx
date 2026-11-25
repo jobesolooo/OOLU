@@ -13,6 +13,7 @@ import type { MessageKey } from "@/i18n/messages";
 import { getSocialFeed } from "@/lib/social";
 import { InstagramIcon, TikTokIcon } from "@/components/icons";
 import { Rail, TikTokTile } from "./SocialCarousel";
+import { SOCIAL_BADGE, SOCIAL_TILE } from "./social-tile";
 
 export async function CategoryTiles({ counts }: { counts: Record<string, number> }) {
   const { t } = await getT();
@@ -444,10 +445,11 @@ export async function SocialFeed() {
             {head(InstagramIcon, "Instagram", feed.igHandle, feed.igProfile)}
             <Rail label="Instagram" prev={t("social.prev")} next={t("social.next")}>
               {feed.instagram.map((p, i) => (
-                <a key={i} href={p.href} target="_blank" rel="noreferrer" className="group relative aspect-[4/5] w-[clamp(180px,48vw,230px)] shrink-0 snap-start overflow-hidden bg-stone">
-                  <Image src={p.image} alt={p.alt} fill sizes="230px" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                  <span className="absolute inset-0 grid place-items-center bg-black/0 text-white opacity-0 transition-[opacity,background-color] group-hover:bg-black/30 group-hover:opacity-100">
-                    <InstagramIcon className="size-7" />
+                <a key={i} href={p.href} target="_blank" rel="noreferrer" className={SOCIAL_TILE}>
+                  <Image src={p.image} alt={p.alt} fill sizes="(min-width:1024px) 16vw, 45vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                  <span className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+                  <span className={SOCIAL_BADGE}>
+                    <InstagramIcon className="size-4" />
                   </span>
                 </a>
               ))}
