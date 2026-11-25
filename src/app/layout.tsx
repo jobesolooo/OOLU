@@ -22,6 +22,27 @@ import { ORG_ID, WEBSITE_ID, ldJson, returnPolicy } from "@/lib/seo";
 
 const SITE_URL = siteUrl();
 
+/**
+ * Night mode by the visitor's own clock. Dark from dusk to morning, following the season
+ * (roughly Amsterdam's evenings: from 17:00 in December, from 22:00 in June).
+ * Re-checked every minute so an open tab switches by itself. ?theme=dark / ?theme=light previews either.
+ */
+const NIGHT_SCRIPT = `(function(){
+  var d=document.documentElement, DUSK=[17,18,19,20,21,22,22,21,20,19,17,17], DAWN=[8,8,7,7,6,5,5,6,7,7,8,8];
+  var q=(location.search.match(/[?&]theme=(dark|light)/)||[])[1];
+  function apply(first){
+    var n=new Date(), h=n.getHours()+n.getMinutes()/60, m=n.getMonth();
+    var t=q||((h>=DUSK[m]||h<DAWN[m])?"dark":"light");
+    if(d.getAttribute("data-theme")===t) return;
+    if(!first){d.classList.add("theme-fade");setTimeout(function(){d.classList.remove("theme-fade")},700);}
+    d.setAttribute("data-theme",t);
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute("content",t==="dark"?"#0e0e12":"#060606");
+  }
+  apply(true); setInterval(apply,60000);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) apply(); });
+})();`;
+
 export async function generateMetadata(): Promise<Metadata> {
   const [{ t, locale }, b] = await Promise.all([getT(), getBusiness()]);
   const description = b.description ?? t("brand.description");
@@ -92,7 +113,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ],
   };
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Before first paint, so night visitors never see a white flash. */}
+        <script dangerouslySetInnerHTML={{ __html: NIGHT_SCRIPT }} />
+      </head>
       <body id="top" className="flex min-h-dvh flex-col">
         <PrefsProvider locale={locale} messages={dictionaries[locale]} currency={currency} rates={rates}>
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">

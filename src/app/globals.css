@@ -317,3 +317,81 @@ a[class*="border-ink"]:active, button[class*="bg-ink"]:active:not(:disabled) { t
 @media (prefers-reduced-motion: reduce) {
   .spin, .float, .parallax, .drift { animation: none !important; }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Night mode. A script in the root layout sets <html data-theme="dark"> during the
+   visitor's local night hours. The brand tokens flip (light surfaces → dark,
+   dark text → light) and everything built on them follows. Sections that are
+   dark by design (hero, promo strip, drop banner, footer, overlays) put the
+   day tokens back for themselves, so they look exactly the same.
+   ───────────────────────────────────────────────────────────────────────────── */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-white: #17161c;
+  --color-black: #f1efea;
+  --color-ink: #f1efea;
+  --color-night: #f1efea;
+  --color-mist: #0e0e12;
+  --color-stone: #141419;
+  --color-bone: #1b1a21;
+  --color-ash: #a6a29b;
+  /* Status colours in the admin: soft tints instead of bright pastel boxes */
+  --color-emerald-50: rgb(16 185 129 / 0.12);
+  --color-emerald-100: rgb(16 185 129 / 0.18);
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #6ee7b7;
+  --color-emerald-900: #a7f3d0;
+  --color-amber-50: rgb(245 158 11 / 0.12);
+  --color-amber-100: rgb(245 158 11 / 0.18);
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fcd34d;
+  --color-amber-900: #fde68a;
+  --color-red-50: rgb(239 68 68 / 0.12);
+  --color-red-100: rgb(239 68 68 / 0.18);
+  --color-red-700: #fca5a5;
+  --color-red-800: #fca5a5;
+  --color-red-900: #fecaca;
+  --color-sky-50: rgb(14 165 233 / 0.12);
+  --color-sky-100: rgb(14 165 233 / 0.18);
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #7dd3fc;
+  --color-sky-900: #bae6fd;
+  --color-violet-50: rgb(139 92 246 / 0.14);
+  --color-violet-100: rgb(139 92 246 / 0.2);
+  --color-violet-700: #c4b5fd;
+  --color-violet-800: #c4b5fd;
+  --color-violet-900: #ddd6fe;
+}
+
+/* Dark-by-design areas keep the day tokens */
+/* (Prefix matches use "^=" / " " so hover:/md: variants don't count.) */
+html[data-theme="dark"] :is(.bg-ink, .bg-night, .bg-black, .on-dark, [class^="bg-[#0"], [class*=" bg-[#0"], [class^="bg-[#1"], [class*=" bg-[#1"]) {
+  color-scheme: light;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-ink: #060606;
+  --color-night: #0d0d0d;
+  --color-mist: #fdfdfd;
+  --color-stone: #f3f2ef;
+  --color-bone: #eeedeb;
+  --color-ash: #77746f;
+}
+/* White text on photos and black overlays/gradients stay white and black */
+html[data-theme="dark"] :is(.text-white, [class^="text-white/"], [class*=" text-white/"]) { --color-white: #fff; }
+html[data-theme="dark"] :is([class^="bg-black/"], [class*=" bg-black/"], [class^="from-black"], [class*=" from-black"], [class*=" via-black"], [class*=" to-black"]) { --color-black: #000; }
+
+/* Hard-coded light surfaces and purple text */
+html[data-theme="dark"] :is(.bg-\[\#f4efe3\], .bg-\[\#e9e4d8\]) { background-color: #1f1d25; }
+html[data-theme="dark"] .bg-\[\#ece8ff\] { background-color: rgb(165 146 255 / 0.16); }
+html[data-theme="dark"] :is(.border-\[\#e9e4d8\], .border-\[\#ece8ff\]) { border-color: #2c2a33; }
+html[data-theme="dark"] :is(.text-\[\#5a44cf\], .text-\[\#6b54e0\]) { color: #b9acff; }
+html[data-theme="dark"] .text-\[\#a3271b\] { color: #ff8a7a; }
+
+/* Components defined in this file */
+html[data-theme="dark"] .input { background: #17161c; border-color: #2f2d36; color: var(--color-ink); }
+html[data-theme="dark"] .input::placeholder { color: #77746f; }
+html[data-theme="dark"] .btn-solid { color: #0e0e12; }
+html[data-theme="dark"] img { color-scheme: light; }
+
+/* Smooth switch when the clock crosses into night while the page is open */
+html.theme-fade, html.theme-fade * { transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease !important; }
