@@ -33,14 +33,22 @@
 }
 
 /* Height of the sticky header, so sections can size to "exactly one screen".
+   --nav-row is the menu bar itself; --garland-h is room above it for the Christmas garland
+   (0 the rest of the year). --nav-h is the whole header and is what pages offset by.
    (--bar-h stays for older layouts; OOLU has no top announcement bar.) */
 :root {
   --bar-h: 0px;
-  --nav-h: 60px;
+  --nav-row: 60px;
+  --garland-h: 0px;
+  --nav-h: calc(var(--nav-row) + var(--garland-h));
   --chrome-h: calc(var(--bar-h) + var(--nav-h));
 }
 @media (min-width: 48rem) {
-  :root { --nav-h: clamp(64px, 5.2vw, 84px); }
+  :root { --nav-row: clamp(64px, 5.2vw, 84px); }
+}
+html.xmas { --garland-h: 30px; }
+@media (min-width: 48rem) {
+  html.xmas { --garland-h: 42px; }
 }
 
 @layer base {
@@ -401,7 +409,7 @@ html.theme-fade, html.theme-fade * { transition: background-color 0.6s ease, col
    bulbs that twinkle in turn). --s scales everything together (smaller on phones). */
 .xmas-lights-x, .xmas-lights-y { pointer-events: none; }
 .xmas-lights-x {
-  --s: 1;
+  --s: 0.7;
   height: calc(60px * var(--s));
   background:
     url(/images/xmas/deco-h.webp) repeat-x 0 0 / calc(960px * var(--s)) calc(60px * var(--s)),
@@ -428,7 +436,7 @@ html.theme-fade, html.theme-fade * { transition: background-color 0.6s ease, col
 .xmas-snowcap { pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26'%3E%3Cpath d='M0 0H160V7C150 12 142 8 134 11C126 15 118 9 108 10C98 11 92 16 82 12C72 8 64 13 54 11C44 9 38 15 28 12C18 9 10 12 0 8Z' fill='%23fff'/%3E%3Cpath d='M20 11L23 21L26 11ZM61 12L63 19L66 12ZM97 12L101 25L104 12ZM139 10L141 17L144 10Z' fill='%23fff' fill-opacity='.9'/%3E%3C/svg%3E") repeat-x left top / 160px 26px; filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.25)); }
 
 /* Ornaments swinging on threads under the header */
-.xmas-hang { position: absolute; top: calc(30px * var(--s, 1)); display: flex; flex-direction: column; align-items: center; transform-origin: top center; pointer-events: none; }
+.xmas-hang { position: absolute; top: -1px; display: flex; flex-direction: column; align-items: center; transform-origin: top center; pointer-events: none; }
 .xmas-hang::before { content: ""; width: 1px; height: var(--len, 30px); background: linear-gradient(#c9a24a, #8a6116); }
 .xmas-hang > span { display: block; width: var(--size, 24px); height: calc(var(--size, 24px) * 1.07); margin-top: -2px; background: var(--img) center / contain no-repeat; filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.3)); }
 
@@ -444,7 +452,7 @@ html.theme-fade, html.theme-fade * { transition: background-color 0.6s ease, col
 @keyframes xmas-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 @keyframes xmas-swing { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
 @media (max-width: 47.99rem) {
-  .xmas-lights-x { --s: 0.62; }
+  .xmas-lights-x { --s: 0.5; }
   .xmas-lights-y { --s: 0.36; }
   .xmas-hang { --s: 0.62; --len: 14px !important; }
   .xmas-hang[data-desktop] { display: none; }

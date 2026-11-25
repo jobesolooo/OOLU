@@ -116,7 +116,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ],
   };
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={holiday ? "xmas" : undefined}>
       <head>
         {/* Before first paint, so night visitors never see a white flash. */}
         <script dangerouslySetInnerHTML={{ __html: NIGHT_SCRIPT }} />
@@ -154,8 +154,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div aria-hidden className="pointer-events-none absolute inset-0 z-[45] overflow-hidden">
               <div className="xmas-lights-y absolute inset-y-0 left-0" />
               <div className="xmas-lights-y flip absolute inset-y-0 right-0" />
-              <span className="xmas-bow top-[calc(var(--nav-h)-26px)] -left-3 md:-left-4" />
-              <span className="xmas-bow top-[calc(var(--nav-h)-26px)] -right-3 -scale-x-100 md:-right-4" />
+              <span className="xmas-bow -top-2 -left-3 md:-left-4" />
+              <span className="xmas-bow -top-2 -right-3 -scale-x-100 md:-right-4" />
               <span className="xmas-gifts left-2" />
               <span className="xmas-gifts right-2 -scale-x-100" />
             </div>

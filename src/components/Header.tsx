@@ -84,12 +84,12 @@ export function Header({ holiday = false }: { holiday?: boolean }) {
   return (
     <header
       className={cx(
-        "sticky top-0 z-40 border-b transition-[background-color,color,border-color,box-shadow] duration-500",
+        "sticky top-0 z-40 border-b pt-[var(--garland-h)] transition-[background-color,color,border-color,box-shadow] duration-500",
         clear ? "border-transparent bg-transparent text-white" : "border-black/5 bg-white text-ink",
         scrolled && "shadow-[0_6px_24px_-12px_rgba(0,0,0,0.18)]",
       )}
     >
-      <div className="container-x grid h-[var(--nav-h)] grid-cols-[1fr_auto_1fr] items-center">
+      <div className="container-x grid h-[var(--nav-row)] grid-cols-[1fr_auto_1fr] items-center">
         <div className="flex items-center">
           <button className="-ml-1 p-1 md:hidden" aria-label={t("nav.openMenu")} aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
             <Menu className="size-5" strokeWidth={1.5} />
@@ -171,7 +171,7 @@ export function Header({ holiday = false }: { holiday?: boolean }) {
             menuOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
-          <div className="flex h-[var(--nav-h)] items-center justify-between border-b border-black/10 px-5">
+          <div className="flex h-[var(--nav-row)] items-center justify-between border-b border-black/10 px-5">
             <Image src="/images/brand/logo-mark.png" alt={site.name} width={40} height={38} className="h-9 w-auto" />
             <button aria-label={t("nav.closeMenu")} onClick={() => setMenuOpen(false)} className="p-1 transition-transform duration-300 hover:rotate-90">
               <X className="size-5" strokeWidth={1.5} />
@@ -226,9 +226,10 @@ export function Header({ holiday = false }: { holiday?: boolean }) {
           </p>
         </nav>
       </div>
+      {/* Christmas garland along the top of the header (room for it is reserved via --garland-h) */}
+      {holiday && <div aria-hidden className="xmas-lights-x pointer-events-none absolute inset-x-0 top-0" />}
       {holiday && (
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full">
-          <div className="xmas-lights-x absolute inset-x-0 top-0" />
           {HANGING.map((h, i) => (
             <span
               key={i}
