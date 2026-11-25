@@ -19,6 +19,8 @@ import { SearchVisibility } from "./SearchVisibility";
 export const dynamic = "force-dynamic";
 
 const toLocalInput = (iso: string | null) => (iso ? new Date(iso).toISOString().slice(0, 16) : "");
+/** Stored end moment (midnight Amsterdam) back to the calendar day it was picked as. */
+const holidayDate = (iso: string | null) => (iso ? new Date(Date.parse(iso) + 3600_000).toISOString().slice(0, 10) : "");
 
 /** One tab per area; `lock` = needs the staff passcode for some changes, so the security lock shows there. */
 const TABS = [
@@ -87,6 +89,31 @@ async function TabBody({ tab, s, unlockedUntil }: { tab: TabId; s: Awaited<Retur
     case "homepage":
       return (
       <AdminForm action={saveStoreSettings} submitLabel="Save homepage" className="space-y-3">
+        <fieldset className="min-w-0 space-y-3 bg-white [&>legend~*]:clear-both p-6 ring-1 ring-black/5">
+          <legend className="float-left mb-1 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">Christmas theme</legend>
+          <p className="text-xs text-ash">
+            Snow over the homepage photo, a holiday headline and promo, holiday lines in the scrolling strip and a gift card section. It switches itself off on
+            the end date, so there is nothing to undo after the holidays. Empty text fields use the built-in copy in every language.
+          </p>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="holidayEnabled" defaultChecked={s.holiday.enabled} /> Show the Christmas theme
+          </label>
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-3">
+            <label className="text-xs text-ash">
+              Switches off on (Amsterdam time)
+              <input name="holidayUntil" type="date" defaultValue={holidayDate(s.holiday.until)} className="input mt-1" />
+            </label>
+            <label className="text-xs text-ash">
+              Headline (optional)
+              <input name="holidayTitle" defaultValue={s.holiday.title} maxLength={60} placeholder="Gift the journey." className="input mt-1" />
+            </label>
+            <label className="text-xs text-ash">
+              Promo strip text (optional)
+              <input name="holidayMessage" defaultValue={s.holiday.message} maxLength={140} placeholder="Christmas gifting is open…" className="input mt-1" />
+            </label>
+          </div>
+        </fieldset>
+
         <fieldset className="min-w-0 space-y-3 bg-white [&>legend~*]:clear-both p-6 ring-1 ring-black/5">
           <legend className="float-left mb-3 w-full text-[11px] font-semibold tracking-[0.14em] uppercase">Promo strip (under the homepage hero)</legend>
           <input name="announcement" defaultValue={s.announcement} maxLength={140} className="input" />

@@ -1,6 +1,6 @@
 import { getFeaturedProducts, getProducts, getUpcomingDrops, isOnSale } from "@/lib/catalog";
 import { getRatingsMap } from "@/lib/reviews";
-import { DEFAULT_SETTINGS, getSettings } from "@/lib/settings";
+import { DEFAULT_SETTINGS, getSettings, holidayActive } from "@/lib/settings";
 import { getT } from "@/i18n/server";
 import type { Metadata } from "next";
 import { getBusiness } from "@/lib/business";
@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 import { latestPosts } from "@/content/journal";
 import { nowMs } from "@/lib/time";
 import { Hero } from "@/components/home/Hero";
-import { CategoryTiles, DropBanner, Features, JournalTeaser, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
+import { CategoryTiles, DropBanner, Features, GiftBand, JournalTeaser, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
@@ -51,10 +51,11 @@ export default async function HomePage() {
   const nextDrop = drops[0];
   const launchAt = banner.launchAt ? Date.parse(banner.launchAt) : (nextDrop?.releaseAt ?? null);
   const showBanner = banner.enabled && launchAt != null && launchAt > nowMs();
+  const holiday = holidayActive(settings, nowMs()) ? { title: settings.holiday.title, message: settings.holiday.message } : null;
 
   return (
     <>
-      <Hero promo={promo} />
+      <Hero promo={promo} holiday={holiday} />
       {/* Next drop sits right under the hero so the countdown is the first thing after it. */}
       {showBanner && (
         <DropBanner
@@ -67,6 +68,7 @@ export default async function HomePage() {
         />
       )}
       <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
+      {holiday && <GiftBand />}
       <CategoryTiles counts={counts} />
       <Story />
       <Features />

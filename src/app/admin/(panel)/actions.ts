@@ -369,6 +369,8 @@ export async function saveStoreSettings(_: ActionResult, form: FormData): Promis
   await requireAdmin();
   const current = await getSettings();
   const launch = String(form.get("launchAt") ?? "").trim();
+  const holidayUntil = String(form.get("holidayUntil") ?? "").trim();
+  if (holidayUntil && Number.isNaN(Date.parse(`${holidayUntil}T00:00:00Z`))) return { error: "Invalid end date for the Christmas theme." };
   const next: StoreSettings = {
     ...current,
     announcement: String(form.get("announcement") ?? "").trim().slice(0, 140) || current.announcement,
@@ -384,6 +386,13 @@ export async function saveStoreSettings(_: ActionResult, form: FormData): Promis
       enabled: form.get("popupEnabled") === "on",
       percentOff: Math.min(90, Math.max(1, Math.round(Number(form.get("percentOff")) || current.popup.percentOff))),
       delaySeconds: Math.min(120, Math.max(0, Math.round(Number(form.get("delaySeconds")) || 0))),
+    },
+    holiday: {
+      enabled: form.get("holidayEnabled") === "on",
+      // The theme ends at midnight Amsterdam time at the start of the chosen day (UTC+1 in winter).
+      until: holidayUntil ? new Date(Date.parse(`${holidayUntil}T00:00:00Z`) - 3600_000).toISOString() : null,
+      title: String(form.get("holidayTitle") ?? "").trim().slice(0, 60),
+      message: String(form.get("holidayMessage") ?? "").trim().slice(0, 140),
     },
   };
   if (launch && Number.isNaN(Date.parse(`${launch}Z`))) return { error: "Invalid launch date." };

@@ -365,3 +365,45 @@ export async function NewsletterBand({ percentOff }: { percentOff: number }) {
     </section>
   );
 }
+
+/** Christmas theme: gift card band with a CSS gift card (no extra image to load). */
+export async function GiftBand() {
+  const { t } = await getT();
+  return (
+    <section className="relative isolate overflow-hidden bg-[#17123a] text-white">
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_85%_20%,rgba(155,135,255,0.35),transparent_70%),radial-gradient(50%_60%_at_10%_90%,rgba(241,220,162,0.12),transparent_70%)]" />
+      <div className="container-x section-y grid items-center gap-12 md:grid-cols-[1.1fr_1fr]">
+        <div>
+          <p className="eyebrow text-[#f1dca2]">
+            <span aria-hidden className="mr-2">✦</span>
+            {t("xmas.band.eyebrow")}
+          </p>
+          <h2 className="h-display mt-4">{t("xmas.band.title")}</h2>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/80">{t("xmas.band.body")}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/gift-cards" className="inline-flex items-center gap-2 bg-[#f1dca2] px-6 py-4 text-[12px] tracking-[0.06em] text-ink uppercase transition-[opacity,transform] hover:opacity-90 active:scale-[0.98]">
+              {t("xmas.band.cta")} <ArrowRight className="size-4" strokeWidth={1.5} />
+            </Link>
+            <Link href="/shop" className="btn-outline">
+              {t("xmas.band.shop")}
+            </Link>
+          </div>
+        </div>
+        {/* The card itself */}
+        <div className="flex justify-center md:justify-end">
+          <div className="relative aspect-[1.6] w-full max-w-[420px] rotate-[-4deg] overflow-hidden rounded-2xl bg-gradient-to-br from-[#9b87ff] via-[#5b45d1] to-[#2a1f6e] p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-white/20 transition-transform duration-500 hover:rotate-[-1deg] sm:p-8">
+            <div aria-hidden className="absolute inset-y-0 left-[74%] w-5 bg-[#f1dca2]/85" />
+            <div aria-hidden className="absolute inset-x-0 top-[58%] h-5 bg-[#f1dca2]/85" />
+            <div className="relative flex h-full flex-col justify-between">
+              <div>
+                <span className="block font-display text-[34px] leading-none tracking-[-0.02em]">OOLU</span>
+                <span className="mt-2 block text-[10px] tracking-[0.16em] uppercase text-white/80">{t("xmas.giftCards")}</span>
+              </div>
+              <p className="max-w-[64%] text-[11px] leading-relaxed tracking-[0.14em] uppercase text-white/85">{t("xmas.m2")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
