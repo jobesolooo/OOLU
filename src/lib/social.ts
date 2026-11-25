@@ -49,6 +49,6 @@ export async function getSocialFeed() {
     : SHOOT.map((image) => ({ href: igProfile, image, alt: "OOLU Roots and Journey shoot", ours: false }));
   const tiktok: TtTile[] = s.social.tiktok.length
     ? await Promise.all(s.social.tiktok.map(tiktokTile))
-    : [SHOOT[1], SHOOT[4], SHOOT[6], SHOOT[7], SHOOT[5]].map((image) => ({ href: ttProfile, image, caption: "", videoId: null, ours: false }));
+    : [SHOOT[4], SHOOT[6], SHOOT[7], SHOOT[5], SHOOT[1]].map((image) => ({ href: ttProfile, image, caption: "", videoId: null, ours: false }));
   return { instagram, tiktok, igProfile, ttProfile, igHandle: b.handles.instagram, ttHandle: b.handles.tiktok };
 }
