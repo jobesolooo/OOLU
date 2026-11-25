@@ -855,4 +855,10 @@ export const nl: Record<keyof typeof en, string> = {
   "social.close": "Sluiten",
   "social.prev": "Vorige",
   "social.next": "Volgende",
+  "home.newCol.eyebrow": "Net binnen",
+  "home.newCol.title": "De nieuwe collectie",
+  "home.newCol.body": "Vers uit de studio: de nieuwste OOLU-items, net toegevoegd aan de shop.",
+  "home.newCol.cta": "Shop de collectie",
+  "home.newCol.count": "{n} nieuwe items",
+  "home.featured": "Uitgelicht",
 };

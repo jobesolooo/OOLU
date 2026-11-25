@@ -466,3 +466,30 @@ export async function SocialFeed() {
     </section>
   );
 }
+
+/** The latest drop: products added together most recently, shown big right under the hero. */
+export async function NewCollection({ products, ratings }: { products: Product[]; ratings?: Map<string, { average: number; count: number }> }) {
+  if (!products.length) return null;
+  const { t } = await getT();
+  const cols = products.length <= 2 ? "grid-cols-2" : products.length === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 lg:grid-cols-4";
+  return (
+    <section className="section-y bg-bone">
+      <div className="container-x grid gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,2fr)] lg:gap-16">
+        <div data-reveal className="lg:sticky lg:top-[calc(var(--nav-h)+32px)] lg:self-start">
+          <p className="eyebrow text-[#6b54e0]">{t("home.newCol.eyebrow")}</p>
+          <h2 className="mt-4 font-display text-[clamp(36px,4vw,64px)] leading-[0.95] font-normal tracking-[-0.03em]">{t("home.newCol.title")}</h2>
+          <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-black/70">{t("home.newCol.body")}</p>
+          <p className="mt-6 text-[11px] tracking-[0.14em] text-ash uppercase">{t("home.newCol.count", { n: String(products.length) })}</p>
+          <Link href="/shop?sort=new" className="btn-solid mt-6">
+            {t("home.newCol.cta")} <ArrowRight className="size-4" strokeWidth={1.5} />
+          </Link>
+        </div>
+        <div data-reveal="stagger" className={`grid ${cols} gap-x-[clamp(8px,1.2vw,20px)] gap-y-[clamp(28px,2.6vw,44px)]`}>
+          {products.map((p, i) => (
+            <ProductCard key={p.id} product={p} priority={i < 2} rating={ratings?.get(p.id)} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -855,4 +855,10 @@ export const pt: Record<keyof typeof en, string> = {
   "social.close": "Fechar",
   "social.prev": "Anterior",
   "social.next": "Seguinte",
+  "home.newCol.eyebrow": "Acabado de chegar",
+  "home.newCol.title": "A nova coleção",
+  "home.newCol.body": "Acabadas de sair do estúdio: as peças OOLU mais recentes, já na loja.",
+  "home.newCol.cta": "Ver a coleção",
+  "home.newCol.count": "{n} peças novas",
+  "home.featured": "Em destaque",
 };

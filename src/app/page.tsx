@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 import { latestPosts } from "@/content/journal";
 import { nowMs } from "@/lib/time";
 import { Hero } from "@/components/home/Hero";
-import { CategoryTiles, DropBanner, Features, GiftBand, JournalTeaser, SocialFeed, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
+import { CategoryTiles, DropBanner, Features, GiftBand, JournalTeaser, NewCollection, SocialFeed, NewsletterBand, ProductRow, Story } from "@/components/home/Sections";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,17 @@ export default async function HomePage() {
   ]);
 
   const dropIds = new Set(drops.map((d) => d.id));
-  const newIn = all.filter((p) => p.isNew && !dropIds.has(p.id)).slice(0, 8);
+  const live = all.filter((p) => !dropIds.has(p.id));
+  // New collection = the batch added most recently (within 3 days of the newest product).
+  // If that's most of the shop (e.g. a first import), there's no "new" batch to show.
+  const newest = live.reduce((m, p) => Math.max(m, p.createdAt || 0), 0);
+  const batch = live.filter((p) => p.createdAt && newest - p.createdAt < 3 * 86_400_000).sort((a, b) => b.createdAt - a.createdAt);
+  const newCollection = batch.length <= 8 && batch.length < live.length / 2 ? batch : [];
+  const shown = new Set(newCollection.map((p) => p.id));
+  // Featured = exactly what's ticked "Featured" in the admin (minus what the new collection already shows).
+  const featuredRow = live.filter((p) => p.featured && !shown.has(p.id)).slice(0, 8);
+  for (const p of featuredRow) shown.add(p.id);
+  const newIn = live.filter((p) => p.isNew && !shown.has(p.id)).slice(0, 8);
   const onSale = all.filter(isOnSale).slice(0, 4);
   const counts: Record<string, number> = {};
   for (const p of all) counts[p.category] = (counts[p.category] ?? 0) + 1;
@@ -67,7 +77,10 @@ export default async function HomePage() {
           image="/images/brand/drop-portrait.jpg"
         />
       )}
-      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
+      <NewCollection products={newCollection} ratings={ratings} />
+      <ProductRow title={t("home.featured")} products={featuredRow} href="/shop" ratings={ratings} />
+      {/* Without any new or featured products the homepage still shows a row of products */}
+      <ProductRow title={t("home.newArrivals")} products={newIn.length >= 4 ? newIn : featuredRow.length || newCollection.length ? newIn : featured} href="/shop?sort=new" ratings={ratings} />
       {holiday && <GiftBand />}
       <CategoryTiles counts={counts} />
       <Story />

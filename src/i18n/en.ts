@@ -853,4 +853,10 @@ export const en = {
   "social.close": "Close",
   "social.prev": "Previous",
   "social.next": "Next",
+  "home.newCol.eyebrow": "Just dropped",
+  "home.newCol.title": "The new collection",
+  "home.newCol.body": "Fresh from the studio: the latest OOLU pieces, just added to the shop.",
+  "home.newCol.cta": "Shop the collection",
+  "home.newCol.count": "{n} new pieces",
+  "home.featured": "Featured",
 } as const;
