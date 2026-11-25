@@ -174,13 +174,14 @@ export const JOURNAL: JournalPost[] = [
     excerpt: "Soft fabrics and relaxed fits, from morning commute to late-night hangout. A closer look at the OOLU tee.",
     category: "Process",
     date: "2026-07-21",
-    cover: "/images/brand/look-friends.jpg",
+    cover: "/images/brand/hoodie-set-glow.jpg",
+    coverPosition: "center 22%",
     nl: {
       title: "Altijd makkelijk comfort",
       excerpt: "Zachte stoffen en een relaxte pasvorm, van de ochtendspits tot laat op de avond. Een kijkje bij het OOLU-shirt.",
       blocks: [
         { type: "p", text: "Elk OOLU-shirt begint met dezelfde opdracht: het moet op dag één goed voelen en op dag honderd nog beter. Ruim in de body, strak aan de hals, het logo klein gehouden. Klinkt simpel. Dat is ook de bedoeling, maar simpel goed krijgen kost de meeste moeite." },
-        { type: "image", src: "/images/brand/look-friends.jpg", alt: "Drie lachende vrienden op betonnen trappen in OOLU-shirts", caption: "Washed en everyday tees." },
+        { type: "image", src: "/images/brand/story-crowd.jpg", alt: "Drie vrienden in OOLU staan stil in een drukke straat, van bovenaf", caption: "Een relaxte pasvorm, gemaakt om in te leven." },
         { type: "h2", text: "Begint bij de stof" },
         { type: "p", text: "Onze shirts zijn van 100% katoen. Zacht tegen je huid, ademend als het warm is en sterk genoeg om week na week in de was te gaan. Het Classic Cotton T-Shirt gaat nog een stap verder: zwaarder katoen dat voorgekrompen is, zodat het na het wassen zijn vorm houdt." },
         { type: "h2", text: "Pasvormen, uitgelegd" },
@@ -201,7 +202,7 @@ export const JOURNAL: JournalPost[] = [
         { type: "quote", text: "Het shirt dat je pakt als je niet wilt nadenken, en dat je toch het gevoel geeft dat je klaar bent.", by: "OOLU" },
         { type: "h2", text: "Van ochtend tot laat" },
         { type: "p", text: "Ochtendspits met jeans en sneakers. Een middag in de stad met de trainingsbroek. 's Avonds onder de windbreaker als het afkoelt. Een goed shirt doet al die dingen zonder dat je je hoeft om te kleden." },
-        { type: "image", src: "/images/brand/tile-t-shirts.jpg", alt: "Het OOLU washed-shirt in paars", caption: "Kies je kleur. Draag het vaak." },
+        { type: "image", src: "/images/brand/move-streaks.jpg", alt: "Model in de OOLU-windbreakerset gehurkt tussen strepen stadslicht", caption: "Onder de windbreaker als de avond afkoelt.", position: "center 45%" },
         { type: "h2", text: "Zo blijft hij mooi" },
         {
           type: "list",
@@ -216,7 +217,7 @@ export const JOURNAL: JournalPost[] = [
     },
     blocks: [
       { type: "p", text: "Every OOLU t-shirt starts with the same brief: it has to feel good on day one and better on day one hundred. Relaxed through the body, clean at the neck, logo kept small. It sounds simple. That's the point, but getting simple right takes the most effort." },
-      { type: "image", src: "/images/brand/look-friends.jpg", alt: "Three friends laughing on concrete steps in OOLU t-shirts", caption: "Washed and everyday tees." },
+      { type: "image", src: "/images/brand/story-crowd.jpg", alt: "Three friends in OOLU standing still in a busy street, seen from above", caption: "Relaxed fits, made to be lived in." },
       { type: "h2", text: "It starts with the fabric" },
       { type: "p", text: "Our tees are 100% cotton. Soft on your skin, breathable when it's warm and strong enough to go through the wash week after week. The Classic Cotton T-Shirt goes a step further: heavier cotton that's pre-shrunk, so it keeps its shape after washing." },
       { type: "h2", text: "Fits, explained" },
@@ -237,7 +238,7 @@ export const JOURNAL: JournalPost[] = [
       { type: "quote", text: "The tee you reach for when you don't want to think, and that still makes you feel ready.", by: "OOLU" },
       { type: "h2", text: "From morning to late" },
       { type: "p", text: "The morning commute with jeans and sneakers. An afternoon in the city with the tracksuit pants. Under the windbreaker in the evening when it cools down. A good tee does all of that without you having to change." },
-      { type: "image", src: "/images/brand/tile-t-shirts.jpg", alt: "The OOLU washed tee in purple", caption: "Pick your colour. Wear it often." },
+      { type: "image", src: "/images/brand/move-streaks.jpg", alt: "Model in the OOLU windbreaker set crouching between streaks of city light", caption: "Under the windbreaker when the evening cools down.", position: "center 45%" },
       { type: "h2", text: "Keep it looking good" },
       {
         type: "list",
