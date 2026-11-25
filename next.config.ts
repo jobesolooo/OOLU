@@ -24,6 +24,9 @@ const nextConfig: NextConfig = {
     serverActions: { allowedOrigins: process.env.NODE_ENV === "production" ? extraOrigins : [...tunnels, ...extraOrigins] },
   },
   images: {
+    // Vercel's image resizing has a monthly quota (past it, images fail with 402). Our photos are
+    // already compressed WebP/JPEG at sensible sizes, so they're served as they are.
+    unoptimized: true,
     remotePatterns: [
       // Product photos uploaded in the Stripe dashboard
       { protocol: "https", hostname: "files.stripe.com" },
