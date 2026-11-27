@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { getT } from "@/i18n/server";
 import { pageMeta } from "@/lib/seo";
 import { getMoney } from "@/lib/rates";
+import { POSTERS } from "@/lib/posters";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getT();
@@ -55,6 +56,24 @@ export default async function AboutPage() {
           </Link>
         </div>
       </div>
+      {/* Campaign posters: the brand line, "stay in motion", in print */}
+      <section className="border-t border-black/10 py-14">
+        <div className="container-x">
+          <div className="mb-6 flex items-end justify-between gap-6">
+            <p className="font-display text-[clamp(28px,2.6vw,40px)] leading-none tracking-[-0.02em]">Stay in motion</p>
+            <Link href="/journal/stay-in-motion-the-zine" className="shrink-0 text-[11px] tracking-[0.12em] uppercase underline-offset-4 hover:underline">
+              {t("journal.seeZine")} →
+            </Link>
+          </div>
+          <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0">
+            {[POSTERS.stayGraffiti, POSTERS.keepMovingNavy, POSTERS.trackSet, POSTERS.inMotion].map((p) => (
+              <Link key={p.src} href="/journal/stay-in-motion-the-zine" className="group relative aspect-[3/4] w-[62%] shrink-0 snap-start overflow-hidden bg-stone sm:w-auto">
+                <Image src={p.src} alt={p.alt} fill sizes="(min-width:640px) 25vw, 62vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

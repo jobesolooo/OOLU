@@ -444,6 +444,7 @@ export const es: Record<keyof typeof en, string> = {
   "home.viewAll": "Ver todo",
   "journal.all": "Todo",
   "journal.allStories": "Todas las historias",
+  "journal.seeZine": "Ver el zine",
   "journal.back": "← Journal",
   "journal.bandBody": "Recibe nuevas historias, lookbooks y drops anticipados en tu email.",
   "journal.bandTitle": "Lleva tus raíces. Cuenta tu historia.",

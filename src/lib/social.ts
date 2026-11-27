@@ -1,6 +1,7 @@
 import "server-only";
 import { getSettings } from "./settings";
 import { getBusiness } from "./business";
+import { POSTERS } from "./posters";
 
 export type IgTile = { href: string; image: string; alt: string; ours: boolean };
 export type TtTile = { href: string; image: string | null; caption: string; videoId: string | null; ours: boolean };
@@ -16,6 +17,9 @@ const SHOOT = [
   "/images/brand/move-painted.jpg",
   "/images/brand/backs-roots-journey.jpg",
 ];
+
+/** Campaign posters fill the Instagram rail until real posts are added (3:4, same as the tiles). */
+const IG_POSTERS = [POSTERS.trackSet, POSTERS.stayGraffiti, POSTERS.keepMovingNavy, POSTERS.giant, POSTERS.stayBlue, POSTERS.inMotion, POSTERS.darkMotion, POSTERS.keepMovingGraffiti];
 
 const TT_TTL = 6 * 3600_000;
 const ttCache = new Map<string, { at: number; tile: TtTile }>();
@@ -46,7 +50,7 @@ export async function getSocialFeed() {
   const ttProfile = b.social.tiktok ?? "https://www.tiktok.com/";
   const instagram: IgTile[] = s.social.instagram.length
     ? s.social.instagram.map((p) => ({ href: p.url || igProfile, image: p.image, alt: "OOLU on Instagram", ours: true }))
-    : SHOOT.map((image) => ({ href: igProfile, image, alt: "OOLU Roots and Journey shoot", ours: false }));
+    : IG_POSTERS.map((p) => ({ href: igProfile, image: p.src, alt: p.alt, ours: false }));
   const tiktok: TtTile[] = s.social.tiktok.length
     ? await Promise.all(s.social.tiktok.map(tiktokTile))
     : [SHOOT[4], SHOOT[6], SHOOT[7], SHOOT[5], SHOOT[1]].map((image) => ({ href: ttProfile, image, caption: "", videoId: null, ours: false }));

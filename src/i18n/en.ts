@@ -442,6 +442,7 @@ export const en = {
   "home.viewAll": "View all",
   "journal.all": "All",
   "journal.allStories": "All stories",
+  "journal.seeZine": "See the zine",
   "journal.back": "← Journal",
   "journal.bandBody": "Get new stories, lookbooks and early drops in your inbox.",
   "journal.bandTitle": "Wear your roots. Tell your story.",

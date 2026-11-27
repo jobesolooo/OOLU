@@ -115,6 +115,26 @@ export default async function JournalPost({ params }: PageProps<"/journal/[slug]
                     {b.caption && <figcaption className="mt-3 px-4 text-sm text-ash sm:px-0">{b.caption}</figcaption>}
                   </figure>
                 );
+              case "posters":
+                return (
+                  <figure key={i} className="-mx-4 sm:mx-[-8%]">
+                    {/* Swipeable on phones, three across from tablet up; each opens full size */}
+                    <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
+                      {b.items.map((p) => (
+                        <a
+                          key={p.src}
+                          href={p.src}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group relative aspect-[3/4] w-[72%] shrink-0 snap-start overflow-hidden bg-stone shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] sm:w-auto"
+                        >
+                          <Image src={p.src} alt={p.alt} fill sizes="(min-width:768px) 300px, 72vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                        </a>
+                      ))}
+                    </div>
+                    {b.caption && <figcaption className="mt-3 px-4 text-sm text-ash sm:px-0">{b.caption}</figcaption>}
+                  </figure>
+                );
               case "list":
                 return (
                   <section key={i}>

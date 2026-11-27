@@ -3,15 +3,18 @@
  * Swap in real campaign stories and photography as they come.
  *
  * Block types: p (paragraph), h2 (heading), quote, image, products (shop-the-look, by product slug),
- * list (labelled points, e.g. fit notes or care).
+ * list (labelled points, e.g. fit notes or care), posters (a row of 3:4 campaign posters).
  */
+import { POSTERS, type Poster } from "@/lib/posters";
+
 export type JournalBlock =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
   | { type: "quote"; text: string; by?: string }
   | { type: "image"; src: string; alt: string; caption?: string; position?: string }
   | { type: "products"; title?: string; slugs: string[] }
-  | { type: "list"; title?: string; items: { label: string; text: string }[] };
+  | { type: "list"; title?: string; items: { label: string; text: string }[] }
+  | { type: "posters"; items: Poster[]; caption?: string };
 
 export type JournalPost = {
   slug: string;
@@ -27,6 +30,53 @@ export type JournalPost = {
 };
 
 export const JOURNAL: JournalPost[] = [
+  {
+    slug: "stay-in-motion-the-zine",
+    title: "Stay in Motion — the zine",
+    excerpt: "Twelve posters from the fall/winter shoot. Halftone, spray paint and tape: the Roots and Journey tracksuit, the zip hoodie set and a city that never stands still.",
+    category: "Lookbook",
+    date: "2026-11-27",
+    cover: POSTERS.trackSet.src,
+    coverPosition: "center 30%",
+    nl: {
+      title: "Stay in Motion — de zine",
+      excerpt: "Twaalf posters uit de herfst/winter-shoot. Halftoon, spuitbus en tape: het Roots and Journey-trainingspak, de zip-hoodieset en een stad die nooit stilstaat.",
+      blocks: [
+        { type: "p", text: "We schoten de collectie midden in de drukte: stilstaan terwijl de stad voorbij raast. Daarna haalden we de foto's uit elkaar. Geprint, geknipt, overgetrokken, met tape vastgezet en besproeid, tot er een zine lag. Twaalf posters, één boodschap: blijf bewegen." },
+        { type: "h2", text: "Keep moving" },
+        { type: "p", text: "Van bovenaf gezien wordt de stad een patroon en wordt een trainingspak een lijn erdoorheen. Drie keer dezelfde wandeling: in inkt, in rode spuitbus en als stripverhaal vol OOLU-tags." },
+        { type: "posters", items: [POSTERS.keepMovingNavy, POSTERS.keepMovingGraffiti, POSTERS.keepMovingCollage], caption: "Keep Moving: drie versies van dezelfde wandeling." },
+        { type: "h2", text: "Stay in motion" },
+        { type: "p", text: "Iedereen beweegt, jij staat stil. Dat is het beeld dat bleef hangen, en het werd de slogan van het seizoen. De zwarte set met witte piping en Journey langs het been doet de rest." },
+        { type: "posters", items: [POSTERS.stayGraffiti, POSTERS.stayRed, POSTERS.stayBlue], caption: "Stay in Motion: stilstaan in de drukte." },
+        { type: "quote", text: "Stay in motion.", by: "OOLU" },
+        { type: "h2", text: "Na donker" },
+        { type: "p", text: "Binnen, in de studio, werd het warmer en donkerder. De zip-hoodie en sweatpants in strepen licht, de crouch study en een low-angle shot met letters zo groot als gebouwen." },
+        { type: "posters", items: [POSTERS.darkMotion, POSTERS.inMotionLookbook, POSTERS.giant], caption: "Dark Motion, het herfst-lookbook en OOLU in het groot." },
+        { type: "products", title: "Shop de zine", slugs: ["oolu-tracksuit", "oolu-windbreaker-tracksuit-set-black-grey", "oolu-hoodie-tracksuit-set-black"] },
+        { type: "h2", text: "Het nieuwe jaar in" },
+        { type: "p", text: "De laatste pagina's kijken vooruit: een nieuw seizoen, een nieuw verhaal. Hang ze op, deel ze, en blijf in beweging." },
+        { type: "posters", items: [POSTERS.newYear, POSTERS.inMotion, POSTERS.trackSet], caption: "New Year Motion, In Motion en Track Set 01." },
+      ],
+    },
+    blocks: [
+      { type: "p", text: "We shot the collection in the middle of the crowd: standing still while the city rushes past. Then we took the photos apart. Printed, cut, traced, taped down and sprayed over, until there was a zine. Twelve posters, one message: keep moving." },
+      { type: "h2", text: "Keep moving" },
+      { type: "p", text: "Seen from above, the city turns into a pattern and a tracksuit turns into a line through it. The same walk three times: in ink, in red spray paint and as a comic strip full of OOLU tags." },
+      { type: "posters", items: [POSTERS.keepMovingNavy, POSTERS.keepMovingGraffiti, POSTERS.keepMovingCollage], caption: "Keep Moving: three takes on the same walk." },
+      { type: "h2", text: "Stay in motion" },
+      { type: "p", text: "Everyone moves, you stand still. That's the picture that stuck, and it became the line of the season. The black set with white piping and Journey down the leg does the rest." },
+      { type: "posters", items: [POSTERS.stayGraffiti, POSTERS.stayRed, POSTERS.stayBlue], caption: "Stay in Motion: standing still in the crowd." },
+      { type: "quote", text: "Stay in motion.", by: "OOLU" },
+      { type: "h2", text: "After dark" },
+      { type: "p", text: "Inside, in the studio, it got warmer and darker. The zip hoodie and sweatpants in streaks of light, the crouch study, and a low-angle shot with letters as tall as buildings." },
+      { type: "posters", items: [POSTERS.darkMotion, POSTERS.inMotionLookbook, POSTERS.giant], caption: "Dark Motion, the fall lookbook and OOLU, big." },
+      { type: "products", title: "Shop the zine", slugs: ["oolu-tracksuit", "oolu-windbreaker-tracksuit-set-black-grey", "oolu-hoodie-tracksuit-set-black"] },
+      { type: "h2", text: "Into the new year" },
+      { type: "p", text: "The last pages look ahead: a new season, a new story. Put them up, share them, and stay in motion." },
+      { type: "posters", items: [POSTERS.newYear, POSTERS.inMotion, POSTERS.trackSet], caption: "New Year Motion, In Motion and Track Set 01." },
+    ],
+  },
   {
     slug: "oolu-means-trust",
     title: "OOLU means trust",
@@ -270,6 +320,7 @@ export function readingMinutes(p: JournalPost) {
     if (b.type === "p" || b.type === "h2" || b.type === "quote") words += b.text.split(/\s+/).length;
     if (b.type === "list") for (const it of b.items) words += `${it.label} ${it.text}`.split(/\s+/).length;
     if (b.type === "image") images++;
+    if (b.type === "posters") images += b.items.length;
   }
   return Math.max(1, Math.round(words / 200 + images / 5));
 }

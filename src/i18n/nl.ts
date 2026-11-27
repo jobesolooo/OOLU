@@ -444,6 +444,7 @@ export const nl: Record<keyof typeof en, string> = {
   "home.viewAll": "Bekijk alles",
   "journal.all": "Alles",
   "journal.allStories": "Alle verhalen",
+  "journal.seeZine": "Bekijk de zine",
   "journal.back": "← Journal",
   "journal.bandBody": "Ontvang nieuwe verhalen, lookbooks en vroege drops in je inbox.",
   "journal.bandTitle": "Draag je wortels. Vertel je verhaal.",
